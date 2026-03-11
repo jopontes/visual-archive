@@ -129,51 +129,51 @@
 <body class="bg-background-dark text-white font-display antialiased min-h-screen selection:bg-primary/20">
 
 <!-- ── TOP BAR ──────────────────────────────────────────────── -->
-<header class="sticky top-0 z-30 bg-background-dark/90 backdrop-blur border-b border-white/[0.05]">
-  <div class="max-w-screen-2xl mx-auto px-6 h-14 flex items-center gap-6">
+<header class="sticky top-0 z-30 bg-background-dark/95 backdrop-blur border-b border-white/[0.05]">
 
-    <!-- Logo -->
+  <!-- Row 1: logo + controls -->
+  <div class="max-w-screen-2xl mx-auto px-6 h-12 flex items-center gap-4">
     <h1 class="font-syne font-light text-2xl tracking-tighter text-white/90 shrink-0 select-none">VA</h1>
+    <div class="h-4 w-px bg-white/10 shrink-0"></div>
+    <div class="flex-1"></div>
 
-    <!-- Divider -->
-    <div class="h-5 w-px bg-white/10 shrink-0"></div>
+    <!-- Count -->
+    <span id="count" class="text-[11px] font-syne uppercase tracking-widest text-white/30 hidden sm:block"></span>
 
-    <!-- Filter tag pills (scrollable) -->
-    <div id="filter-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1"></div>
+    <!-- Search -->
+    <div class="flex items-center gap-1.5 opacity-50 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+      <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 200;font-size:18px">search</span>
+      <input id="search" type="text" autocomplete="off"
+             class="bg-transparent border-none text-white font-syne text-sm focus:ring-0
+                    placeholder:text-white/30 w-28 focus:w-44 transition-all outline-none"
+             placeholder="Search…"/>
+      <button id="clear-btn" class="material-symbols-outlined text-white/35 hover:text-white/70 transition-colors hidden cursor-pointer select-none"
+              style="font-variation-settings:'wght' 200;font-size:16px">close</button>
+    </div>
 
-    <!-- Right controls -->
-    <div class="flex items-center gap-3 shrink-0">
-      <!-- Count label -->
-      <span id="count" class="text-[11px] font-syne uppercase tracking-widest text-white/30 hidden sm:block"></span>
-
-      <!-- Search -->
-      <div class="flex items-center gap-1.5 opacity-50 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
-        <span class="material-symbols-outlined text-base select-none" style="font-variation-settings:'wght' 200;font-size:18px">search</span>
-        <input id="search" type="text" autocomplete="off"
-               class="bg-transparent border-none text-white font-syne text-sm focus:ring-0
-                      placeholder:text-white/30 w-32 focus:w-48 transition-all outline-none"
-               placeholder="Search…"/>
-        <button id="clear-btn" class="material-symbols-outlined text-white/35 hover:text-white/70 transition-colors hidden cursor-pointer select-none"
-                style="font-variation-settings:'wght' 200;font-size:16px">close</button>
-      </div>
-
-      <!-- View toggle -->
-      <div class="flex items-center border border-white/10 rounded-sm overflow-hidden">
-        <button id="btn-grid" onclick="setView('grid')"
-                class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer"
-                title="Grid view">
-          <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">grid_view</span>
-        </button>
-        <div class="w-px h-5 bg-white/10"></div>
-        <button id="btn-list" onclick="setView('list')"
-                class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer"
-                title="List view">
-          <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">view_list</span>
-        </button>
-      </div>
+    <!-- View toggle -->
+    <div class="flex items-center border border-white/10 rounded-sm overflow-hidden">
+      <button id="btn-grid" onclick="setView('grid')"
+              class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer" title="Grid view">
+        <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">grid_view</span>
+      </button>
+      <div class="w-px h-5 bg-white/10"></div>
+      <button id="btn-list" onclick="setView('list')"
+              class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer" title="List view">
+        <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">view_list</span>
+      </button>
     </div>
   </div>
+
+  <!-- Row 2: filter tags (wrapping) -->
+  <div class="border-t border-white/[0.04]">
+    <div class="max-w-screen-2xl mx-auto px-6 py-2">
+      <div id="filter-row" class="flex flex-wrap gap-1.5"></div>
+    </div>
+  </div>
+
 </header>
+
 
 <!-- ── MAIN CONTENT ──────────────────────────────────────────── -->
 <main class="max-w-screen-2xl mx-auto px-6 py-8">
