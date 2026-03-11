@@ -398,18 +398,18 @@ function renderList(){
     });
   } else {
     // ── COMPACT LIST MODE (default) ──────────────────
-    refList.className = 'flex flex-col px-5';
+    refList.className = 'flex flex-col px-5 gap-0.5';
     visibleRefs.forEach((r,i)=>{
       const div = document.createElement('div');
       div.className = 'ref-item group relative cursor-pointer py-2 pl-4 border-l border-transparent'
                     + (i===activeIdx ? ' active' : '');
       div.innerHTML = `
-        <h2 class="font-syne text-sm font-medium leading-snug tracking-tight
-                   ${i===activeIdx ? 'text-white' : 'text-white/45 group-hover:text-white/80'}
-                   transition-colors duration-150">${r.name}</h2>
-        <p class="text-[9px] font-display mt-0.5 uppercase tracking-widest
-                  ${i===activeIdx ? 'text-primary/55' : 'text-transparent group-hover:text-white/22'}
-                  transition-colors duration-150">${r.tags[0] || ''}</p>
+        <h2 class="font-syne text-sm font-medium leading-relaxed tracking-tight
+                   ${i===activeIdx ? 'text-white' : 'text-white/65 group-hover:text-white/90'}
+                   transition-colors duration-200">${r.name}</h2>
+        <p class="text-[10px] font-display uppercase tracking-widest leading-none
+                  ${i===activeIdx ? 'text-primary/60' : 'text-white/20 group-hover:text-white/35'}
+                  transition-colors duration-200">${r.tags[0] || ''}</p>
       `;
       div.onclick = ()=>{ activeIdx = i; renderAll(); };
       refList.appendChild(div);
