@@ -168,7 +168,7 @@
   <!-- Row 2: filter tags (wrapping) -->
   <div class="border-t border-white/[0.04]">
     <div class="max-w-screen-2xl mx-auto px-6 py-2">
-      <div id="filter-row" class="flex flex-wrap gap-x-0 gap-y-1.5"></div>
+      <div id="filter-row"></div>
     </div>
   </div>
 
@@ -466,12 +466,13 @@ function renderList(){
 
 // ─── RENDER: FILTER ROW ──────────────────────────────────────
 function renderFilterRow(){
-  const chipClass = 'tag-chip flex-1 text-center whitespace-nowrap';
-  filterRow.innerHTML =
-    `<button class="${chipClass} ${!activeTag?'active':''}" onclick="window.setTagFilter(null)">All</button>` +
-    ALL_TAGS.map(tag=>
-      `<button class="${chipClass} ${activeTag===tag?'active':''}" onclick="window.setTagFilter('${tag}')">${tag}</button>`
-    ).join('');
+  const allTags = [null, ...ALL_TAGS]; // null = "All"
+  const cols = Math.ceil(allTags.length / 2);
+  filterRow.style.cssText = `display:grid;grid-template-columns:repeat(${cols},1fr);gap:4px`;
+  filterRow.innerHTML = allTags.map(tag=>
+    `<button class="tag-chip text-center ${tag===activeTag||(tag===null&&!activeTag)?'active':''}"
+      onclick="window.setTagFilter(${tag?`'${tag}'`:'null'})">${tag||'All'}</button>`
+  ).join('');
 }
 
 // ─── MAIN RENDER ─────────────────────────────────────────────
