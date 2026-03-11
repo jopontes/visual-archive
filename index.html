@@ -38,10 +38,35 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* ── List item transitions ─────────────────── */
-    .ref-item { transition: all 0.2s ease; }
+    /* ── List item (compact) ────────────────────── */
+    .ref-item { transition: border-color 0.2s ease, color 0.2s ease; }
     .ref-item.active h2 { color: #fff; }
-    .ref-item.active { border-left-color: rgba(167,139,250,0.4); }
+    .ref-item.active { border-left-color: rgba(167,139,250,0.45); }
+
+    /* ── Mini card (filtered grid mode) ─────────── */
+    .mini-card {
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 2px;
+      padding: 0.75rem 0.85rem;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .mini-card:hover {
+      border-color: rgba(167,139,250,0.25);
+      background: rgba(167,139,250,0.04);
+    }
+    .mini-card.active {
+      border-color: rgba(167,139,250,0.45);
+      background: rgba(167,139,250,0.07);
+    }
+    .mini-card.active .mc-name { color: #fff; }
+
+    /* ── Card grid entrance ─────────────────────── */
+    @keyframes gridIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-grid { animation: gridIn 0.22s ease both; }
 
     /* ── Right pane entrance ───────────────────── */
     @keyframes fadeIn {
@@ -116,16 +141,16 @@
   <div class="flex flex-1 w-full h-full pt-[4.5rem]">
 
     <!-- ── LEFT PANE: list ───────────────────────────────── -->
-    <div class="w-[320px] lg:w-[360px] xl:w-[400px] flex-shrink-0 flex flex-col border-r border-white/[0.05] h-full overflow-y-auto no-scrollbar pb-24 pt-6">
+    <div class="w-[300px] lg:w-[340px] xl:w-[380px] flex-shrink-0 flex flex-col border-r border-white/[0.05] h-full overflow-y-auto no-scrollbar pb-24 pt-6">
 
       <!-- Count + active filter indicator -->
-      <div class="px-8 mb-4 flex items-center justify-between">
+      <div class="px-6 mb-3 flex items-center justify-between">
         <span id="count" class="text-[10px] font-syne uppercase tracking-widest text-white/25"></span>
         <button id="clear-filter-btn" class="hidden text-[10px] font-syne uppercase tracking-widest text-primary/50 hover:text-primary transition-colors">Clear</button>
       </div>
 
-      <!-- Reference list -->
-      <nav id="ref-list" class="flex flex-col px-8 gap-0"></nav>
+      <!-- Reference list / card grid (toggled by JS) -->
+      <nav id="ref-list"></nav>
     </div>
 
     <!-- ── RIGHT PANE: detail ────────────────────────────── -->
@@ -351,24 +376,45 @@ function domain(url){
   try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
 }
 
-// ─── LEFT LIST ────────────────────────────────────
+// ─── LEFT LIST / CARD GRID ────────────────────────
 function renderList(){
   refList.innerHTML = '';
-  visibleRefs.forEach((r,i)=>{
-    const div = document.createElement('div');
-    div.className = 'ref-item group relative cursor-pointer py-4 pl-6 border-l border-transparent'
-                  + (i===activeIdx ? ' active' : '');
-    div.innerHTML = `
-      <h2 class="font-syne text-base font-medium leading-snug
-                 ${i===activeIdx ? 'text-white' : 'text-white/40 group-hover:text-white/75'}
-                 transition-colors duration-200 tracking-tight">${r.name}</h2>
-      <p class="text-[10px] font-display mt-0.5 uppercase tracking-widest
-                ${i===activeIdx ? 'text-primary/60' : 'text-transparent group-hover:text-white/25'}
-                transition-colors duration-200">${r.tags[0] || ''}</p>
-    `;
-    div.onclick = ()=>{ activeIdx = i; renderAll(); };
-    refList.appendChild(div);
-  });
+  const isFiltered = !!(query || activeTag);
+
+  if(isFiltered && visibleRefs.length > 0){
+    // ── CARD GRID MODE (when filtered) ──────────────
+    refList.className = 'card-grid grid grid-cols-2 gap-1.5 px-4';
+    visibleRefs.forEach((r,i)=>{
+      const div = document.createElement('div');
+      div.className = 'mini-card' + (i===activeIdx ? ' active' : '');
+      div.innerHTML = `
+        <p class="mc-name font-syne text-[0.7rem] font-medium leading-tight tracking-tight
+                  ${i===activeIdx ? 'text-white' : 'text-white/40'}
+                  transition-colors duration-150 line-clamp-2">${r.name}</p>
+        <p class="text-[9px] font-display mt-1.5 uppercase tracking-widest text-white/20 truncate">${r.tags[0] || ''}</p>
+      `;
+      div.onclick = ()=>{ activeIdx = i; renderAll(); };
+      refList.appendChild(div);
+    });
+  } else {
+    // ── COMPACT LIST MODE (default) ──────────────────
+    refList.className = 'flex flex-col px-5';
+    visibleRefs.forEach((r,i)=>{
+      const div = document.createElement('div');
+      div.className = 'ref-item group relative cursor-pointer py-[0.45rem] pl-4 border-l border-transparent'
+                    + (i===activeIdx ? ' active' : '');
+      div.innerHTML = `
+        <h2 class="font-syne text-[0.78rem] font-medium leading-snug tracking-tight
+                   ${i===activeIdx ? 'text-white' : 'text-white/38 group-hover:text-white/70'}
+                   transition-colors duration-150">${r.name}</h2>
+        <p class="text-[9px] font-display mt-0.5 uppercase tracking-widest
+                  ${i===activeIdx ? 'text-primary/55' : 'text-transparent group-hover:text-white/20'}
+                  transition-colors duration-150">${r.tags[0] || ''}</p>
+      `;
+      div.onclick = ()=>{ activeIdx = i; renderAll(); };
+      refList.appendChild(div);
+    });
+  }
 }
 
 // ─── RIGHT DETAIL ────────────────────────────────
@@ -428,7 +474,7 @@ window.setTag = t=>{ activeTag = activeTag===t ? null : t; activeIdx=0; renderAl
 
 // ─── SCROLL ACTIVE INTO VIEW ──────────────────────
 function scrollActiveIntoView(){
-  const items = refList.querySelectorAll('.ref-item');
+  const items = refList.querySelectorAll('.ref-item, .mini-card');
   if(items[activeIdx]){
     items[activeIdx].scrollIntoView({ block:'nearest', behavior:'smooth' });
   }
