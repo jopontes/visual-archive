@@ -449,17 +449,14 @@ function renderGrid(){
 
 // ─── RENDER: LIST ─────────────────────────────────────────────
 function renderList(){
-  container.className = 'flex flex-col fade-up';
+  container.className = 'flex flex-col fade-up max-w-3xl mx-auto border border-white/[0.05] rounded-sm overflow-hidden';
   container.innerHTML = visibleRefs.map(r=>`
-    <div class="list-row px-4 py-3 ${expandedId===r.id?'expanded':''}"
+    <div class="list-row px-5 py-3 ${expandedId===r.id?'expanded':''}"
          data-ref-id="${r.id}"
          onclick="toggleExpand(${r.id}, event)">
       <div class="flex items-center gap-4 min-w-0">
         <h2 class="font-syne text-sm font-semibold text-white/90 tracking-tight w-64 shrink-0 truncate">${r.name}</h2>
-        <div class="flex flex-wrap gap-1.5 flex-1 min-w-0">
-          ${r.tags.map(t=>`<span class="tag-chip ${activeTag===t?'active':''}"
-            onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`).join('')}
-        </div>
+        <div class="flex-1"></div>
         <span class="text-[11px] text-white/30 font-display truncate shrink-0 hidden lg:block">${domain(r.url)}</span>
         <span class="material-symbols-outlined chevron text-white/25 shrink-0 select-none"
               style="font-variation-settings:'wght' 300;font-size:16px">expand_more</span>
