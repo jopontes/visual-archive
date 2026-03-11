@@ -16,92 +16,109 @@
       theme: {
         extend: {
           colors: {
-            "primary":          "#a78bfa",
-            "background-dark":  "#050509",
+            "primary":         "#a78bfa",
+            "background-dark": "#050509",
           },
           fontFamily: {
             "display": ["Inter", "sans-serif"],
             "syne":    ["Syne", "sans-serif"],
-          },
-          borderRadius: {
-            "DEFAULT": "0.125rem",
-            "lg":      "0.25rem",
-            "xl":      "0.5rem",
-            "full":    "0.75rem",
           },
         },
       },
     }
   </script>
   <style>
-    /* ── Scrollbar hidden ──────────────────────── */
+    /* ── Reset/base ──────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* ── List item (compact) ────────────────────── */
-    .ref-item { transition: border-color 0.2s ease, color 0.2s ease; }
-    .ref-item.active h2 { color: #fff; }
-    .ref-item.active { border-left-color: rgba(167,139,250,0.45); }
-
-    /* ── Mini card (filtered grid mode) ─────────── */
-    .mini-card {
+    /* ── Card ────────────────────────────────── */
+    .archive-card {
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 3px;
+      background: rgba(255,255,255,0.025);
       cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 2px;
-      padding: 0.75rem 0.85rem;
-      transition: border-color 0.18s, background 0.18s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .mini-card:hover {
-      border-color: rgba(167,139,250,0.25);
+    .archive-card:hover {
+      border-color: rgba(167,139,250,0.3);
       background: rgba(167,139,250,0.04);
     }
-    .mini-card.active {
-      border-color: rgba(167,139,250,0.45);
-      background: rgba(167,139,250,0.07);
+    .archive-card.expanded {
+      border-color: rgba(167,139,250,0.5);
+      background: rgba(167,139,250,0.06);
     }
-    .mini-card.active .mc-name { color: #fff; }
 
-    /* ── Card grid entrance ─────────────────────── */
-    @keyframes gridIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* ── Detail expand panel ─────────────────── */
+    .detail-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease;
+      opacity: 0;
     }
-    .card-grid { animation: gridIn 0.22s ease both; }
-
-    /* ── Right pane entrance ───────────────────── */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .detail-panel.open {
+      max-height: 300px;
+      opacity: 1;
     }
-    .detail-fade { animation: fadeIn 0.28s ease both; }
 
-    /* ── Tag chips ─────────────────────────────── */
+    /* ── List row ────────────────────────────── */
+    .list-row {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .list-row:hover { background: rgba(167,139,250,0.04); }
+    .list-row.expanded { background: rgba(167,139,250,0.06); }
+
+    /* ── Tag chip ────────────────────────────── */
     .tag-chip {
       display: inline-block;
-      padding: 0.2rem 0.65rem;
+      padding: 0.15rem 0.55rem;
       border: 1px solid rgba(167,139,250,0.2);
       border-radius: 2px;
-      font-size: 0.67rem;
-      letter-spacing: 0.08em;
+      font-size: 0.65rem;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
-      color: rgba(167,139,250,0.6);
+      color: rgba(167,139,250,0.65);
       cursor: pointer;
-      transition: all 0.18s;
+      transition: all 0.15s;
+      white-space: nowrap;
     }
     .tag-chip:hover, .tag-chip.active {
-      border-color: rgba(167,139,250,0.7);
+      border-color: rgba(167,139,250,0.6);
       color: #a78bfa;
-      background: rgba(167,139,250,0.07);
+      background: rgba(167,139,250,0.08);
     }
     .tag-chip.active {
       color: #fff;
-      background: rgba(167,139,250,0.14);
+      background: rgba(167,139,250,0.16);
     }
 
-    /* ── Kbd hint ──────────────────────────────── */
+    /* ── Chevron spin ──────────────────────── */
+    .chevron { transition: transform 0.25s ease; }
+    .expanded .chevron { transform: rotate(180deg); }
+
+    /* ── Line clamp ──────────────────────────── */
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── Fade in entrance ──────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.22s ease both; }
+
+    /* ── Kbd ─────────────────────────────────── */
     kbd {
-      font-size: 0.6rem;
-      padding: 0.1rem 0.4rem;
+      font-size: 0.58rem;
+      padding: 0.1rem 0.35rem;
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 2px;
       color: rgba(255,255,255,0.25);
@@ -109,78 +126,78 @@
   </style>
 </head>
 
-<body class="bg-background-dark text-slate-100 font-display min-h-screen antialiased selection:bg-primary/20">
-<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<body class="bg-background-dark text-white font-display antialiased min-h-screen selection:bg-primary/20">
 
-  <!-- ── HEADER ──────────────────────────────────────────── -->
-  <header class="absolute top-0 left-0 w-full z-20 flex items-center justify-between px-8 py-6 pointer-events-none">
+<!-- ── TOP BAR ──────────────────────────────────────────────── -->
+<header class="sticky top-0 z-30 bg-background-dark/90 backdrop-blur border-b border-white/[0.05]">
+  <div class="max-w-screen-2xl mx-auto px-6 h-14 flex items-center gap-6">
 
-    <!-- Left: logo + filter tags -->
-    <div class="flex items-center gap-8 pointer-events-auto">
-      <h1 class="text-white font-syne font-light text-3xl tracking-tighter opacity-90 select-none">VA</h1>
+    <!-- Logo -->
+    <h1 class="font-syne font-light text-2xl tracking-tighter text-white/90 shrink-0 select-none">VA</h1>
 
-      <!-- Inline filter pills -->
-      <div id="filter-row" class="hidden lg:flex items-center gap-2 flex-wrap"></div>
-    </div>
+    <!-- Divider -->
+    <div class="h-5 w-px bg-white/10 shrink-0"></div>
 
-    <!-- Right: search -->
-    <div class="flex items-center pointer-events-auto">
-      <div id="search-wrap" class="flex items-center gap-2 opacity-40 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
-        <span class="material-symbols-outlined text-lg font-light select-none" style="font-variation-settings:'wght' 200">search</span>
+    <!-- Filter tag pills (scrollable) -->
+    <div id="filter-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1"></div>
+
+    <!-- Right controls -->
+    <div class="flex items-center gap-3 shrink-0">
+      <!-- Count label -->
+      <span id="count" class="text-[11px] font-syne uppercase tracking-widest text-white/30 hidden sm:block"></span>
+
+      <!-- Search -->
+      <div class="flex items-center gap-1.5 opacity-50 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+        <span class="material-symbols-outlined text-base select-none" style="font-variation-settings:'wght' 200;font-size:18px">search</span>
         <input id="search" type="text" autocomplete="off"
-               class="bg-transparent border-none text-white font-syne focus:ring-0 placeholder:text-white/35
-                      w-40 focus:w-60 transition-all outline-none text-sm"
-               placeholder="Search archive…"/>
-        <button id="clear-btn" class="material-symbols-outlined text-sm text-white/30 hover:text-white/70 transition-colors hidden cursor-pointer select-none"
-                style="font-variation-settings:'wght' 200">close</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ── MAIN SPLIT PANE ────────────────────────────────── -->
-  <div class="flex flex-1 w-full h-full pt-[4.5rem]">
-
-    <!-- ── LEFT PANE: list ───────────────────────────────── -->
-    <div class="w-[300px] lg:w-[340px] xl:w-[380px] flex-shrink-0 flex flex-col border-r border-white/[0.05] h-full overflow-y-auto no-scrollbar pb-24 pt-6">
-
-      <!-- Count + active filter indicator -->
-      <div class="px-6 mb-3 flex items-center justify-between">
-        <span id="count" class="text-[10px] font-syne uppercase tracking-widest text-white/25"></span>
-        <button id="clear-filter-btn" class="hidden text-[10px] font-syne uppercase tracking-widest text-primary/50 hover:text-primary transition-colors">Clear</button>
+               class="bg-transparent border-none text-white font-syne text-sm focus:ring-0
+                      placeholder:text-white/30 w-32 focus:w-48 transition-all outline-none"
+               placeholder="Search…"/>
+        <button id="clear-btn" class="material-symbols-outlined text-white/35 hover:text-white/70 transition-colors hidden cursor-pointer select-none"
+                style="font-variation-settings:'wght' 200;font-size:16px">close</button>
       </div>
 
-      <!-- Reference list / card grid (toggled by JS) -->
-      <nav id="ref-list"></nav>
-    </div>
-
-    <!-- ── RIGHT PANE: detail ────────────────────────────── -->
-    <div class="flex-1 h-full flex flex-col px-16 xl:px-24 py-16 overflow-y-auto no-scrollbar justify-center relative">
-
-      <!-- Detail content (replaced on selection) -->
-      <div id="detail" class="max-w-2xl z-10"></div>
-
-      <!-- Ambient bg hint -->
-      <div class="absolute inset-0 pointer-events-none opacity-[0.025]"
-           style="background: radial-gradient(circle at 70% 50%, #a78bfa, transparent 55%)"></div>
+      <!-- View toggle -->
+      <div class="flex items-center border border-white/10 rounded-sm overflow-hidden">
+        <button id="btn-grid" onclick="setView('grid')"
+                class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer"
+                title="Grid view">
+          <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">grid_view</span>
+        </button>
+        <div class="w-px h-5 bg-white/10"></div>
+        <button id="btn-list" onclick="setView('list')"
+                class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer"
+                title="List view">
+          <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">view_list</span>
+        </button>
+      </div>
     </div>
   </div>
+</header>
 
-  <!-- ── FOOTER / KEYBOARD HINT ────────────────────────── -->
-  <div class="absolute bottom-6 left-0 w-full flex justify-center gap-4 pointer-events-none z-10">
-    <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5">
-      <kbd>↑</kbd><kbd>↓</kbd> navigate
-    </span>
-    <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5">
-      <kbd>↵</kbd> open
-    </span>
-    <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5">
-      <kbd>/</kbd> search
-    </span>
+<!-- ── MAIN CONTENT ──────────────────────────────────────────── -->
+<main class="max-w-screen-2xl mx-auto px-6 py-8">
+  <div id="refs-container"></div>
+
+  <!-- Empty state -->
+  <div id="empty-state" class="hidden flex-col items-center justify-center py-32 text-center">
+    <span class="material-symbols-outlined text-5xl text-white/10 mb-4" style="font-variation-settings:'wght' 200">search_off</span>
+    <p class="font-syne text-xl text-white/30 mb-2">No archives found</p>
+    <p class="text-sm text-white/20">Try adjusting your search or filter</p>
+    <button onclick="clearAll()" class="mt-6 text-xs font-syne uppercase tracking-widest text-primary/60 hover:text-primary transition-colors cursor-pointer">
+      Clear filters
+    </button>
   </div>
+</main>
+
+<!-- ── FOOTER HINT ───────────────────────────────────────────── -->
+<div class="fixed bottom-5 left-0 w-full flex justify-center gap-4 pointer-events-none z-10">
+  <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5"><kbd>/</kbd> search</span>
+  <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5"><kbd>Esc</kbd> clear</span>
 </div>
 
 <script>
-// ─── DATA ──────────────────────────────────────────────────
+// ─── DATA ────────────────────────────────────────────────────
 const RAW = [
 ["Academy Film Archive","https://www.oscars.org/","A premier institutional collection holding physical artifacts and digital records of motion picture history. It serves as a vital primary source for production designers seeking absolute historical authenticity in cinematic recreation.","Film & Motion,Culture & History"],
 ["AD&A Museum (UCSB)","https://www.museum.ucsb.edu/","Holds one of the largest architectural archives in North America, featuring over two million drawings, models, and objects focused heavily on the heritage of Southern California architects and designers.","Architecture & Space,Fine Art"],
@@ -324,42 +341,31 @@ const RAW = [
 ];
 
 const REFS = RAW.map(([name,url,desc,tags],i)=>({
-  id: i,
-  name, url, desc,
+  id: i, name, url, desc,
   tags: tags ? tags.split(',').map(t=>t.trim()) : []
 }));
 
-// ─── TAG SET ──────────────────────────────────────
+// ─── TAGS ────────────────────────────────────────────────────
 const tagSet = new Set();
 REFS.forEach(r=>r.tags.forEach(t=>tagSet.add(t)));
 const ALL_TAGS = [...tagSet].sort();
 
-// ─── STATE ────────────────────────────────────────
-let activeTag = null, query = '', activeIdx = 0;
+// ─── STATE ───────────────────────────────────────────────────
+let activeTag = null, query = '', view = 'grid', expandedId = null;
 let visibleRefs = [];
 
-// ─── ELEMENTS ─────────────────────────────────────
-const refList   = document.getElementById('ref-list');
-const detail    = document.getElementById('detail');
-const countEl   = document.getElementById('count');
-const searchEl  = document.getElementById('search');
-const clearBtn  = document.getElementById('clear-btn');
-const clearFilt = document.getElementById('clear-filter-btn');
-const filterRow = document.getElementById('filter-row');
+// ─── ELEMENTS ───────────────────────────────────────────────
+const container   = document.getElementById('refs-container');
+const emptyState  = document.getElementById('empty-state');
+const countEl     = document.getElementById('count');
+const searchEl    = document.getElementById('search');
+const clearBtn    = document.getElementById('clear-btn');
+const filterRow   = document.getElementById('filter-row');
 
-// ─── FILTER TAGS RENDER ───────────────────────────
-function renderFilterRow(){
-  filterRow.innerHTML = '';
-  ALL_TAGS.forEach(tag=>{
-    const c = document.createElement('button');
-    c.className = 'tag-chip' + (activeTag===tag ? ' active' : '');
-    c.textContent = tag;
-    c.onclick = ()=>{ activeTag = activeTag===tag ? null : tag; activeIdx=0; renderAll(); };
-    filterRow.appendChild(c);
-  });
+// ─── HELPERS ─────────────────────────────────────────────────
+function domain(url){
+  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
 }
-
-// ─── FILTERED RESULT ──────────────────────────────
 function filtered(){
   const q = query.toLowerCase();
   return REFS.filter(r=>{
@@ -371,161 +377,169 @@ function filtered(){
   });
 }
 
-// ─── DOMAIN HELPER ───────────────────────────────
-function domain(url){
-  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
+// ─── VIEW TOGGLE ─────────────────────────────────────────────
+window.setView = function(v){
+  view = v;
+  expandedId = null;
+  localStorage.setItem('va-view', v);
+  updateViewBtns();
+  renderRefs();
+};
+function updateViewBtns(){
+  document.getElementById('btn-grid').className =
+    `view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer ${view==='grid' ? 'text-white' : 'text-white/30 hover:text-white/60'}`;
+  document.getElementById('btn-list').className =
+    `view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer ${view==='list' ? 'text-white' : 'text-white/30 hover:text-white/60'}`;
 }
 
-// ─── LEFT LIST / CARD GRID ────────────────────────
-function renderList(){
-  refList.innerHTML = '';
-  const isFiltered = !!(query || activeTag);
+// ─── EXPAND TOGGLE ───────────────────────────────────────────
+window.toggleExpand = function(id, e){
+  e.stopPropagation();
+  expandedId = expandedId === id ? null : id;
+  // Update DOM without full re-render for snappy feel
+  document.querySelectorAll('[data-ref-id]').forEach(el=>{
+    const elId = parseInt(el.dataset.refId);
+    const panel = el.querySelector('.detail-panel');
+    const isExp = elId === expandedId;
+    el.classList.toggle('expanded', isExp);
+    if(panel){
+      panel.classList.toggle('open', isExp);
+    }
+  });
+};
 
-  if(isFiltered && visibleRefs.length > 0){
-    // ── CARD GRID MODE (when filtered) ──────────────
-    refList.className = 'card-grid grid grid-cols-2 gap-1.5 px-4';
-    visibleRefs.forEach((r,i)=>{
-      const div = document.createElement('div');
-      div.className = 'mini-card' + (i===activeIdx ? ' active' : '');
-      div.innerHTML = `
-        <p class="mc-name font-syne text-[0.7rem] font-medium leading-tight tracking-tight
-                  ${i===activeIdx ? 'text-white' : 'text-white/40'}
-                  transition-colors duration-150 line-clamp-2">${r.name}</p>
-        <p class="text-[9px] font-display mt-1.5 uppercase tracking-widest text-white/20 truncate">${r.tags[0] || ''}</p>
-      `;
-      div.onclick = ()=>{ activeIdx = i; renderAll(); };
-      refList.appendChild(div);
-    });
-  } else {
-    // ── COMPACT LIST MODE (default) ──────────────────
-    refList.className = 'flex flex-col px-5 gap-0.5';
-    visibleRefs.forEach((r,i)=>{
-      const div = document.createElement('div');
-      div.className = 'ref-item group relative cursor-pointer py-2 pl-4 border-l border-transparent'
-                    + (i===activeIdx ? ' active' : '');
-      div.innerHTML = `
-        <h2 class="font-syne text-sm font-medium leading-relaxed tracking-tight
-                   ${i===activeIdx ? 'text-white' : 'text-white/65 group-hover:text-white/90'}
-                   transition-colors duration-200">${r.name}</h2>
-        <p class="text-[10px] font-display uppercase tracking-widest leading-none
-                  ${i===activeIdx ? 'text-primary/60' : 'text-white/20 group-hover:text-white/35'}
-                  transition-colors duration-200">${r.tags[0] || ''}</p>
-      `;
-      div.onclick = ()=>{ activeIdx = i; renderAll(); };
-      refList.appendChild(div);
-    });
-  }
-}
-
-// ─── RIGHT DETAIL ────────────────────────────────
-function renderDetail(){
-  const r = visibleRefs[activeIdx];
-  if(!r){ detail.innerHTML=''; return; }
-  const idx   = (activeIdx+1).toString().padStart(3,'0');
-  const dom   = domain(r.url);
-  detail.innerHTML = `
-    <div class="detail-fade">
-      <div class="mb-10 flex items-center gap-4">
-        <span class="text-[10px] font-syne text-primary/60 tracking-widest uppercase">Ref. ${idx}</span>
-        <div class="h-px w-10 bg-primary/25"></div>
-        <span class="text-[10px] font-syne text-white/30 tracking-widest uppercase">${dom}</span>
-      </div>
-
-      <h1 class="font-syne text-5xl xl:text-6xl leading-[0.92] font-light text-white tracking-tighter mb-12">
-        ${r.name}
-      </h1>
-
-      <div class="grid grid-cols-2 gap-16">
-        <div>
-          <p class="font-display font-light text-base text-white/45 leading-relaxed mb-8">
-            ${r.desc || ''}
-          </p>
+// ─── DETAIL PANEL HTML ───────────────────────────────────────
+function detailHTML(r){
+  return `
+    <div class="detail-panel ${expandedId===r.id ? 'open' : ''}">
+      <div class="pt-3 pb-4 px-0 border-t border-white/[0.06] mt-3">
+        <p class="text-sm text-white/70 leading-relaxed mb-4">${r.desc}</p>
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex flex-wrap gap-1.5">
+            ${r.tags.map(t=>`<span class="tag-chip ${activeTag===t?'active':''}"
+              onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`).join('')}
+          </div>
           <a href="${r.url}" target="_blank" rel="noopener noreferrer"
-             class="inline-flex items-center gap-2 text-primary hover:text-white font-syne
-                    transition-colors duration-300 group text-sm">
-            <span class="tracking-wide uppercase">Visit archive</span>
-            <span class="material-symbols-outlined text-sm transform group-hover:translate-x-1 transition-transform duration-300"
-                  style="font-variation-settings:'wght' 300">arrow_forward</span>
+             class="inline-flex items-center gap-1.5 text-primary hover:text-white text-xs font-syne
+                    uppercase tracking-wider transition-colors duration-200 group cursor-pointer"
+             onclick="event.stopPropagation()">
+            <span>Visit archive</span>
+            <span class="material-symbols-outlined text-sm transform group-hover:translate-x-0.5 transition-transform"
+                  style="font-variation-settings:'wght' 300;font-size:14px">arrow_forward</span>
           </a>
-        </div>
-        <div class="space-y-7">
-          <div>
-            <h3 class="text-[9px] font-syne text-white/25 uppercase tracking-widest mb-2">Categories</h3>
-            <div class="flex flex-wrap gap-1.5">
-              ${r.tags.map(t=>`<span class="tag-chip ${activeTag===t?'active':''}"
-                onclick="setTag('${t}')">${t}</span>`).join('')}
-            </div>
-          </div>
-          <div>
-            <h3 class="text-[9px] font-syne text-white/25 uppercase tracking-widest mb-2">Source</h3>
-            <p class="font-display text-white/55 text-sm">${dom}</p>
-          </div>
-          <div>
-            <h3 class="text-[9px] font-syne text-white/25 uppercase tracking-widest mb-2">Index</h3>
-            <p class="font-display text-white/55 text-sm">${idx} / ${REFS.length.toString().padStart(3,'0')}</p>
-          </div>
         </div>
       </div>
     </div>
   `;
 }
-// expose tag click from detail panel
-window.setTag = t=>{ activeTag = activeTag===t ? null : t; activeIdx=0; renderAll(); };
 
-// ─── SCROLL ACTIVE INTO VIEW ──────────────────────
-function scrollActiveIntoView(){
-  const items = refList.querySelectorAll('.ref-item, .mini-card');
-  if(items[activeIdx]){
-    items[activeIdx].scrollIntoView({ block:'nearest', behavior:'smooth' });
-  }
+// ─── RENDER: GRID ─────────────────────────────────────────────
+function renderGrid(){
+  container.className = 'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 fade-up';
+  container.innerHTML = visibleRefs.map(r=>`
+    <div class="archive-card p-4 ${expandedId===r.id?'expanded':''}"
+         data-ref-id="${r.id}"
+         onclick="toggleExpand(${r.id}, event)">
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <h2 class="font-syne text-sm font-semibold text-white/90 leading-snug tracking-tight flex-1">${r.name}</h2>
+        <span class="material-symbols-outlined chevron shrink-0 text-white/30 mt-0.5 select-none"
+              style="font-variation-settings:'wght' 300;font-size:16px">expand_more</span>
+      </div>
+      <p class="text-[11px] text-white/50 leading-relaxed line-clamp-2 mb-3">${r.desc}</p>
+      <div class="flex flex-wrap gap-1">
+        ${r.tags.slice(0,2).map(t=>`<span class="tag-chip ${activeTag===t?'active':''}"
+          onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`).join('')}
+      </div>
+      ${detailHTML(r)}
+    </div>
+  `).join('');
 }
 
-// ─── FULL RENDER ─────────────────────────────────
-function renderAll(){
-  visibleRefs = filtered();
-  if(activeIdx >= visibleRefs.length) activeIdx = 0;
+// ─── RENDER: LIST ─────────────────────────────────────────────
+function renderList(){
+  container.className = 'flex flex-col fade-up';
+  container.innerHTML = visibleRefs.map(r=>`
+    <div class="list-row px-4 py-3 ${expandedId===r.id?'expanded':''}"
+         data-ref-id="${r.id}"
+         onclick="toggleExpand(${r.id}, event)">
+      <div class="flex items-center gap-4 min-w-0">
+        <h2 class="font-syne text-sm font-semibold text-white/90 tracking-tight w-64 shrink-0 truncate">${r.name}</h2>
+        <div class="flex flex-wrap gap-1.5 flex-1 min-w-0">
+          ${r.tags.map(t=>`<span class="tag-chip ${activeTag===t?'active':''}"
+            onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`).join('')}
+        </div>
+        <span class="text-[11px] text-white/30 font-display truncate shrink-0 hidden lg:block">${domain(r.url)}</span>
+        <span class="material-symbols-outlined chevron text-white/25 shrink-0 select-none"
+              style="font-variation-settings:'wght' 300;font-size:16px">expand_more</span>
+      </div>
+      ${detailHTML(r)}
+    </div>
+  `).join('');
+}
 
+// ─── RENDER: FILTER ROW ──────────────────────────────────────
+function renderFilterRow(){
+  filterRow.innerHTML =
+    `<button class="tag-chip ${!activeTag?'active':''}" onclick="window.setTagFilter(null)">All</button>` +
+    ALL_TAGS.map(tag=>`
+      <button class="tag-chip ${activeTag===tag?'active':''}" onclick="window.setTagFilter('${tag}')">${tag}</button>
+    `).join('');
+}
+
+// ─── MAIN RENDER ─────────────────────────────────────────────
+function renderRefs(){
+  visibleRefs = filtered();
   renderFilterRow();
-  renderList();
-  renderDetail();
 
   const total = REFS.length;
   countEl.textContent = visibleRefs.length === total
     ? `${total} archives`
-    : `${visibleRefs.length} of ${total}`;
+    : `${visibleRefs.length} / ${total}`;
 
-  const hasFilters = !!query || !!activeTag;
   clearBtn.classList.toggle('hidden', !query);
-  clearFilt.classList.toggle('hidden', !hasFilters);
+  emptyState.classList.toggle('hidden', visibleRefs.length > 0);
+  emptyState.classList.toggle('flex', visibleRefs.length === 0);
+  container.classList.toggle('hidden', visibleRefs.length === 0);
 
-  scrollActiveIntoView();
+  if(visibleRefs.length === 0) return;
+  view === 'grid' ? renderGrid() : renderList();
+  updateViewBtns();
 }
 
-// ─── SEARCH ──────────────────────────────────────
-searchEl.addEventListener('input', e=>{ query=e.target.value; activeIdx=0; renderAll(); });
-clearBtn.addEventListener('click', ()=>{ query=''; activeIdx=0; searchEl.value=''; renderAll(); });
-clearFilt.addEventListener('click', ()=>{ query=''; activeTag=null; activeIdx=0; searchEl.value=''; renderAll(); });
+// ─── GLOBAL HELPERS ──────────────────────────────────────────
+window.setTagFilter = function(tag){
+  activeTag = tag;
+  expandedId = null;
+  renderRefs();
+};
+window.clearAll = function(){
+  activeTag = null; query = ''; expandedId = null;
+  searchEl.value = '';
+  renderRefs();
+};
 
-// ─── KEYBOARD NAV ────────────────────────────────
+// ─── EVENTS ──────────────────────────────────────────────────
+searchEl.addEventListener('input', e=>{
+  query = e.target.value;
+  expandedId = null;
+  renderRefs();
+});
+clearBtn.addEventListener('click', ()=>{
+  query = ''; searchEl.value = ''; expandedId = null; renderRefs();
+});
 document.addEventListener('keydown', e=>{
-  const key = e.key;
-  if(key === '/' && document.activeElement !== searchEl){
-    e.preventDefault(); searchEl.focus(); return;
-  }
-  if(key === 'ArrowDown'){
-    e.preventDefault(); activeIdx = Math.min(activeIdx+1, visibleRefs.length-1); renderAll();
-  } else if(key === 'ArrowUp'){
-    e.preventDefault(); activeIdx = Math.max(activeIdx-1, 0); renderAll();
-  } else if(key === 'Enter' && visibleRefs[activeIdx]){
-    window.open(visibleRefs[activeIdx].url, '_blank');
-  } else if(key === 'Escape'){
+  if(e.key === '/' && document.activeElement !== searchEl){
+    e.preventDefault(); searchEl.focus();
+  } else if(e.key === 'Escape'){
     if(document.activeElement === searchEl){ searchEl.blur(); }
-    else { query=''; activeTag=null; activeIdx=0; searchEl.value=''; renderAll(); }
+    else { window.clearAll(); }
   }
 });
 
-// ─── INIT ────────────────────────────────────────
-renderAll();
+// ─── INIT ────────────────────────────────────────────────────
+const savedView = localStorage.getItem('va-view');
+if(savedView === 'list' || savedView === 'grid') view = savedView;
+renderRefs();
 </script>
 </body>
 </html>
