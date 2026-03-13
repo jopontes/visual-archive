@@ -336,7 +336,7 @@
       <div class="home-source" onclick="triggerSourceSearch('nasa')"><div class="home-source-name">NASA</div><div class="home-source-n">Space imagery</div></div>
       <div class="home-source" onclick="triggerSourceSearch('loc')"><div class="home-source-name">Lib. of Congress</div><div class="home-source-n">Prints &amp; photos</div></div>
       <div class="home-source" onclick="triggerSourceSearch('nypl')"><div class="home-source-name">NYPL</div><div class="home-source-n">1.5M images</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('bhl')"><div class="home-source-name">Bio. Heritage</div><div class="home-source-n">Illustrations</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('bhl')"><div class="home-source-name">Wikimedia</div><div class="home-source-n">Commons</div></div>
     </div>
   </div>
 </div>
@@ -384,7 +384,7 @@
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nasa" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NASA</span><span class="filter-count" id="cnt-nasa"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Lib. of Congress</span><span class="filter-count" id="cnt-loc"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL</span><span class="filter-count" id="cnt-nypl"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="bhl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Bio. Heritage</span><span class="filter-count" id="cnt-bhl"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="bhl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia</span><span class="filter-count" id="cnt-bhl"></span></label>
       </div>
     </aside>
 
@@ -502,7 +502,7 @@ const SRC_COLOR = {
   'NASA':                          '#0B2C4A',
   'Library of Congress':           '#5C2C1A',
   'NYPL':                          '#2C1A5C',
-  'Biodiversity Heritage Library': '#1A4C2C',
+  'Wikimedia Commons':             '#1A4C2C',
 };
 
 const SRC_KEY_MAP = {
@@ -515,7 +515,7 @@ const SRC_KEY_MAP = {
   nasa:        'NASA',
   loc:         'Library of Congress',
   nypl:        'NYPL',
-  bhl:         'Biodiversity Heritage Library',
+  bhl:         'Wikimedia Commons',
 };
 
 // ── STATE ─────────────────────────────────────────────────────────

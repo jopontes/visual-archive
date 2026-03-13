@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     'NASA':                          6,
     'Library of Congress':           7,
     'NYPL':                          8,
-    'Biodiversity Heritage Library': 9,
+    'Wikimedia Commons':             9,
   };
 
   let items = results
@@ -277,6 +277,7 @@ async function searchNASA(term) {
 }
 
 // ── 8. Library of Congress ─────────────────────────────────────
+// Note: image_url field is an array of URLs (smallest→largest).
 async function searchLOC(term) {
   try {
     const res = await fetch(
@@ -285,11 +286,12 @@ async function searchLOC(term) {
     const data = await res.json();
     if (!data.results?.length) return [];
     return data.results
-      .filter(item => item.image?.thumb || item.image?.small)
+      .filter(item => item.image_url?.length)
       .map(item => ({
         id:          `loc-${encodeURIComponent(item.id || item.url || String(Math.random()))}`,
         title:       Array.isArray(item.title) ? item.title[0] : (item.title || 'Untitled'),
-        image_url:   item.image.thumb || item.image.small,
+        // Use largest available (last element), fallback to first
+        image_url:   item.image_url[item.image_url.length - 1] || item.image_url[0],
         source_url:  item.url || 'https://www.loc.gov/photos/',
         institution: 'Library of Congress',
         date:        item.date || '',
@@ -298,6 +300,7 @@ async function searchLOC(term) {
 }
 
 // ── 9. NYPL Digital Collections ───────────────────────────────
+// Search returns imageID; image URL built as images.nypl.org/index.php?id={id}&t=q
 async function searchNYPL(term) {
   const key = process.env.NYPL_KEY;
   if (!key) return [];
@@ -310,51 +313,53 @@ async function searchNYPL(term) {
     const results = data.nyplAPI?.response?.result;
     if (!results?.length) return [];
     return results
-      .filter(item => item.imageLinks?.imageLink?.length)
+      .filter(item => item.imageID)
       .map(item => {
-        const links = Array.isArray(item.imageLinks.imageLink)
-          ? item.imageLinks.imageLink : [item.imageLinks.imageLink];
-        // Prefer 'q' (large ~760px) then 'r' (regular ~400px), fallback first
-        const img = links.find(l => l['$']?.t === 'q')
-                 || links.find(l => l['$']?.t === 'r')
-                 || links[0];
-        const imgUrl = img?.['_'] || (typeof img === 'string' ? img : '');
-        if (!imgUrl) return null;
         const title = Array.isArray(item.title) ? item.title[0] : (item.title || 'Untitled');
         return {
           id:          `nypl-${item.uuid}`,
           title,
-          image_url:   imgUrl,
-          source_url:  `https://digitalcollections.nypl.org/items/${item.uuid}`,
+          // t=q is ~760px; t=r is ~400px
+          image_url:   `https://images.nypl.org/index.php?id=${item.imageID}&t=q`,
+          source_url:  item.itemLink || `https://digitalcollections.nypl.org/items/${item.uuid}`,
           institution: 'NYPL',
-          date:        item.dateStart ? String(item.dateStart) : '',
+          date:        item.dateDigitized ? item.dateDigitized.substring(0, 4) : '',
         };
-      })
-      .filter(Boolean);
+      });
   } catch { return []; }
 }
 
-// ── 10. Biodiversity Heritage Library ─────────────────────────
+// ── 10. Wikimedia Commons ─────────────────────────────────────
+// Replaces BHL (BHL's ASP.NET API requires browser session cookies, unusable from serverless).
+// Wikimedia Commons is free, no key needed, excellent for historical illustrations & art.
 async function searchBHL(term) {
-  const key = process.env.BHL_KEY;
-  if (!key) return [];
   try {
     const res = await fetch(
-      `https://www.biodiversitylibrary.org/api2/httpquery.ashx?op=SearchFullText&searchterm=${term}&page=1&pagesize=20&apikey=${key}&format=json`
+      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=16&prop=imageinfo&iiprop=url|thumburl|mime&iiurlwidth=400&format=json&origin=*`
     );
     const data = await res.json();
-    const items = data.Result;
-    if (!items?.length) return [];
-    return items
-      .filter(item => item.PageID)
+    const pages = data.query?.pages;
+    if (!pages) return [];
+    return Object.values(pages)
+      .filter(p => {
+        const ii = p.imageinfo?.[0];
+        if (!ii) return false;
+        const mime = ii.mime || '';
+        return mime.startsWith('image/') && !mime.includes('svg');
+      })
       .slice(0, 12)
-      .map(item => ({
-        id:          `bhl-${item.PageID}`,
-        title:       item.Title || 'Untitled',
-        image_url:   `https://www.biodiversitylibrary.org/pagethumb/${item.PageID}`,
-        source_url:  `https://www.biodiversitylibrary.org/page/${item.PageID}`,
-        institution: 'Biodiversity Heritage Library',
-        date:        item.Year || '',
-      }));
+      .map(p => {
+        const ii = p.imageinfo[0];
+        const title = p.title?.replace(/^File:/, '').replace(/\.[^.]+$/, '') || 'Untitled';
+        const slug = encodeURIComponent(p.title?.replace(/^File:/, '') || '');
+        return {
+          id:          `wikimedia-${p.pageid}`,
+          title,
+          image_url:   ii.thumburl || ii.url,
+          source_url:  `https://commons.wikimedia.org/wiki/File:${slug}`,
+          institution: 'Wikimedia Commons',
+          date:        '',
+        };
+      });
   } catch { return []; }
 }
