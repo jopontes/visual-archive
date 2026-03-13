@@ -305,10 +305,16 @@ async function searchNYPL(term) {
   const key = process.env.NYPL_KEY;
   if (!key) return [];
   try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(
       `https://api.repo.nypl.org/api/v2/items/search?q=${term}&publicDomainOnly=true&per_page=12`,
-      { headers: { 'Authorization': `Token token="${key}"` } }
+      {
+        headers: { 'Authorization': `Token token="${key}"` },
+        signal: controller.signal,
+      }
     );
+    clearTimeout(timer);
     const data = await res.json();
     const results = data.nyplAPI?.response?.result;
     if (!results?.length) return [];
@@ -319,11 +325,11 @@ async function searchNYPL(term) {
         return {
           id:          `nypl-${item.uuid}`,
           title,
-          // t=q is ~760px; t=r is ~400px
+          // t=q is ~760px; t=r is ~400px; t=w is full-width
           image_url:   `https://images.nypl.org/index.php?id=${item.imageID}&t=q`,
           source_url:  item.itemLink || `https://digitalcollections.nypl.org/items/${item.uuid}`,
           institution: 'NYPL',
-          date:        item.dateDigitized ? item.dateDigitized.substring(0, 4) : '',
+          date:        '',
         };
       });
   } catch { return []; }
@@ -332,18 +338,29 @@ async function searchNYPL(term) {
 // ── 10. Wikimedia Commons ─────────────────────────────────────
 // Replaces BHL (BHL's ASP.NET API requires browser session cookies, unusable from serverless).
 // Wikimedia Commons is free, no key needed, excellent for historical illustrations & art.
+// Derives 400px thumbnail from the full URL using the standard Commons thumb path convention.
 async function searchBHL(term) {
   try {
     const res = await fetch(
-      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=16&prop=imageinfo&iiprop=url|thumburl|mime&iiurlwidth=400&format=json&origin=*`
+      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime&format=json`
     );
     const data = await res.json();
     const pages = data.query?.pages;
     if (!pages) return [];
+
+    const toThumb = (url) => {
+      // https://upload.wikimedia.org/wikipedia/commons/a/ab/Image.jpg
+      // → https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Image.jpg/400px-Image.jpg
+      const m = url.match(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/)([a-f0-9]\/[a-f0-9]{2}\/)(.+)$/);
+      if (!m) return url;
+      const [, base, path, filename] = m;
+      return `${base}thumb/${path}${filename}/400px-${filename}`;
+    };
+
     return Object.values(pages)
       .filter(p => {
         const ii = p.imageinfo?.[0];
-        if (!ii) return false;
+        if (!ii?.url) return false;
         const mime = ii.mime || '';
         return mime.startsWith('image/') && !mime.includes('svg');
       })
@@ -355,7 +372,7 @@ async function searchBHL(term) {
         return {
           id:          `wikimedia-${p.pageid}`,
           title,
-          image_url:   ii.thumburl || ii.url,
+          image_url:   toThumb(ii.url),
           source_url:  `https://commons.wikimedia.org/wiki/File:${slug}`,
           institution: 'Wikimedia Commons',
           date:        '',
