@@ -1,705 +1,770 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Visual Archive — Reference Library</title>
-  <meta name="description" content="143 curated visual archives for the discerning creative eye."/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary":         "#a78bfa",
-            "background-dark": "#050509",
-          },
-          fontFamily: {
-            "display": ["Inter", "sans-serif"],
-            "syne":    ["Syne", "sans-serif"],
-          },
-        },
-      },
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visual Archive</title>
+  <meta name="description" content="Search 5 major museum archives simultaneously — art, photography, design, objects."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    /* ── Reset/base ──────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper:      #F7F5F0;
+      --paper-2:    #EFECE5;
+      --ink:        #1A1814;
+      --ink-2:      #6B6760;
+      --ink-3:      #A8A49E;
+      --rule:       #D8D4CC;
+      --warm-white: #FDFCF9;
+    }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    button { font-family: 'DM Sans', sans-serif; cursor: pointer; }
+    input  { font-family: 'DM Sans', sans-serif; }
 
-    /* ── Card ────────────────────────────────── */
-    .archive-card {
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 3px;
-      background: rgba(255,255,255,0.025);
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .archive-card:hover {
-      border-color: rgba(167,139,250,0.3);
-      background: rgba(167,139,250,0.04);
-    }
-    .archive-card.expanded {
-      border-color: rgba(167,139,250,0.5);
-      background: rgba(167,139,250,0.06);
-    }
+    /* ── VIEWS ─────────────────────────────────────── */
+    .view { display: none; min-height: 100vh; }
+    .view.active { display: block; }
 
-    /* ── Detail expand panel ─────────────────── */
-    .detail-panel {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                  opacity 0.25s ease;
-      opacity: 0;
+    /* ── NAV (desktop) ──────────────────────────────── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+      background: var(--warm-white); border-bottom: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 52px;
     }
-    .detail-panel.open {
-      max-height: 300px;
-      opacity: 1;
-    }
+    #nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); cursor: pointer; }
+    #nav-links { display: flex; gap: 28px; }
+    #nav-links span { font-size: 11px; letter-spacing: .07em; color: var(--ink-3); cursor: pointer; transition: color .15s; text-transform: uppercase; }
+    #nav-links span:hover { color: var(--ink); }
 
-    /* ── List row ────────────────────────────── */
-    .list-row {
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      cursor: pointer;
-      transition: background 0.15s;
+    /* ── HOME VIEW ──────────────────────────────────── */
+    #view-home { padding-top: 52px; }
+    .home-inner { max-width: 720px; margin: 0 auto; padding: 100px 40px 120px; }
+    .home-eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; }
+    .home-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 7vw, 76px); font-weight: 300; line-height: 1.05; letter-spacing: -.01em; margin-bottom: 20px; }
+    .home-title em { font-style: italic; }
+    .home-sub { font-size: 14px; color: var(--ink-2); line-height: 1.75; margin-bottom: 40px; max-width: 480px; }
+    .home-search-row { display: flex; border: 1.5px solid var(--ink); border-radius: 2px; margin-bottom: 14px; background: white; }
+    .home-search-row input { flex: 1; border: none; outline: none; padding: 13px 18px; font-size: 14px; color: var(--ink); background: transparent; }
+    .home-search-row input::placeholder { color: var(--ink-3); }
+    .home-search-btn { background: var(--ink); color: white; border: none; padding: 0 28px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+    .home-chips { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 28px; }
+    .chips-label { font-size: 10px; color: var(--ink-3); letter-spacing: .04em; }
+    .chip { border: 1px solid var(--rule); padding: 5px 12px; font-size: 11px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: white; transition: all .15s; }
+    .chip:hover { border-color: var(--ink-3); color: var(--ink); }
+    .chip.active { border-color: var(--ink); color: var(--ink); background: var(--paper); }
+    .home-divider { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .home-divider hr { flex: 1; border: none; border-top: 1px solid var(--rule); }
+    .home-divider span { font-size: 10px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+    .home-discover-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 15px 20px; border: 1.5px dashed var(--rule); border-radius: 2px;
+      cursor: pointer; transition: border-color .2s; background: var(--paper); margin-bottom: 60px;
     }
-    .list-row:hover { background: rgba(167,139,250,0.04); }
-    .list-row.expanded { background: rgba(167,139,250,0.06); }
+    .home-discover-btn:hover { border-color: var(--ink-3); }
+    .home-discover-icon { font-size: 20px; line-height: 1; }
+    .home-discover-text strong { font-size: 13px; color: var(--ink); font-weight: 500; display: block; margin-bottom: 2px; }
+    .home-discover-text small { font-size: 11px; color: var(--ink-3); }
+    .home-discover-arrow { margin-left: auto; color: var(--ink-3); font-size: 16px; }
+    .home-sources { display: flex; border-top: 1px solid var(--rule); margin: 0 -40px; }
+    .home-source { flex: 1; padding: 16px 20px; border-right: 1px solid var(--rule); transition: background .15s; cursor: default; }
+    .home-source:last-child { border-right: none; }
+    .home-source-name { font-size: 10px; font-weight: 500; letter-spacing: .04em; color: var(--ink); margin-bottom: 3px; }
+    .home-source-n { font-size: 9px; color: var(--ink-3); }
 
-    /* ── Tag chip ────────────────────────────── */
-    .tag-chip {
-      display: inline-block;
-      padding: 0.15rem 0.55rem;
-      border: 1px solid rgba(167,139,250,0.2);
-      border-radius: 2px;
-      font-size: 0.65rem;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: rgba(167,139,250,0.65);
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-    .tag-chip:hover, .tag-chip.active {
-      border-color: rgba(167,139,250,0.6);
-      color: #a78bfa;
-      background: rgba(167,139,250,0.08);
-    }
-    .tag-chip.active {
-      color: #fff;
-      background: rgba(167,139,250,0.16);
-    }
+    /* ── RESULTS VIEW ───────────────────────────────── */
+    #view-results { padding-top: 52px; }
+    .res-header { padding: 12px 28px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 16px; background: var(--warm-white); }
+    .res-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; color: var(--ink); cursor: pointer; }
+    .res-search-wrap { flex: 1; display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 7px 14px; gap: 8px; background: var(--paper); max-width: 520px; }
+    .res-search-wrap input { border: none; background: transparent; outline: none; font-size: 13px; flex: 1; color: var(--ink); }
+    .res-search-ic { color: var(--ink-3); font-size: 13px; }
+    .res-body { display: flex; min-height: calc(100vh - 105px); }
+    /* Sidebar */
+    .res-sidebar { width: 200px; flex-shrink: 0; border-right: 1px solid var(--rule); padding: 20px 16px; background: var(--warm-white); overflow-y: auto; }
+    .filter-group { margin-bottom: 24px; }
+    .filter-title { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+    .filter-opt { display: flex; align-items: center; gap: 7px; padding: 3px 0; cursor: pointer; }
+    .filter-opt input[type=checkbox] { width: 12px; height: 12px; accent-color: var(--ink); flex-shrink: 0; cursor: pointer; }
+    .filter-opt-label { font-size: 11px; color: var(--ink-2); flex: 1; }
+    .filter-count { font-size: 10px; color: var(--ink-3); }
+    /* Main results */
+    .res-main { flex: 1; padding: 20px 24px; min-width: 0; }
+    .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .res-count { font-size: 11px; color: var(--ink-2); }
+    .img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .img-card { cursor: pointer; }
+    .img-card-wrap { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--rule); margin-bottom: 6px; background: var(--paper-2); }
+    .img-card-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+    .img-card:hover .img-card-wrap img { transform: scale(1.03); }
+    .img-card-title { font-size: 10px; color: var(--ink); line-height: 1.35; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-card-src { font-size: 9px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
+    .src-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    /* Skeleton */
+    .skeleton { background: linear-gradient(90deg, var(--paper-2) 25%, var(--paper) 50%, var(--paper-2) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 2px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skel-card .img-card-wrap { background: var(--paper-2); }
+    .skel-card .img-card-wrap::after { content:''; display:block; width:100%;height:100%; background: linear-gradient(90deg, var(--paper-2) 25%, var(--paper) 50%, var(--paper-2) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+    .skel-card .img-card-title { height: 10px; width: 80%; background: var(--paper-2); animation: shimmer 1.4s infinite; background-size: 200% 100%; }
+    /* Archives CTA */
+    .archives-cta { margin-top: 40px; padding: 20px; border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); display: flex; align-items: flex-start; gap: 14px; }
+    .archives-cta-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .archives-cta p { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+    .archives-cta a { color: var(--ink); text-decoration: underline; cursor: pointer; }
+    /* Empty / Error states */
+    .state-msg { text-align: center; padding: 80px 20px; }
+    .state-msg p { font-size: 14px; color: var(--ink-3); }
 
-    /* ── Chevron spin ──────────────────────── */
-    .chevron { transition: transform 0.25s ease; }
-    .expanded .chevron { transform: rotate(180deg); }
+    /* ── DISCOVER VIEW ──────────────────────────────── */
+    #view-discover { background: var(--ink); min-height: 100vh; display: none; flex-direction: column; }
+    #view-discover.active { display: flex; }
+    .disc-header { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    .disc-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.5); cursor: pointer; }
+    .disc-source { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.3); }
+    .disc-card-area { flex: 1; padding: 0 24px 16px; display: flex; flex-direction: column; }
+    .disc-card { background: var(--paper-2); border-radius: 4px; overflow: hidden; flex: 1; min-height: 0; }
+    .disc-card img { width: 100%; height: 280px; object-fit: cover; display: block; }
+    .disc-card-info { padding: 16px 20px; }
+    .disc-card-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; line-height: 1.3; color: var(--ink); margin-bottom: 4px; }
+    .disc-card-meta { font-size: 11px; color: var(--ink-2); }
+    .disc-actions { display: flex; gap: 10px; padding: 0 24px 12px; flex-shrink: 0; }
+    .disc-btn { flex: 1; padding: 12px; text-align: center; border-radius: 2px; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
+    .disc-btn-skip { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; }
+    .disc-btn-skip:hover { background: rgba(255,255,255,.14); }
+    .disc-btn-info { background: rgba(255,255,255,.16); color: white; border: none; }
+    .disc-btn-info:hover { background: rgba(255,255,255,.22); }
+    .disc-progress { display: flex; gap: 5px; justify-content: center; padding: 0 24px 12px; flex-shrink: 0; }
+    .disc-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.2); transition: all .2s; }
+    .disc-dot.on { background: rgba(255,255,255,.65); width: 16px; border-radius: 3px; }
+    .disc-hint { text-align: center; padding: 0 24px 16px; font-size: 9px; color: rgba(255,255,255,.2); letter-spacing: .06em; text-transform: uppercase; flex-shrink: 0; }
+    .disc-loading { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .disc-loading p { font-size: 13px; color: rgba(255,255,255,.3); letter-spacing: .04em; }
 
-    /* ── Line clamp ──────────────────────────── */
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    /* ── ARCHIVES VIEW ──────────────────────────────── */
+    #view-archives { padding-top: 52px; }
+    .arch-inner { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
+    .arch-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+    .arch-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; }
+    .arch-sub { font-size: 11px; color: var(--ink-3); }
+    .arch-banner { background: var(--paper-2); border: 1px solid var(--rule); padding: 16px 18px; margin-bottom: 36px; display: flex; gap: 14px; align-items: flex-start; border-radius: 2px; }
+    .arch-banner-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .arch-banner-text { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+    .arch-banner-text strong { color: var(--ink); }
+    .arch-filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+    .arch-filter { border: 1px solid var(--rule); padding: 5px 12px; font-size: 11px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: white; transition: all .15s; }
+    .arch-filter:hover, .arch-filter.active { border-color: var(--ink); color: var(--ink); background: var(--paper); }
+    .arch-cat { margin-bottom: 28px; }
+    .arch-cat-title { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+    .arch-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .arch-item { background: var(--warm-white); padding: 12px 16px; cursor: pointer; transition: background .15s; text-decoration: none; display: block; }
+    .arch-item:hover { background: var(--paper); }
+    .arch-item-name { font-size: 12px; color: var(--ink); margin-bottom: 3px; }
+    .arch-item-desc { font-size: 10px; color: var(--ink-3); line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+    /* ── MODAL ──────────────────────────────────────── */
+    #modal { display: none; position: fixed; inset: 0; z-index: 80; background: rgba(26,24,20,.7); align-items: center; justify-content: center; padding: 40px; }
+    #modal.open { display: flex; }
+    .modal-box { background: var(--warm-white); border-radius: 4px; overflow: hidden; display: flex; max-width: 900px; width: 100%; max-height: 90vh; box-shadow: 0 8px 60px rgba(0,0,0,.25); }
+    .modal-left { flex: 1; background: var(--ink); display: flex; align-items: center; justify-content: center; min-height: 320px; overflow: hidden; }
+    .modal-left img { width: 100%; height: 100%; object-fit: contain; max-height: 500px; }
+    .modal-right { width: 300px; flex-shrink: 0; padding: 28px 24px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+    .modal-close { position: absolute; top: 50px; right: 50px; background: none; border: none; font-size: 22px; color: white; cursor: pointer; line-height: 1; opacity: .7; }
+    .modal-close:hover { opacity: 1; }
+    .modal-source { font-size: 9px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; line-height: 1.3; }
+    .modal-meta { display: flex; flex-direction: column; gap: 7px; }
+    .modal-row { display: flex; gap: 10px; font-size: 11px; }
+    .modal-key { color: var(--ink-3); width: 56px; flex-shrink: 0; }
+    .modal-val { color: var(--ink-2); }
+    .modal-actions { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+    .modal-btn { padding: 11px 14px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; text-align: center; border-radius: 2px; text-decoration: none; display: block; }
+    .modal-btn-primary { background: var(--ink); color: white; border: none; }
+    .modal-btn-primary:hover { background: #2d2924; }
+    .modal-btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--rule); opacity: .5; cursor: not-allowed; }
+
+    /* ── MOBILE NAV ─────────────────────────────────── */
+    #mob-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; border-top: 1px solid var(--rule); background: var(--warm-white); }
+    .mob-nav-inner { display: flex; }
+    .mob-tab { flex: 1; padding: 10px 6px; text-align: center; cursor: pointer; border-right: 1px solid var(--rule); transition: background .15s; }
+    .mob-tab:last-child { border-right: none; }
+    .mob-tab:hover { background: var(--paper); }
+    .mob-tab-icon { font-size: 16px; margin-bottom: 2px; line-height: 1; }
+    .mob-tab-label { font-size: 9px; color: var(--ink-3); letter-spacing: .03em; }
+    .mob-tab.active .mob-tab-label { color: var(--ink); }
+    /* Discover nav (dark version) */
+    #mob-nav.dark { background: var(--ink); border-top-color: rgba(255,255,255,.08); }
+    #mob-nav.dark .mob-tab { border-right-color: rgba(255,255,255,.08); }
+    #mob-nav.dark .mob-tab:hover { background: rgba(255,255,255,.05); }
+    #mob-nav.dark .mob-tab-label { color: rgba(255,255,255,.3); }
+    #mob-nav.dark .mob-tab.active .mob-tab-label { color: rgba(255,255,255,.8); }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .img-grid { grid-template-columns: repeat(3, 1fr); }
     }
-
-    /* ── Fade in entrance ──────────────────── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @media (max-width: 640px) {
+      #nav { padding: 0 20px; }
+      #nav-links { display: none; }
+      .home-inner { padding: 72px 20px 100px; }
+      .home-sources { display: none; }
+      .img-grid { grid-template-columns: repeat(2, 1fr); }
+      .res-sidebar { display: none; }
+      .res-main { padding: 14px 16px; }
+      .arch-inner { padding: 32px 20px 80px; }
+      .arch-list { grid-template-columns: repeat(2, 1fr); }
+      .modal-box { flex-direction: column; }
+      .modal-left { min-height: 240px; }
+      .modal-right { width: 100%; max-height: 300px; }
+      .modal-close { top: 12px; right: 12px; }
+      #mob-nav { display: block; }
+      #view-home { padding-bottom: 60px; }
+      #view-results { padding-bottom: 60px; }
+      #view-archives { padding-bottom: 60px; }
+      #view-discover { padding-bottom: 60px; }
     }
-    .fade-up { animation: fadeUp 0.22s ease both; }
-
-    /* ── Kbd ─────────────────────────────────── */
-    kbd {
-      font-size: 0.58rem;
-      padding: 0.1rem 0.35rem;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 2px;
-      color: rgba(255,255,255,0.25);
+    @media (min-width: 641px) {
+      #mob-nav { display: none !important; }
     }
   </style>
 </head>
+<body>
 
-<body class="bg-background-dark text-white font-display antialiased min-h-screen selection:bg-primary/20">
+<!-- ── FIXED NAV (desktop) ─────────────────────────────────────── -->
+<nav id="nav">
+  <div id="nav-logo" onclick="goHome()">Visual Archive</div>
+  <div id="nav-links">
+    <span onclick="showArchives()">Archives</span>
+    <span onclick="startDiscover()">Discover</span>
+  </div>
+</nav>
 
-<!-- ── TOP BAR ──────────────────────────────────────────────── -->
-<header class="sticky top-0 z-30 bg-background-dark/95 backdrop-blur border-b border-white/[0.05]">
+<!-- ── HOME VIEW ─────────────────────────────────────────────── -->
+<div id="view-home" class="view active">
+  <div class="home-inner">
+    <div class="home-eyebrow">Visual Research Tool</div>
+    <h1 class="home-title">Visual research<br><em>across institutions</em></h1>
+    <p class="home-sub">Search 5 major museum archives simultaneously — art, photography, architecture, design, objects. All in one place.</p>
 
-  <!-- Row 1: logo + controls -->
-  <div class="max-w-screen-2xl mx-auto px-6 h-12 flex items-center gap-4">
-    <h1 class="font-syne font-light text-3xl tracking-tighter text-white/90 shrink-0 select-none">Visual Archive</h1>
-    <div class="h-4 w-px bg-white/10 shrink-0"></div>
-    <div class="flex-1"></div>
-
-    <!-- Count -->
-    <span id="count" class="text-[11px] font-syne uppercase tracking-widest text-white/30 hidden sm:block"></span>
-
-    <!-- Search -->
-    <div class="flex items-center gap-1.5 opacity-50 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
-      <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 200;font-size:18px">search</span>
-      <input id="search" type="text" autocomplete="off"
-             class="bg-transparent border-none text-white font-syne text-sm focus:ring-0
-                    placeholder:text-white/30 w-28 focus:w-44 transition-all outline-none"
-             placeholder="Search…"/>
-      <button id="clear-btn" class="material-symbols-outlined text-white/35 hover:text-white/70 transition-colors hidden cursor-pointer select-none"
-              style="font-variation-settings:'wght' 200;font-size:16px">close</button>
+    <div class="home-search-row">
+      <input id="home-input" type="text" placeholder="Search by theme, style, object, period, technique…"
+             onkeydown="if(event.key==='Enter') triggerSearch()"/>
+      <button class="home-search-btn" onclick="triggerSearch()">Search</button>
     </div>
 
-    <!-- View toggle -->
-    <div class="flex items-center border border-white/10 rounded-sm overflow-hidden">
-      <button id="btn-grid" onclick="setView('grid')"
-              class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer" title="Grid view">
-        <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">grid_view</span>
-      </button>
-      <div class="w-px h-5 bg-white/10"></div>
-      <button id="btn-list" onclick="setView('list')"
-              class="view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer" title="List view">
-        <span class="material-symbols-outlined select-none" style="font-variation-settings:'wght' 300;font-size:18px">view_list</span>
-      </button>
+    <div class="home-chips">
+      <span class="chips-label">Type:</span>
+      <span class="chip active" data-type="any">Any</span>
+      <span class="chip" data-type="painting">Painting</span>
+      <span class="chip" data-type="photography">Photography</span>
+      <span class="chip" data-type="object">Object</span>
+      <span class="chip" data-type="drawing">Drawing</span>
+      <span class="chip" data-type="architecture">Architecture</span>
+    </div>
+
+    <div class="home-divider">
+      <hr/><span>or</span><hr/>
+    </div>
+
+    <div class="home-discover-btn" onclick="startDiscover()">
+      <span class="home-discover-icon">✦</span>
+      <div class="home-discover-text">
+        <strong>Discover something unexpected</strong>
+        <small>Random images from all 5 archives — no search term needed</small>
+      </div>
+      <span class="home-discover-arrow">→</span>
+    </div>
+
+    <div class="home-sources">
+      <div class="home-source"><div class="home-source-name">V&amp;A Museum</div><div class="home-source-n">1.2M objects</div></div>
+      <div class="home-source"><div class="home-source-name">Art Institute</div><div class="home-source-n">120k+ works</div></div>
+      <div class="home-source"><div class="home-source-name">Smithsonian</div><div class="home-source-n">5.1M items</div></div>
+      <div class="home-source"><div class="home-source-name">Europeana</div><div class="home-source-n">50M+ items</div></div>
+      <div class="home-source"><div class="home-source-name">Met Museum</div><div class="home-source-n">470k objects</div></div>
     </div>
   </div>
-
-  <!-- Row 2: filter tags (wrapping) -->
-  <div class="border-t border-white/[0.04]">
-    <div class="max-w-screen-2xl mx-auto px-6 py-2">
-      <div id="filter-row"></div>
-    </div>
-  </div>
-
-</header>
-
-
-<!-- ── VISUAL SEARCH ──────────────────────────────────────────── -->
-<section class="max-w-screen-2xl mx-auto px-6 pt-10 pb-2">
-
-  <!-- Section header -->
-  <div class="flex items-center gap-3 mb-5">
-    <span class="material-symbols-outlined text-primary/60" style="font-variation-settings:'wght' 200;font-size:20px">image_search</span>
-    <h2 class="font-syne text-sm uppercase tracking-widest text-white/40">Buscar em acervos institucionais</h2>
-  </div>
-
-  <!-- Search bar -->
-  <div class="flex gap-2 mb-6 max-w-xl">
-    <div class="flex-1 flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-sm px-3 py-2
-                focus-within:border-primary/30 transition-colors">
-      <span class="material-symbols-outlined text-white/30 shrink-0" style="font-variation-settings:'wght' 200;font-size:18px">search</span>
-      <input id="vs-input" type="text" autocomplete="off" placeholder="portrait, landscape, architecture…"
-             class="flex-1 bg-transparent border-none text-white text-sm font-syne focus:ring-0 outline-none
-                    placeholder:text-white/25"/>
-      <button id="vs-clear" class="material-symbols-outlined text-white/25 hover:text-white/60 transition-colors hidden cursor-pointer"
-              style="font-variation-settings:'wght' 200;font-size:15px">close</button>
-    </div>
-    <button id="vs-btn"
-            class="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40
-                   text-primary font-syne text-xs uppercase tracking-widest rounded-sm transition-all cursor-pointer shrink-0">
-      Search
-    </button>
-  </div>
-
-  <!-- Results grid -->
-  <div id="vs-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 mb-10"></div>
-
-  <!-- States -->
-  <div id="vs-skeleton" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 mb-10">
-    <!-- 10 skeleton cards -->
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden sm:block"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden md:block"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden md:block"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden xl:block"></div>
-    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden xl:block"></div>
-  </div>
-
-  <div id="vs-empty" class="hidden text-center py-16">
-    <span class="material-symbols-outlined text-4xl text-white/10 mb-3 block" style="font-variation-settings:'wght' 200">image_not_supported</span>
-    <p class="font-syne text-white/30 text-sm">Nenhum resultado encontrado</p>
-    <p class="text-white/15 text-xs mt-1">Tente outro termo em inglês — ex: portrait, textile, map</p>
-  </div>
-
-  <div id="vs-error" class="hidden text-center py-16">
-    <span class="material-symbols-outlined text-4xl text-white/10 mb-3 block" style="font-variation-settings:'wght' 200">cloud_off</span>
-    <p class="font-syne text-white/30 text-sm">Servidor indisponível</p>
-    <p class="text-white/15 text-xs mt-1">Verifique se o backend está rodando</p>
-  </div>
-
-  <!-- Divider -->
-  <div class="border-t border-white/[0.05] mb-8"></div>
-</section>
-
-<!-- ── MAIN CONTENT ──────────────────────────────────────────── -->
-<main class="max-w-screen-2xl mx-auto px-6 py-8">
-  <div id="refs-container"></div>
-
-  <!-- Empty state -->
-  <div id="empty-state" class="hidden flex-col items-center justify-center py-32 text-center">
-    <span class="material-symbols-outlined text-5xl text-white/10 mb-4" style="font-variation-settings:'wght' 200">search_off</span>
-    <p class="font-syne text-xl text-white/30 mb-2">No archives found</p>
-    <p class="text-sm text-white/20">Try adjusting your search or filter</p>
-    <button onclick="clearAll()" class="mt-6 text-xs font-syne uppercase tracking-widest text-primary/60 hover:text-primary transition-colors cursor-pointer">
-      Clear filters
-    </button>
-  </div>
-</main>
-
-<!-- ── FOOTER HINT ───────────────────────────────────────────── -->
-<div class="fixed bottom-5 left-0 w-full flex justify-center gap-4 pointer-events-none z-10">
-  <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5"><kbd>/</kbd> search</span>
-  <span class="text-[10px] text-white/15 font-syne flex items-center gap-1.5"><kbd>Esc</kbd> clear</span>
 </div>
 
-<script>
-// ─── DATA ────────────────────────────────────────────────────
-const RAW = [
-["Academy Film Archive","https://www.oscars.org/film-archive","A premier institutional collection holding physical artifacts and digital records of motion picture history. It serves as a vital primary source for production designers seeking absolute historical authenticity in cinematic recreation.","Film & Motion,Culture & History"],
-["AD&A Museum (UCSB)","https://www.museum.ucsb.edu/","Holds one of the largest architectural archives in North America, featuring over two million drawings, models, and objects focused heavily on the heritage of Southern California architects and designers.","Architecture & Space,Fine Art"],
-["ADG Research Library","https://adg.org/archives/","Managed by the Art Directors Guild, this visual research collection includes 6,000+ reference books, vintage catalogs, and set drawings critical for authentic period spatial and graphic design.","Graphic Design,Architecture & Space"],
-["AIGA Design Archives","https://designarchives.aiga.org/","A rich institutional archive containing over 20,000 selections from AIGA's design competitions dating back to 1924, documenting the shifting aesthetics of elite American communication design.","Graphic Design"],
-["Alvar Aalto Library","https://www.alvaraalto.fi/","An archive dedicated to the architectural and industrial design legacy of Finnish modernist Alvar Aalto, preserving his blueprints, furniture design, graphic identities, and theoretical writings.","Graphic Design,Architecture & Space"],
-["American Sign Museum","https://www.americansignmuseum.org/collection/","Digitizes the artistry and evolution of commercial signage, offering visual references of neon, enamel, and hand-painted signs indicative of vibrant 20th-century American visual culture.","Fine Art,Graphic Design"],
-["Anthology Film Archives","http://anthologyfilmarchives.org/","An international center focused entirely on the preservation, study, and exhibition of avant-garde, independent, and experimental cinema, offering unparalleled access to non-commercial film histories.","Film & Motion,Fine Art"],
-["Aperture Foundation","https://aperture.org/","A multi-platform photography organization that publishes and exhibits seminal photographic work, fostering critical dialogue around the medium's evolution and societal impact.","Photography,Fine Art"],
-["Architextures","https://architextures.org/","A digital library providing high-quality, procedural material surfaces and seamless textures for architectural visualization and 3D modeling.","Architecture & Space,CGI & Textures"],
-["Archive of Digital Art","https://digitalartarchive.at/","Addresses the dearth of critical reflection in digital art history by archiving early net-art, computational installations, and theoretical essays on digital interfaces and data politics.","Digital & Tech,Fine Art"],
-["Art Directors Guild Collection","https://www.oscars.org/film-archive/collections/art-directors-guild-collection","Housed within the Academy, this vast collection contains produced and unproduced production files, set photographs, blueprints, storyboards, and illustrations critical for the study of historical art direction.","Film & Motion,Architecture & Space"],
-["Art History Archive","http://www.arthistoryarchive.com/","Comprehensive index and visual resource dedicated to global art history, movements, periods, and key figures across centuries of creative production.","Fine Art"],
-["Art Institute of Chicago","https://www.artic.edu/collections","Houses nearly 300,000 works spanning global cultures. The institution is notable for providing unrestricted, open-access use to over 50,000 public domain images in ultra-high resolution.","Fine Art,Photography"],
-["Art of the Title","https://www.artofthetitle.com","An exhaustive digital publication and archive dedicated to title sequence design, bridging the disciplines of film, motion graphics, and typography to celebrate the graphic design of cinema.","Film & Motion,Graphic Design"],
-["Artcyclopedia","http://www.artcyclopedia.com/","An early internet index functioning as a comprehensive search engine for fine art, linking users directly to museum collections and image databases worldwide based on artist names.","Fine Art,Digital & Tech"],
-["Artnet","https://www.artnet.com/","A commercial and research platform tracking art market trends, auction results, and artist biographies, serving as an essential financial and historical tool for art historians and collectors.","Fine Art,Business & Law"],
-["Artsy","https://artsy.net/","A digital gallery and educational platform utilizing an Art Genome Project to categorize artworks by style, medium, and movement, facilitating deep discovery of contemporary and historical pieces.","Fine Art,Digital & Tech"],
-["Asia Art Archive","https://aaa.org.hk/","A Hong Kong-based non-profit aiming to rewrite the narrative of recent Asian art history. It operates on an ethos of the commons, heavily digitizing artists personal archives and exhibition documents.","Fine Art,Culture & History"],
-["Asian Fashion Archive","https://www.asianfashionarchive.com","A digital humanities project created to amplify the diverse cultural landscapes of Asian fashion, combating negative stereotypes by preserving rich sartorial stories and indigenous styles.","Fashion & Costume,Culture & History"],
-["Asian Film Archive","https://catalogue.asianfilmarchive.org/","Dedicated to preserving the culturally significant works of independent Asian filmmakers, this archive provides comprehensive resources to inspire creative processes and nurture a passion for diverse Asian cinema.","Film & Motion,Culture & History"],
-["Avery Library (Columbia)","https://library.columbia.edu/","The world's largest architecture library, containing over 400,000 volumes and extensive archival materials documenting 19th and 20th-century American architecture and historic preservation efforts.","Architecture & Space,Culture & History"],
-["Biblioteca Nacional Digital","https://bndigital.bn.gov.br/","A portal for preserving Brazilian memory, containing hyper-accurate scans of centuries-old manuscripts, rare iconography, and historical maps.","Culture & History"],
-["Biodiversity Heritage","https://www.biodiversitylibrary.org/","An open-access digital library specifically focused on life on Earth, holding millions of pages of legacy biological literature and exquisite antique botanical illustrations.","Science & Nature,Culture & History"],
-["Bloomsbury Fashion Central","https://www.bloomsburyfashioncentral.com/","A formidable academic resource offering the Berg Fashion Library and an archive of over 775,000 newly-digitized fashion photographs.","Fashion & Costume,Fine Art"],
-["Bridgeman Education","https://www.bridgemaneducation.com/","A commercial but education-focused portal aggregating over 3 million copyright-cleared images from 1,600 global museums.","Fine Art,Education"],
-["British Culture Archive","https://britishculturearchive.co.uk/","Documents the everyday life, society, and subcultures of Britain through documentary photography, preserving lost scenes of working-class history and marginalized youth movements.","Photography,Culture & History"],
-["British Library World Music","https://www.bl.uk/","The Sound Archive holds over six million recordings, preserving rare ethnographic field recordings and global musical traditions.","Culture & History"],
-["British Museum Online","https://www.britishmuseum.org/collection","A colossal database indexing the museum's 250-year history of acquisitions, granting digital access to artifacts from global civilizations.","Fine Art,Culture & History"],
-["Chicago History Museum","https://www.chicagohistory.org/","Preserves 23 million items regarding urban evolution with research collections spanning the societal shifts of the American Midwest.","Architecture & Space,Culture & History"],
-["Chicago History Museum Images","https://images.chicagohistory.org","Houses over 330,000 digitized visual resources, including the monumental Chicago Sun-Times photography collection.","Fine Art,Photography"],
-["Cinemateca Brasileira","https://www.cinemateca.org.br/","The largest film archive in South America, dedicated to preserving Brazil's audiovisual heritage, encompassing vast collections of national cinema and historical posters.","Film & Motion,Culture & History"],
-["Cinémathèque Française","https://www.cinematheque.fr/","A legendary French archive housing one of the largest collections of film documents and cinema apparatuses in the world.","Film & Motion,Culture & History"],
-["Coverjunkie","https://coverjunkie.com/","An expansive archive celebrating magazine and newspaper cover design, serving as a curated inspirational hub for editorial art directors.","Graphic Design"],
-["David Rumsey Map Collection","https://www.davidrumsey.com","An extraordinarily high-resolution digital archive of historical cartography, featuring tens of thousands of rare maps and atlases.","Digital & Tech,Culture & History"],
-["Duke AdAccess","https://repository.duke.edu/dc/adaccess","Features historical print advertisements from the J. Walter Thompson Company, focusing on mid-century campaigns spanning transportation, beauty, and WWII propaganda.","Graphic Design,Culture & History"],
-["Duke AdViews","https://repository.duke.edu/dc/adviews","A digital collection providing access to thousands of vintage television commercials created between the 1950s and 1980s.","Graphic Design,Film & Motion"],
-["Ethnofest","https://www.ethnofest.gr/database/","A comprehensive database of ethnographic films indexed by central social science keywords, providing open access to visual studies of human culture and ritualistic practices.","Film & Motion,Culture & History"],
-["Europeana","https://www.europeana.eu/","A massive web portal containing digitized cultural heritage collections, artworks, and books from thousands of allied institutions across Europe.","Fine Art,Digital & Tech"],
-["Exhibiting Fashion","https://exhibitingfashion.org/","Examines the intersection of fashion curation and museology, providing critical analysis of how historical garments are displayed and preserved.","Fashion & Costume,Fine Art"],
-["Eyecannndy","https://eyecannndy.com","A highly categorized visual technique database for filmmakers, indexing specific cinematic devices to assist directors and cinematographers in rapid pre-production planning.","Film & Motion,Digital & Tech"],
-["Fashion History Timeline","https://fashionhistory.fitnyc.edu","An open-access index created by FIT, mapping centuries of Western fashion through artwork, film, and surviving garments.","Fashion & Costume,Culture & History"],
-["Fashion Research Library","https://fashionresearchlibrary.com","An independent institution focused on the preservation of contemporary and avant-garde fashion printed matter.","Fashion & Costume,Graphic Design"],
-["FIDM Museum","https://fidmmuseum.org/","Features a 15,000-piece collection spanning 400 years, with distinct strengths in haute couture, global world dress, and motion picture costumes.","Fashion & Costume,Film & Motion"],
-["FilmGrab","https://film-grab.com/","A manually curated database of high-resolution movie stills organized by director, cinematographer, aspect ratio, and genre.","Film & Motion"],
-["Filson Digital Collections","https://filsonhistorical.org/","Digitizes the special collections of the Filson Historical Society, focusing on the history of Kentucky and the Ohio Valley Region.","Digital & Tech,Culture & History"],
-["Flickr's The Commons","https://www.flickr.com/commons","A collaborative initiative with international institutions to share hidden photographic archives with no known copyright restrictions.","Photography,Digital & Tech"],
-["Flim.ai","https://flim.ai/","An advanced AI-powered search engine for HD movie stills and video cuts, utilizing neural networks for semantic search.","Film & Motion,Digital & Tech"],
-["FOCAL International","https://focalint.org","A professional trade association representing footage and content libraries globally, facilitating the licensing and ethical use of archival moving images.","Film & Motion,Business & Law"],
-["Fonts In Use","https://fontsinuse.com","A public archive indexing typography by typeface, format, and industry, utilized by designers to study typographic literacy in real-world contexts.","Graphic Design,Digital & Tech"],
-["Frobenius Institute","https://www.frobenius-institut.de/","Holds 30,000 historical ethnographic illustrations and rock art copies gathered from early 20th-century global expeditions.","Materials & Science,Culture & History"],
-["Genery","https://genery.io","A visual search and reference engine built for filmmakers using AI to analyze lighting patterns, optical flow, and perceptual tone.","Digital & Tech,Film & Motion"],
-["George Eastman House","https://www.eastman.org/","The world's oldest photography museum, holding millions of objects related to the history of cinema and photographic technology.","Photography,Fine Art"],
-["Getty Images","https://www.gettyimages.com/","A massive commercial supplier of stock images, editorial photography, and historical archives powering global media and advertising.","Photography,Business & Law"],
-["Getty Museum Collection","https://www.getty.edu/art/collection/","Provides robust open access to the J. Paul Getty Trust's collections of antiquities, illuminated manuscripts, and European painting.","Fine Art,Photography"],
-["Godly","https://godly.website","A highly curated gallery of bold, experimental web design and UI/UX inspiration, highlighting interactive storytelling and cutting-edge digital experiences.","Digital & Tech,Graphic Design"],
-["GreatBuildings","http://www.greatbuildings.com/","A comprehensive gateway documenting thousands of historical structures and architects using 3D models, photographic images, and architectural commentaries.","Architecture & Space,Digital & Tech"],
-["Guggenheim Collection","https://www.guggenheim.org/collection","An online searchable archive of the Guggenheim's international holdings, focusing heavily on non-objective art and abstract expressionism.","Fine Art"],
-["Ibero-Amerikanisches Institut","https://www.iai.spk-berlin.de/","Cross-links text, sound, and visual sources to preserve the cultural heritage of Latin America, the Caribbean, and the Iberian Peninsula.","Photography,Culture & History"],
-["ICP Collections","https://www.icp.org/","The International Center of Photography's repository focuses strongly on socially and politically impactful photojournalism.","Photography,Fine Art"],
-["Ikonographia","https://www.ikonographia.com/","A curated visual memory of the 20th century, presenting restored graphic works, rare printed matter, and Art Deco ephemera.","Graphic Design,Culture & History"],
-["Instituto Moreira Salles","https://ims.com.br/","A premier Brazilian cultural institution possessing over 800,000 photographic images spanning the 19th and 20th centuries.","Photography,Culture & History"],
-["Internet Archive (Textiles)","https://archive.org/details/textiles","A massive open-source library subset containing digitized books and technical manuals regarding historical fabric manufacturing and garment construction.","Materials & Science,Fashion & Costume"],
-["ISAC (Chicago)","https://isac.uchicago.edu/","The Institute for the Study of Ancient Cultures integrates archaeological data, cuneiform tablets, and expedition photography from ancient Near Eastern civilizations.","Culture & History,Fine Art"],
-["IU Museum of Archaeology","https://iumaa.iu.edu/","Showcases indigenous artistry, ranging from Amazonian ceramics to Mexican textiles, focusing on material culture born from humanity's interaction with the natural environment.","Materials & Science,Fine Art"],
-["Kyoto Costume Institute (KCI)","https://www.kci.or.jp/en/archives/digital_archives/","A digital archive presenting high-resolution images of historical Western dress, emphasizing cross-cultural influence and material evolution.","Fashion & Costume,Culture & History"],
-["Latin American Library (Tulane)","https://library.tulane.edu/","Houses over 800,000 volumes and digital surrogates documenting indigenous cultures and history in Mesoamerica.","Digital & Tech,Culture & History"],
-["Letterform Archive","https://letterformarchive.org/","A nonprofit center holding physical and digital artifacts chronicling the history of written communication, from medieval manuscripts to modern digital typography.","Graphic Design"],
-["Library of Congress (Free to Use)","https://www.loc.gov/free-to-use/","A curated portal within the Library of Congress highlighting sets of digital content that are entirely free to use and reuse.","Digital & Tech,Culture & History"],
-["Library of Congress Prints & Photographs","https://loc.gov/pictures/","A colossal federal archive providing access to millions of photographs, historic prints, and architectural drawings documenting American and global history.","Photography,Culture & History"],
-["LIFE Photo Archive","https://images.google.com/hosted/life","Hosted by Google, this repository contains millions of photographs from LIFE Magazine, capturing definitive moments of 20th-century photojournalism.","Photography,Culture & History"],
-["Lilli Wolff Archive","https://digital.library.unt.edu/","Preserves the original fashion sketches, swatches, and scrapbooks of Lilli Wolff, a mid-century custom designer.","Fashion & Costume,Graphic Design"],
-["Logan Museum","https://www.beloit.edu/","An academic anthropological museum at Beloit College, holding 300,000 ethnographic and archaeological objects.","Fine Art,Science & Nature"],
-["Logo Book","https://logobook.com/directory/","A highly curated directory of the world's finest black-and-white logos, symbols, and trademarks.","Graphic Design"],
-["Magnum Photos","https://www.magnumphotos.com/","The legendary cooperative of documentary photographers, providing an unparalleled archive of iconic images defining human events and global conflicts since 1947.","Photography,Culture & History"],
-["Mapping Moviegoing","https://myunh.maps.arcgis.com/","An interactive geographic database that visualizes historical exhibition patterns and the social history of film distribution networks.","Film & Motion,Architecture & Space"],
-["Mapping Movies","https://www.mappingmovies.com/","A spatial humanities project employing GIS technology to explore the historical geography of cinema-going.","Film & Motion,Culture & History"],
-["MASP Digital Archive","https://masp.org.br/en","The digital counterpart to the Museu de Arte de São Paulo, documenting the most important collection of European art in the Southern Hemisphere.","Fine Art,Digital & Tech"],
-["Material Bank","https://www.materialbank.com/","A revolutionary platform for architectural and interior specifiers, functioning as a digital search engine tied to a massive physical logistics hub.","Architecture & Space,Materials & Science"],
-["Material ConneXion","https://materialconnexion.com/","A highly specialized subscription library focusing on cutting-edge, innovative, and sustainable materials.","Materials & Science,Architecture & Space"],
-["MaterialDistrict","https://materialdistrict.com/","An international matchmaking platform connecting spatial designers with innovative, circular, and sustainable material manufacturers.","Architecture & Space,Materials & Science"],
-["Merrill C. Berman Collection","http://mcbcollection.com/","An unmatched private collection of avant-garde graphic design spanning Dada, Bauhaus, Futurism, and Russian Constructivism.","Graphic Design,Fine Art"],
-["Met Costume Institute","https://www.metmuseum.org/","Houses over 35,000 garments and accessories spanning five continents, renowned for historical depth and major thematic exhibitions.","Fashion & Costume,Fine Art"],
-["Met Museum Open Access","https://www.metmuseum.org/art/collection/search?showOnly=openAccess","A dedicated portal strictly for the Met's public domain artifacts, allowing unrestricted use of high-resolution imagery.","Fine Art"],
-["Met Museum Online","https://www.metmuseum.org/art/collection","The primary digital interface for the Metropolitan Museum of Art, featuring nearly half a million artworks spanning 5,000 years of global history.","Fine Art,Digital & Tech"],
-["Minimal Gallery","https://minimal.gallery","A web design gallery explicitly focused on the philosophy of minimalism, aggregating websites that leverage negative space and simple high-contrast palettes.","Digital & Tech,Graphic Design"],
-["MovieStillsDB","https://www.moviestillsdb.com/","An extensive crowdsourced repository archiving over 1.3 million movie and television stills, lobby cards, and wallpapers.","Film & Motion,Graphic Design"],
-["Museum of the Home","https://collections.museumofthehome.org.uk/","Explores the psychological and physical evolution of domestic life since 1600, cataloging everyday household objects and interior designs.","Architecture & Space,Culture & History"],
-["Museum of Youth Culture","https://www.museumofyouthculture.com/","A collection of over 150,000 photographs and oral histories dedicated to capturing authentic platforms of youth expression and subcultural art forms.","Fine Art,Culture & History"],
-["Museum Plantin-Moretus","https://www.museumplantinmoretus.be/","A UNESCO World Heritage site archiving the history of early European printing, typography, and bookbinding from the 16th century Renaissance.","Fine Art,Graphic Design"],
-["Mymind","https://mymind.com","An anti-organizational second brain tool that uses AI to visually organize, auto-tag, and read text within saved images.","Digital & Tech"],
-["NARA The Way We Worked","https://www.archives.gov/","Part of the National Archives, this collection offers visual documentation of the American labor force across industrial, corporate, and agricultural contexts.","Photography,Culture & History"],
-["NASA SciVis Studio","https://svs.gsfc.nasa.gov/","Translates complex Earth and space science data into highly accurate, visually compelling animations for NASA.","Science & Nature,Digital & Tech"],
-["National Archives (Still Pictures)","https://www.archives.gov/research/still-pictures","Houses federal photographic records pertaining to military conflicts, government programs, and domestic American life.","Photography,Culture & History"],
-["National Cinema Museum (Turin)","https://www.museocinema.it/","Housed in the Mole Antonelliana, this museum curates the archaeology of cinema, preserving 2.5 million photographs and pre-cinema optical devices.","Film & Motion,Fine Art"],
-["NLM History of Medicine","https://www.nlm.nih.gov/hmd/","The National Library of Medicine's archive of 70,000 medical images, featuring 15th-century anatomical texts and public health propaganda posters.","Materials & Science,Graphic Design"],
-["NYPL Picture Collection","https://digitalcollections.nypl.org/","Established in 1915, this archive provides 1.5 million circulating images organized into 12,000 subject headings for artists, costume designers, and filmmakers.","Photography,Graphic Design"],
-["Panos Pictures","https://library.panos.co.uk/","An independent photo agency specializing in long-term documentary projects regarding global social issues, human rights, and environmental crises.","Photography,Culture & History"],
-["Panos Stories","https://www.panos.co.uk/type/stories/","The narrative arm of Panos Pictures, presenting deep-dive photographic essays on complex geopolitical and ecological topics.","Photography,Culture & History"],
-["Peabody Museum (Postcards)","https://peabody.harvard.edu/","Harvard's repository featuring a specialized collection of historical postcards documenting cross-cultural contact and early global tourism patterns.","Fine Art,Photography"],
-["Penn State Fashion Archive","https://exhibitions.psu.edu/","A hands-on academic collection of 3,000 garments and ephemera used for costume construction, pattern drafting, and material culture studies.","Fashion & Costume,Education"],
-["People's Graphic Design Archive","https://peoplesgdarchive.org/","A revolutionary crowdsourced virtual archive aimed at preserving an inclusive history of graphic design.","Graphic Design,Culture & History"],
-["Public Domain Review","https://publicdomainreview.org/","An online journal and digital Wunderkammer celebrating out-of-copyright works, curating strange and historically compelling images and films.","Digital & Tech,Fine Art"],
-["Quixel Megascans","https://quixel.com/","A massive library of photogrammetry-based 3D assets and textures, essential for video game development and virtual production.","CGI & Textures,Digital & Tech"],
-["RIBA British Architecture","https://www.ribapix.com/","The visual archive of the Royal Institute of British Architects, offering photographs, drawings, and manuscripts charting the history of the global built environment.","Architecture & Space,Digital & Tech"],
-["Richard Roberts Archive","https://www.richardrobertsarchive.org.uk/","A meticulous preservation of vintage print advertising spanning diverse industries from the 20th century.","Fashion & Costume,Graphic Design"],
-["RISD Digital Commons","https://digitalcommons.risd.edu","The institutional repository of the Rhode Island School of Design, archiving complex thesis projects, faculty research, and avant-garde student portfolios.","Digital & Tech,Fine Art"],
-["RIT Graphic Design Archive","https://www.rit.edu/","Preserves the work of significant American graphic designers active from the 1920s to the 1960s.","Graphic Design"],
-["Royal Botanic Kew","https://www.kew.org/science","Archives exhaustive scientific data on global plant and fungal life, merging historical botanical illustration with contemporary DNA sequencing data.","Science & Nature,Culture & History"],
-["Saul Bass Poster Archive","http://saulbassposterarchive.com/","Dedicated to the highly influential graphic designer Saul Bass, offering access to his original silkscreen movie posters, corporate logos, and process drafts.","Graphic Design,Film & Motion"],
-["Savee","https://savee.com","An ad-free, algorithm-free visual bookmarking platform specifically for designers, allowing creation of distraction-free mood boards.","Digital & Tech,Graphic Design"],
-["SCI-Arc Library","https://www.sciarc.edu/","An academic resource attached to the Southern California Institute of Architecture, focusing on contemporary architectural theory and experimental structural studies.","Architecture & Space,Graphic Design"],
-["Servier Medical Art","https://smart.servier.com","A free bank of over 3,000 vector graphics detailing cellular biology, human anatomy, and complex biomolecular structures for educational use.","Science & Nature,Graphic Design"],
-["Shot Cafe","https://shot.cafe/","A meticulously tagged movie stills database featuring RGB Parades for each shot, designed for cinematographers and colorists studying color grading.","Film & Motion,Digital & Tech"],
-["ShotDeck","https://shotdeck.com/","Created by cinematographer Lawrence Sher, the largest library of high-definition film images with exhaustive manual metadata tagging of focal lengths and lighting.","Film & Motion,Digital & Tech"],
-["Smithsonian Open Access","https://www.si.edu/search/images","Allows users to download and reuse millions of the Smithsonian's images without ever asking for copyright permission.","Fine Art,Materials & Science"],
-["Southeast Asian Archive","https://seaa.lib.uci.edu/","Documents the history and culture of the Southeast Asian diaspora, preserving photographic and physical records of refugees and immigrants post-Vietnam War.","Photography,Culture & History"],
-["Staatliche Museen zu Berlin","https://recherche.smb.museum/","The centralized digital catalog for Berlin's state museums, offering open-access publications and imagery of vast European and Asian art holdings.","Fine Art,Culture & History"],
-["Subculture Archives","https://subculturearchives.com/","A tactile, humanistic archive chronicling youth culture through 15,000 flyers, zines, and oral histories from 1960s mods to 1990s ravers.","Photography,Culture & History"],
-["Sundance Institute Archive","https://www.sundance.org/","Preserves the history of independent filmmaking, rigorously documenting the evolution of the Sundance Film Festival and the broader indie cinema movement.","Film & Motion,Culture & History"],
-["The Athenaeum","http://www.the-athenaeum.org/","A user-generated interactive humanities resource presenting thousands of historical artworks utilizing crowdsourced metadata.","Fine Art,Digital & Tech"],
-["The John Bright Collection","https://www.thejohnbrightcollection.co.uk/","An online catalogue of original historical garments belonging to Academy Award-winning costume designer John Bright.","Fashion & Costume,Film & Motion"],
-["The National Archives (UK)","https://www.nationalarchives.gov.uk/","Contains exhaustive British governmental records, including historical city plans, structural surveys, and infrastructure documentation.","Architecture & Space,Culture & History"],
-["The Ringling","https://emuseum.ringling.org/","The digital collection of the State Art Museum of Florida, featuring extensive European painting and a unique archive dedicated to the history of the circus.","Fine Art,Culture & History"],
-["The Strong National Museum of Play","https://onlinecollection.museumofplay.org/","A highly unique cultural archive dedicated to the history and sociology of play, documenting vintage toys, video games, and recreational artifacts.","Fine Art,Culture & History"],
-["TM Research Archive","http://www.tm-research-archive.ch/","An exhaustive research project focusing on Typographische Monatsblätter issues from 1960 to 1990, critical for studying Swiss typography and modernist grid systems.","Graphic Design"],
-["Typographica","https://typographica.org","A dedicated platform reviewing typefaces and typographic design, serving as an essential critical journal for type designers and branding specialists.","Graphic Design"],
-["UbuWeb","https://www.ubu.com","A legendary, independent educational resource for avant-garde material, archiving experimental film, concrete poetry, and sound art.","Digital & Tech,Fine Art"],
-["UNT Texas Fashion","https://fashioncollection.unt.edu/","A world-class repository of nearly 20,000 garments spanning 250 years, featuring haute couture works gathered to support design education.","Fashion & Costume,Fine Art"],
-["US Modernist","https://www.usmodernist.org","America's largest open digital archive dedicated to documenting and promoting residential modernist architecture.","Architecture & Space,Culture & History"],
-["V&A Fashion","https://www.vam.ac.uk/collections/fashion","The largest comprehensive collection of dress in the world, spanning five centuries, including rare 17th-century gowns and post-war Dior couture.","Fashion & Costume,Fine Art"],
-["V&A Poster Collection","https://www.vam.ac.uk/","A digital branch of the Victoria & Albert Museum containing 26,000 posters spanning late 19th-century cabaret to modern political activism.","Graphic Design,Fine Art"],
-["Van Alen Institute","https://www.vanalen.org/","An organization exploring how design can transform cities, with a project archive documenting inclusive urban planning and community-led infrastructure design.","Architecture & Space,Culture & History"],
-["Vogue Archive","https://archive.vogue.com/","A fully searchable database of American Vogue from 1892 to the present, vital for studying 20th-century cultural and sartorial trends.","Fashion & Costume,Digital & Tech"],
-["Web Gallery of Art","https://www.wga.hu/","A virtual museum and searchable database of European fine arts from the 3rd to 19th centuries, widely utilized in academic settings.","Fine Art,Digital & Tech"],
-["Wellcome Collection","https://wellcomecollection.org/","An archive exploring the profound connections between medicine, life, and art, holding vast resources charting the historical sociology of human health.","Science & Nature,Fine Art"],
-["Yale Daily News Archive","https://library.yale.edu/","Provides extensive digital access to historical collegiate journalism, offering a window into student perspectives on major 20th-century events.","Digital & Tech,Culture & History"],
-["Youth & Popular Culture","https://digital.library.wisc.edu/","A specialized digital archive of magazines aimed at teen demographics from 1940 to 2020, shedding light on the evolution of youth activism.","Digital & Tech,Culture & History"]
-];
+<!-- ── RESULTS VIEW ──────────────────────────────────────────── -->
+<div id="view-results" class="view">
+  <div class="res-header">
+    <div class="res-logo" onclick="goHome()">VA</div>
+    <div class="res-search-wrap">
+      <span class="res-search-ic">⌕</span>
+      <input id="res-input" type="text" placeholder="Search…"
+             onkeydown="if(event.key==='Enter') triggerSearch('results')"/>
+    </div>
+  </div>
 
-const REFS = RAW.map(([name,url,desc,tags],i)=>({
-  id: i, name, url, desc,
-  tags: tags ? tags.split(',').map(t=>t.trim()) : []
-}));
+  <div class="res-body">
+    <!-- Sidebar -->
+    <aside class="res-sidebar">
+      <div class="filter-group">
+        <div class="filter-title">Source</div>
+        <label class="filter-opt">
+          <input type="checkbox" id="src-all" checked onchange="handleSourceAll(this)"/>
+          <span class="filter-opt-label">All sources</span>
+        </label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum</span><span class="filter-count" id="cnt-vam"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute</span><span class="filter-count" id="cnt-artic"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian</span><span class="filter-count" id="cnt-smithsonian"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Met Museum</span><span class="filter-count" id="cnt-met"></span></label>
+      </div>
+    </aside>
 
-// ─── CATEGORY COLORS ─────────────────────────────────────────
-const TAG_COLORS = {
-  'Fine Art':             { bg: '#3B0764', border: '#7C3AED', text: '#DDD6FE' },
-  'Film & Motion':        { bg: '#7F1D1D', border: '#DC2626', text: '#FECACA' },
-  'Graphic Design':       { bg: '#7C2D12', border: '#EA580C', text: '#FED7AA' },
-  'Photography':          { bg: '#1E3A5F', border: '#3B82F6', text: '#BFDBFE' },
-  'Architecture & Space': { bg: '#1C1C22', border: '#6B7280', text: '#D1D5DB' },
-  'Fashion & Costume':    { bg: '#500724', border: '#E11D48', text: '#FBCFE8' },
-  'Culture & History':    { bg: '#451A03', border: '#92400E', text: '#FDE68A' },
-  'Digital & Tech':       { bg: '#052E16', border: '#16A34A', text: '#BBF7D0' },
-  'Science & Nature':     { bg: '#082F49', border: '#0EA5E9', text: '#BAE6FD' },
-  'Materials & Science':  { bg: '#042F2E', border: '#0D9488', text: '#99F6E4' },
-  'CGI & Textures':       { bg: '#1E1B4B', border: '#6366F1', text: '#C7D2FE' },
-  'Business & Law':       { bg: '#0F172A', border: '#475569', text: '#CBD5E1' },
-  'Education':            { bg: '#052E16', border: '#15803D', text: '#86EFAC' },
-};
+    <!-- Main -->
+    <main class="res-main">
+      <div class="res-meta">
+        <span class="res-count" id="res-count"></span>
+      </div>
+      <div class="img-grid" id="results-grid"></div>
+      <div id="res-empty" class="state-msg" style="display:none"><p>No results found. Try a different term.</p></div>
+      <div class="archives-cta" id="archives-cta" style="display:none">
+        <span class="archives-cta-icon">↖</span>
+        <p>Didn't find what you needed? <a onclick="showArchives()">Explore these 137 curated archives</a> — each has its own search tools and may surface exactly what you're looking for.</p>
+      </div>
+    </main>
+  </div>
+</div>
 
-// ─── TAGS ────────────────────────────────────────────────────
-const tagSet = new Set();
-REFS.forEach(r=>r.tags.forEach(t=>tagSet.add(t)));
-const ALL_TAGS = [...tagSet].sort();
-
-// ─── STATE ───────────────────────────────────────────────────
-let activeTag = null, query = '', view = 'grid', expandedId = null;
-let visibleRefs = [];
-
-// ─── ELEMENTS ───────────────────────────────────────────────
-const container   = document.getElementById('refs-container');
-const emptyState  = document.getElementById('empty-state');
-const countEl     = document.getElementById('count');
-const searchEl    = document.getElementById('search');
-const clearBtn    = document.getElementById('clear-btn');
-const filterRow   = document.getElementById('filter-row');
-
-// ─── HELPERS ─────────────────────────────────────────────────
-function domain(url){
-  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
-}
-function filtered(){
-  const q = query.toLowerCase();
-  return REFS.filter(r=>{
-    const mTag = !activeTag || r.tags.includes(activeTag);
-    const mQ   = !q || r.name.toLowerCase().includes(q)
-                     || r.desc.toLowerCase().includes(q)
-                     || r.tags.some(t=>t.toLowerCase().includes(q));
-    return mTag && mQ;
-  });
-}
-
-// ─── VIEW TOGGLE ─────────────────────────────────────────────
-window.setView = function(v){
-  view = v;
-  expandedId = null;
-  localStorage.setItem('va-view', v);
-  updateViewBtns();
-  renderRefs();
-};
-function updateViewBtns(){
-  document.getElementById('btn-grid').className =
-    `view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer ${view==='grid' ? 'text-white' : 'text-white/30 hover:text-white/60'}`;
-  document.getElementById('btn-list').className =
-    `view-btn px-2 py-1.5 transition-colors duration-150 cursor-pointer ${view==='list' ? 'text-white' : 'text-white/30 hover:text-white/60'}`;
-}
-
-// ─── EXPAND TOGGLE ───────────────────────────────────────────
-window.toggleExpand = function(id, e){
-  e.stopPropagation();
-  expandedId = expandedId === id ? null : id;
-  document.querySelectorAll('[data-ref-id]').forEach(el=>{
-    const elId = parseInt(el.dataset.refId);
-    const panel = el.querySelector('.detail-panel');
-    const isExp = elId === expandedId;
-    el.classList.toggle('expanded', isExp);
-    if(panel) panel.classList.toggle('open', isExp);
-  });
-};
-
-// ─── DETAIL PANEL HTML ───────────────────────────────────────
-function detailHTML(r){
-  return `
-    <div class="detail-panel open">
-      <div class="pt-3 pb-4 border-t border-white/[0.06] mt-3">
-        <p class="text-xs text-white/55 leading-relaxed mb-4">${r.desc}</p>
-        <div class="flex items-center justify-between flex-wrap gap-3">
-          <div class="flex flex-wrap gap-1.5">
-            ${r.tags.map(t=>{
-              const c = TAG_COLORS[t] || { bg: '#1F2937', border: '#4B5563', text: '#9CA3AF' };
-              const isActive = activeTag === t;
-              return `<span class="tag-chip ${isActive?'active':''}"
-                style="background:${c.bg};border-color:${isActive?'rgba(167,139,250,0.8)':c.border};color:${c.text};font-weight:500"
-                onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`;
-            }).join('')}
-          </div>
-          <a href="${r.url}" target="_blank" rel="noopener noreferrer"
-             class="inline-flex items-center gap-1.5 text-primary hover:text-white text-xs font-syne
-                    uppercase tracking-wider transition-colors duration-200 group cursor-pointer"
-             onclick="event.stopPropagation()">
-            <span>Visit archive</span>
-            <span class="material-symbols-outlined transform group-hover:translate-x-0.5 transition-transform"
-                  style="font-variation-settings:'wght' 300;font-size:14px">arrow_forward</span>
-          </a>
+<!-- ── DISCOVER VIEW ─────────────────────────────────────────── -->
+<div id="view-discover" class="view">
+  <div class="disc-header">
+    <div class="disc-logo" onclick="goHome()">Visual Archive</div>
+    <div class="disc-source" id="disc-source-label"></div>
+  </div>
+  <div class="disc-loading" id="disc-loading"><p>Loading…</p></div>
+  <div id="disc-main" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+    <div class="disc-card-area">
+      <div class="disc-card" id="disc-card">
+        <img id="disc-img" src="" alt="" loading="lazy"/>
+        <div class="disc-card-info">
+          <div class="disc-card-title" id="disc-title"></div>
+          <div class="disc-card-meta" id="disc-meta"></div>
         </div>
       </div>
     </div>
-  `;
-}
-
-// ─── RENDER: GRID ─────────────────────────────────────────────
-function renderGrid(){
-  container.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 fade-up';
-  container.innerHTML = visibleRefs.map(r=>{
-    const dom = domain(r.url);
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${dom}&sz=64`;
-    return `
-    <div class="archive-card expanded p-4" data-ref-id="${r.id}">
-      <img src="${faviconUrl}" width="28" height="28"
-           style="border-radius:4px;margin-bottom:8px;display:block"
-           onerror="this.style.display='none'" alt="" loading="lazy">
-      <h2 class="font-syne text-base font-semibold text-white/90 leading-snug tracking-tight mb-1">${r.name}</h2>
-      ${detailHTML(r)}
+    <div class="disc-actions">
+      <button class="disc-btn disc-btn-skip" onclick="discoverNext()">Skip →</button>
+      <button class="disc-btn disc-btn-info" onclick="openModalFromDiscover()">More info</button>
     </div>
-  `;
-  }).join('');
-}
+    <div class="disc-progress" id="disc-progress"></div>
+    <div class="disc-hint">Swipe left to skip · tap "More info" for details</div>
+  </div>
+</div>
 
-// ─── RENDER: LIST ─────────────────────────────────────────────
-function renderList(){
-  container.className = 'flex flex-col fade-up max-w-3xl mx-auto border border-white/[0.05] rounded-sm overflow-hidden';
-  container.innerHTML = visibleRefs.map(r=>{
-    const dom = domain(r.url);
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${dom}&sz=32`;
-    return `
-    <div class="list-row expanded px-5 py-3" data-ref-id="${r.id}">
-      <div class="flex items-center gap-3 min-w-0">
-        <img src="${faviconUrl}" width="16" height="16"
-             style="border-radius:2px;flex-shrink:0"
-             onerror="this.style.display='none'" alt="" loading="lazy">
-        <h2 class="font-syne text-sm font-semibold text-white/90 tracking-tight w-64 shrink-0 truncate">${r.name}</h2>
-        <div class="flex-1"></div>
-        <span class="text-[11px] text-white/30 font-display truncate shrink-0 hidden lg:block">${dom}</span>
+<!-- ── ARCHIVES VIEW ─────────────────────────────────────────── -->
+<div id="view-archives" class="view">
+  <div class="arch-inner">
+    <div class="arch-head">
+      <div class="arch-title">Curated Archives</div>
+      <div class="arch-sub">137 sources organised by area</div>
+    </div>
+
+    <div class="arch-banner">
+      <div class="arch-banner-icon">↖</div>
+      <div class="arch-banner-text">
+        Didn't find what you needed in the search?
+        <strong>Each archive below has its own search tools</strong> and may have exactly what you're looking for — including things our API doesn't surface yet.
       </div>
-      ${detailHTML(r)}
     </div>
-  `;
-  }).join('');
-}
 
-// ─── RENDER: FILTER ROW ──────────────────────────────────────
-function renderFilterRow(){
-  const allTags = [null, ...ALL_TAGS]; // null = "All"
-  const cols = Math.ceil(allTags.length / 2);
-  filterRow.style.cssText = `display:grid;grid-template-columns:repeat(${cols},1fr);gap:4px`;
-  filterRow.innerHTML = allTags.map(tag=>
-    `<button class="tag-chip text-center ${tag===activeTag||(tag===null&&!activeTag)?'active':''}"
-      onclick="window.setTagFilter(${tag?`'${tag}'`:'null'})">${tag||'All'}</button>`
-  ).join('');
-}
+    <div class="arch-filter-row" id="arch-filter-row"></div>
+    <div id="arch-content"></div>
+  </div>
+</div>
 
-// ─── MAIN RENDER ─────────────────────────────────────────────
-function renderRefs(){
-  visibleRefs = filtered();
-  renderFilterRow();
+<!-- ── MODAL ─────────────────────────────────────────────────── -->
+<div id="modal" onclick="closeModal(event)">
+  <button class="modal-close" onclick="closeModal()">×</button>
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-left">
+      <img id="modal-img" src="" alt=""/>
+    </div>
+    <div class="modal-right">
+      <div class="modal-source" id="modal-source"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-actions">
+        <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">View in archive ↗</a>
+        <span class="modal-btn modal-btn-secondary">+ Save to collection</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-  const total = REFS.length;
-  countEl.textContent = visibleRefs.length === total
-    ? `${total} archives`
-    : `${visibleRefs.length} / ${total}`;
+<!-- ── MOBILE NAV ─────────────────────────────────────────────── -->
+<nav id="mob-nav">
+  <div class="mob-nav-inner">
+    <div class="mob-tab active" id="mtab-home" onclick="goHome()">
+      <div class="mob-tab-icon">⌂</div><div class="mob-tab-label">Home</div>
+    </div>
+    <div class="mob-tab" id="mtab-discover" onclick="startDiscover()">
+      <div class="mob-tab-icon">✦</div><div class="mob-tab-label">Discover</div>
+    </div>
+    <div class="mob-tab" id="mtab-search" onclick="focusSearch()">
+      <div class="mob-tab-icon">⌕</div><div class="mob-tab-label">Search</div>
+    </div>
+    <div class="mob-tab" id="mtab-archives" onclick="showArchives()">
+      <div class="mob-tab-icon">▦</div><div class="mob-tab-label">Archives</div>
+    </div>
+  </div>
+</nav>
 
-  clearBtn.classList.toggle('hidden', !query);
-  emptyState.classList.toggle('hidden', visibleRefs.length > 0);
-  emptyState.classList.toggle('flex', visibleRefs.length === 0);
-  container.classList.toggle('hidden', visibleRefs.length === 0);
-
-  if(visibleRefs.length === 0) return;
-  view === 'grid' ? renderGrid() : renderList();
-  updateViewBtns();
-}
-
-// ─── GLOBAL HELPERS ──────────────────────────────────────────
-window.setTagFilter = function(tag){
-  activeTag = tag;
-  expandedId = null;
-  renderRefs();
-};
-window.clearAll = function(){
-  activeTag = null; query = ''; expandedId = null;
-  searchEl.value = '';
-  renderRefs();
-};
-
-// ─── EVENTS ──────────────────────────────────────────────────
-searchEl.addEventListener('input', e=>{
-  query = e.target.value;
-  expandedId = null;
-  renderRefs();
-});
-clearBtn.addEventListener('click', ()=>{
-  query = ''; searchEl.value = ''; expandedId = null; renderRefs();
-});
-document.addEventListener('keydown', e=>{
-  if(e.key === '/' && document.activeElement !== searchEl){
-    e.preventDefault(); searchEl.focus();
-  } else if(e.key === 'Escape'){
-    if(document.activeElement === searchEl){ searchEl.blur(); }
-    else { window.clearAll(); }
-  }
-});
-
-// ─── INIT ────────────────────────────────────────────────────
-const savedView = localStorage.getItem('va-view');
-if(savedView === 'list' || savedView === 'grid') view = savedView;
-renderRefs();
-
-// ─── VISUAL SEARCH ───────────────────────────────────────────
+<script>
+// ── CONFIG ───────────────────────────────────────────────────────
 const VS_API    = 'https://visual-archive-one.vercel.app';
 const VS_SECRET = 'f9d804150d638857ce4d20a039617be11fc460d42aa67bc1c47eead8c32c2e2c';
 
-const vsInput   = document.getElementById('vs-input');
-const vsBtn     = document.getElementById('vs-btn');
-const vsClear   = document.getElementById('vs-clear');
-const vsGrid    = document.getElementById('vs-grid');
-const vsSkel    = document.getElementById('vs-skeleton');
-const vsEmpty   = document.getElementById('vs-empty');
-const vsError   = document.getElementById('vs-error');
-
-const INST_COLORS = {
-  'Met Museum':              '#7F1D1D',
-  'Art Institute Chicago':   '#7C2D12',
-  'Rijksmuseum':             '#1E3A5F',
-  'Smithsonian':             '#064E3B',
-  'Europeana':               '#3B0764',
-  'V&A Museum':              '#1A3A2A',
+const SRC_COLOR = {
+  'V&A Museum':            '#7A4A20',
+  'Art Institute Chicago': '#1A4E8A',
+  'Smithsonian':           '#5C2D8A',
+  'Europeana':             '#1A7A3A',
+  'Met Museum':            '#8B1A1A',
 };
 
-function vsSetState(state) {
-  vsGrid.classList.toggle('hidden', state !== 'results');
-  vsSkel.classList.toggle('hidden', state !== 'loading');
-  vsEmpty.classList.toggle('hidden', state !== 'empty');
-  vsError.classList.toggle('hidden', state !== 'error');
+const SRC_KEY_MAP = {
+  vam:         'V&A Museum',
+  artic:       'Art Institute Chicago',
+  smithsonian: 'Smithsonian',
+  europeana:   'Europeana',
+  met:         'Met Museum',
+};
+
+// ── STATE ─────────────────────────────────────────────────────────
+let state = {
+  view:        'home',
+  query:       '',
+  typeFilter:  'any',
+  allResults:  [],  // full result set (unfiltered)
+  discoverBatch: [],
+  discoverIdx:   0,
+  activeItem:    null,
+};
+
+// ── ARCHIVES DATA ─────────────────────────────────────────────────
+const ARCHIVES = [{"n":"Academy Film Archive","u":"https://www.oscars.org/film-archive","d":"A premier institutional collection holding physical artifacts and digital records of motion picture history.","t":"Film & Motion,Culture & History"},{"n":"AD&A Museum (UCSB)","u":"https://www.museum.ucsb.edu/","d":"Holds one of the largest architectural archives in North America, featuring over two million drawings, models, and objects.","t":"Architecture & Space,Fine Art"},{"n":"ADG Research Library","u":"https://adg.org/archives/","d":"Managed by the Art Directors Guild, includes 6,000+ reference books, vintage catalogs, and set drawings.","t":"Graphic Design,Architecture & Space"},{"n":"AIGA Design Archives","u":"https://designarchives.aiga.org/","d":"Over 20,000 selections from AIGA design competitions dating back to 1924.","t":"Graphic Design"},{"n":"Alvar Aalto Library","u":"https://www.alvaraalto.fi/","d":"Archive dedicated to the architectural and industrial design legacy of Finnish modernist Alvar Aalto.","t":"Graphic Design,Architecture & Space"},{"n":"American Sign Museum","u":"https://www.americansignmuseum.org/collection/","d":"Digitizes the artistry and evolution of commercial signage — neon, enamel, and hand-painted signs.","t":"Fine Art,Graphic Design"},{"n":"Anthology Film Archives","u":"http://anthologyfilmarchives.org/","d":"International center for preservation and exhibition of avant-garde and experimental cinema.","t":"Film & Motion,Fine Art"},{"n":"Aperture Foundation","u":"https://aperture.org/","d":"Multi-platform photography organization publishing and exhibiting seminal photographic work.","t":"Photography,Fine Art"},{"n":"Architextures","u":"https://architextures.org/","d":"Digital library of high-quality procedural material surfaces and seamless textures.","t":"Architecture & Space,CGI & Textures"},{"n":"Archive of Digital Art","u":"https://digitalartarchive.at/","d":"Archives early net-art, computational installations, and theoretical essays on digital interfaces.","t":"Digital & Tech,Fine Art"},{"n":"Art Directors Guild Collection","u":"https://www.oscars.org/film-archive/collections/art-directors-guild-collection","d":"Vast collection of production files, set photographs, blueprints, and storyboards for historical art direction.","t":"Film & Motion,Architecture & Space"},{"n":"Art History Archive","u":"http://www.arthistoryarchive.com/","d":"Comprehensive visual resource dedicated to global art history, movements, and periods.","t":"Fine Art"},{"n":"Art Institute of Chicago","u":"https://www.artic.edu/collections","d":"Nearly 300,000 works spanning global cultures with 50,000+ open-access public domain images.","t":"Fine Art,Photography"},{"n":"Art of the Title","u":"https://www.artofthetitle.com","d":"Exhaustive archive dedicated to title sequence design, bridging film, motion graphics, and typography.","t":"Film & Motion,Graphic Design"},{"n":"Artcyclopedia","u":"http://www.artcyclopedia.com/","d":"Comprehensive search engine for fine art, linking to museum collections and image databases worldwide.","t":"Fine Art,Digital & Tech"},{"n":"Artnet","u":"https://www.artnet.com/","d":"Platform tracking art market trends, auction results, and artist biographies.","t":"Fine Art,Business & Law"},{"n":"Artsy","u":"https://artsy.net/","d":"Digital gallery and educational platform using the Art Genome Project to categorize artworks.","t":"Fine Art,Digital & Tech"},{"n":"Asia Art Archive","u":"https://aaa.org.hk/","d":"Hong Kong non-profit heavily digitizing artists' personal archives and exhibition documents.","t":"Fine Art,Culture & History"},{"n":"Asian Fashion Archive","u":"https://www.asianfashionarchive.com","d":"Digital humanities project preserving the diverse cultural landscapes of Asian fashion.","t":"Fashion & Costume,Culture & History"},{"n":"Asian Film Archive","u":"https://catalogue.asianfilmarchive.org/","d":"Preserves culturally significant works of independent Asian filmmakers.","t":"Film & Motion,Culture & History"},{"n":"Avery Library (Columbia)","u":"https://library.columbia.edu/","d":"World's largest architecture library, with over 400,000 volumes and extensive archival materials.","t":"Architecture & Space,Culture & History"},{"n":"Biblioteca Nacional Digital","u":"https://bndigital.bn.gov.br/","d":"Portal for Brazilian memory — centuries-old manuscripts, rare iconography, and historical maps.","t":"Culture & History"},{"n":"Biodiversity Heritage","u":"https://www.biodiversitylibrary.org/","d":"Open-access digital library of legacy biological literature and exquisite antique botanical illustrations.","t":"Science & Nature,Culture & History"},{"n":"Bloomsbury Fashion Central","u":"https://www.bloomsburyfashioncentral.com/","d":"Academic resource offering the Berg Fashion Library and 775,000+ digitized fashion photographs.","t":"Fashion & Costume,Fine Art"},{"n":"Bridgeman Education","u":"https://www.bridgemaneducation.com/","d":"Education-focused portal aggregating 3 million+ copyright-cleared images from 1,600 global museums.","t":"Fine Art,Education"},{"n":"British Culture Archive","u":"https://britishculturearchive.co.uk/","d":"Documents British everyday life and subcultures through documentary photography.","t":"Photography,Culture & History"},{"n":"British Library World Music","u":"https://www.bl.uk/","d":"Sound Archive holds over six million recordings of rare ethnographic field recordings and global musical traditions.","t":"Culture & History"},{"n":"British Museum Online","u":"https://www.britishmuseum.org/collection","d":"Database of 250-year acquisitions granting digital access to artifacts from global civilisations.","t":"Fine Art,Culture & History"},{"n":"Chicago History Museum","u":"https://www.chicagohistory.org/","d":"Preserves 23 million items on urban evolution and societal shifts of the American Midwest.","t":"Architecture & Space,Culture & History"},{"n":"Chicago History Museum Images","u":"https://images.chicagohistory.org","d":"Over 330,000 digitised visual resources including the monumental Chicago Sun-Times photography collection.","t":"Fine Art,Photography"},{"n":"Cinemateca Brasileira","u":"https://www.cinemateca.org.br/","d":"Largest film archive in South America — Brazil's audiovisual heritage and historical posters.","t":"Film & Motion,Culture & History"},{"n":"Cinémathèque Française","u":"https://www.cinematheque.fr/","d":"Legendary French archive housing one of the largest film document collections in the world.","t":"Film & Motion,Culture & History"},{"n":"Coverjunkie","u":"https://coverjunkie.com/","d":"Expansive archive celebrating magazine and newspaper cover design for editorial art directors.","t":"Graphic Design"},{"n":"David Rumsey Map Collection","u":"https://www.davidrumsey.com","d":"High-resolution digital archive of historical cartography — tens of thousands of rare maps and atlases.","t":"Digital & Tech,Culture & History"},{"n":"Duke AdAccess","u":"https://repository.duke.edu/dc/adaccess","d":"Historical print advertisements from the J. Walter Thompson Company — mid-century campaigns.","t":"Graphic Design,Culture & History"},{"n":"Duke AdViews","u":"https://repository.duke.edu/dc/adviews","d":"Thousands of vintage television commercials created between the 1950s and 1980s.","t":"Graphic Design,Film & Motion"},{"n":"Ethnofest","u":"https://www.ethnofest.gr/database/","d":"Database of ethnographic films indexed by social science keywords.","t":"Film & Motion,Culture & History"},{"n":"Europeana","u":"https://www.europeana.eu/","d":"Massive portal containing digitised cultural heritage from thousands of institutions across Europe.","t":"Fine Art,Digital & Tech"},{"n":"Exhibiting Fashion","u":"https://exhibitingfashion.org/","d":"Critical analysis of how historical garments are displayed and preserved in museums.","t":"Fashion & Costume,Fine Art"},{"n":"Eyecannndy","u":"https://eyecannndy.com","d":"Visual technique database for filmmakers indexing specific cinematic devices for pre-production.","t":"Film & Motion,Digital & Tech"},{"n":"Fashion History Timeline","u":"https://fashionhistory.fitnyc.edu","d":"Open-access index by FIT mapping centuries of Western fashion through artwork, film, and garments.","t":"Fashion & Costume,Culture & History"},{"n":"Fashion Research Library","u":"https://fashionresearchlibrary.com","d":"Independent institution focused on preservation of contemporary and avant-garde fashion printed matter.","t":"Fashion & Costume,Graphic Design"},{"n":"FIDM Museum","u":"https://fidmmuseum.org/","d":"15,000-piece collection spanning 400 years — haute couture, global world dress, and motion picture costumes.","t":"Fashion & Costume,Film & Motion"},{"n":"FilmGrab","u":"https://film-grab.com/","d":"Manually curated database of high-resolution movie stills organised by director, cinematographer, genre.","t":"Film & Motion"},{"n":"Filson Digital Collections","u":"https://filsonhistorical.org/","d":"Special collections of the Filson Historical Society on Kentucky and Ohio Valley history.","t":"Digital & Tech,Culture & History"},{"n":"Flickr's The Commons","u":"https://www.flickr.com/commons","d":"Collaborative initiative with international institutions sharing photographic archives with no copyright restrictions.","t":"Photography,Digital & Tech"},{"n":"Flim.ai","u":"https://flim.ai/","d":"AI-powered search engine for HD movie stills and video cuts using neural networks for semantic search.","t":"Film & Motion,Digital & Tech"},{"n":"FOCAL International","u":"https://focalint.org","d":"Trade association representing footage and content libraries globally.","t":"Film & Motion,Business & Law"},{"n":"Fonts In Use","u":"https://fontsinuse.com","d":"Public archive indexing typography by typeface, format, and industry for designers to study real-world use.","t":"Graphic Design,Digital & Tech"},{"n":"Frobenius Institute","u":"https://www.frobenius-institut.de/","d":"30,000 historical ethnographic illustrations and rock art copies from early 20th-century global expeditions.","t":"Materials & Science,Culture & History"},{"n":"Genery","u":"https://genery.io","d":"Visual search engine for filmmakers using AI to analyse lighting patterns and perceptual tone.","t":"Digital & Tech,Film & Motion"},{"n":"George Eastman House","u":"https://www.eastman.org/","d":"World's oldest photography museum holding millions of objects related to cinema and photographic technology.","t":"Photography,Fine Art"},{"n":"Getty Images","u":"https://www.gettyimages.com/","d":"Massive commercial supplier of stock images, editorial photography, and historical archives.","t":"Photography,Business & Law"},{"n":"Getty Museum Collection","u":"https://www.getty.edu/art/collection/","d":"Open access to the J. Paul Getty Trust's collections of antiquities, manuscripts, and European painting.","t":"Fine Art,Photography"},{"n":"Godly","u":"https://godly.website","d":"Curated gallery of bold, experimental web design and UI/UX inspiration.","t":"Digital & Tech,Graphic Design"},{"n":"GreatBuildings","u":"http://www.greatbuildings.com/","d":"Documents thousands of historical structures and architects with 3D models and architectural commentaries.","t":"Architecture & Space,Digital & Tech"},{"n":"Guggenheim Collection","u":"https://www.guggenheim.org/collection","d":"Online archive of the Guggenheim's international holdings — non-objective art and abstract expressionism.","t":"Fine Art"},{"n":"Ibero-Amerikanisches Institut","u":"https://www.iai.spk-berlin.de/","d":"Cross-links text, sound, and visual sources preserving the cultural heritage of Latin America and Iberia.","t":"Photography,Culture & History"},{"n":"ICP Collections","u":"https://www.icp.org/","d":"International Center of Photography repository focused on socially and politically impactful photojournalism.","t":"Photography,Fine Art"},{"n":"Ikonographia","u":"https://www.ikonographia.com/","d":"Curated visual memory of the 20th century — restored graphic works, rare printed matter, Art Deco ephemera.","t":"Graphic Design,Culture & History"},{"n":"Instituto Moreira Salles","u":"https://ims.com.br/","d":"Premier Brazilian cultural institution with 800,000+ photographic images from the 19th and 20th centuries.","t":"Photography,Culture & History"},{"n":"Internet Archive (Textiles)","u":"https://archive.org/details/textiles","d":"Digitised books and technical manuals on historical fabric manufacturing and garment construction.","t":"Materials & Science,Fashion & Costume"},{"n":"ISAC (Chicago)","u":"https://isac.uchicago.edu/","d":"Integrates archaeological data, cuneiform tablets, and expedition photography from ancient Near Eastern civilisations.","t":"Culture & History,Fine Art"},{"n":"IU Museum of Archaeology","u":"https://iumaa.iu.edu/","d":"Showcases indigenous artistry from Amazonian ceramics to Mexican textiles.","t":"Materials & Science,Fine Art"},{"n":"Kyoto Costume Institute (KCI)","u":"https://www.kci.or.jp/en/archives/digital_archives/","d":"High-resolution images of historical Western dress emphasising cross-cultural influence and material evolution.","t":"Fashion & Costume,Culture & History"},{"n":"Latin American Library (Tulane)","u":"https://library.tulane.edu/","d":"800,000+ volumes and digital surrogates documenting indigenous cultures and history in Mesoamerica.","t":"Digital & Tech,Culture & History"},{"n":"Letterform Archive","u":"https://letterformarchive.org/","d":"Non-profit holding artifacts of written communication — from medieval manuscripts to digital typography.","t":"Graphic Design"},{"n":"Library of Congress (Free to Use)","u":"https://www.loc.gov/free-to-use/","d":"Curated portal of Library of Congress digital content that is entirely free to use and reuse.","t":"Digital & Tech,Culture & History"},{"n":"Library of Congress Prints & Photographs","u":"https://loc.gov/pictures/","d":"Millions of photographs, historic prints, and architectural drawings documenting American and global history.","t":"Photography,Culture & History"},{"n":"LIFE Photo Archive","u":"https://images.google.com/hosted/life","d":"Millions of LIFE Magazine photographs capturing definitive moments of 20th-century photojournalism.","t":"Photography,Culture & History"},{"n":"Lilli Wolff Archive","u":"https://digital.library.unt.edu/","d":"Original fashion sketches, swatches, and scrapbooks of mid-century custom designer Lilli Wolff.","t":"Fashion & Costume,Graphic Design"},{"n":"Logan Museum","u":"https://www.beloit.edu/","d":"Academic anthropological museum at Beloit College holding 300,000 ethnographic and archaeological objects.","t":"Fine Art,Science & Nature"},{"n":"Logo Book","u":"https://logobook.com/directory/","d":"Curated directory of the world's finest black-and-white logos, symbols, and trademarks.","t":"Graphic Design"},{"n":"Magnum Photos","u":"https://www.magnumphotos.com/","d":"Legendary cooperative of documentary photographers. Iconic images of human events since 1947.","t":"Photography,Culture & History"},{"n":"Mapping Moviegoing","u":"https://myunh.maps.arcgis.com/","d":"Interactive geographic database visualising historical exhibition patterns and film distribution networks.","t":"Film & Motion,Architecture & Space"},{"n":"Mapping Movies","u":"https://www.mappingmovies.com/","d":"Spatial humanities project using GIS to explore the historical geography of cinema-going.","t":"Film & Motion,Culture & History"},{"n":"MASP Digital Archive","u":"https://masp.org.br/en","d":"Digital counterpart to the Museu de Arte de São Paulo — most important collection of European art in South America.","t":"Fine Art,Digital & Tech"},{"n":"Material Bank","u":"https://www.materialbank.com/","d":"Platform for architectural and interior specifiers — digital search tied to a massive physical logistics hub.","t":"Architecture & Space,Materials & Science"},{"n":"Material ConneXion","u":"https://materialconnexion.com/","d":"Specialised subscription library of cutting-edge, innovative, and sustainable materials.","t":"Materials & Science,Architecture & Space"},{"n":"MaterialDistrict","u":"https://materialdistrict.com/","d":"International platform connecting spatial designers with innovative and sustainable material manufacturers.","t":"Architecture & Space,Materials & Science"},{"n":"Merrill C. Berman Collection","u":"http://mcbcollection.com/","d":"Unmatched private collection of avant-garde graphic design — Dada, Bauhaus, Futurism, Constructivism.","t":"Graphic Design,Fine Art"},{"n":"Met Costume Institute","u":"https://www.metmuseum.org/","d":"35,000+ garments and accessories spanning five continents — historical depth and major thematic exhibitions.","t":"Fashion & Costume,Fine Art"},{"n":"Met Museum Open Access","u":"https://www.metmuseum.org/art/collection/search?showOnly=openAccess","d":"Dedicated portal for the Met's public domain artifacts — unrestricted use of high-resolution imagery.","t":"Fine Art"},{"n":"Met Museum Online","u":"https://www.metmuseum.org/art/collection","d":"Primary digital interface of the Metropolitan Museum — nearly half a million artworks across 5,000 years.","t":"Fine Art,Digital & Tech"},{"n":"Minimal Gallery","u":"https://minimal.gallery","d":"Web design gallery focused on minimalism — negative space, simple high-contrast palettes.","t":"Digital & Tech,Graphic Design"},{"n":"MovieStillsDB","u":"https://www.moviestillsdb.com/","d":"Crowdsourced repository of 1.3M+ movie and television stills, lobby cards, and wallpapers.","t":"Film & Motion,Graphic Design"},{"n":"Museum of the Home","u":"https://collections.museumofthehome.org.uk/","d":"Evolution of domestic life since 1600 — everyday household objects and interior designs.","t":"Architecture & Space,Culture & History"},{"n":"Museum of Youth Culture","u":"https://www.museumofyouthculture.com/","d":"150,000+ photographs and oral histories of youth expression and subcultural art forms.","t":"Fine Art,Culture & History"},{"n":"Museum Plantin-Moretus","u":"https://www.museumplantinmoretus.be/","d":"UNESCO World Heritage site archiving early European printing, typography, and bookbinding from the 16th century.","t":"Fine Art,Graphic Design"},{"n":"Mymind","u":"https://mymind.com","d":"AI second brain tool that visually organises, auto-tags, and reads text within saved images.","t":"Digital & Tech"},{"n":"NARA The Way We Worked","u":"https://www.archives.gov/","d":"National Archives visual documentation of the American labour force across industrial and agricultural contexts.","t":"Photography,Culture & History"},{"n":"NASA SciVis Studio","u":"https://svs.gsfc.nasa.gov/","d":"Translates complex Earth and space science data into visually compelling animations.","t":"Science & Nature,Digital & Tech"},{"n":"National Archives (Still Pictures)","u":"https://www.archives.gov/research/still-pictures","d":"Federal photographic records of military conflicts, government programmes, and domestic American life.","t":"Photography,Culture & History"},{"n":"National Cinema Museum (Turin)","u":"https://www.museocinema.it/","d":"Housed in the Mole Antonelliana — 2.5 million photographs and pre-cinema optical devices.","t":"Film & Motion,Fine Art"},{"n":"NLM History of Medicine","u":"https://www.nlm.nih.gov/hmd/","d":"National Library of Medicine's archive of 70,000 medical images from 15th-century anatomical texts.","t":"Materials & Science,Graphic Design"},{"n":"NYPL Picture Collection","u":"https://digitalcollections.nypl.org/","d":"Established in 1915 — 1.5 million circulating images in 12,000 subject headings for artists and designers.","t":"Photography,Graphic Design"},{"n":"Panos Pictures","u":"https://library.panos.co.uk/","d":"Independent photo agency specialising in long-term documentary projects on global social issues.","t":"Photography,Culture & History"},{"n":"Panos Stories","u":"https://www.panos.co.uk/type/stories/","d":"Deep-dive photographic essays on complex geopolitical and ecological topics.","t":"Photography,Culture & History"},{"n":"Peabody Museum (Postcards)","u":"https://peabody.harvard.edu/","d":"Harvard repository of historical postcards documenting cross-cultural contact and early global tourism.","t":"Fine Art,Photography"},{"n":"Penn State Fashion Archive","u":"https://exhibitions.psu.edu/","d":"Academic collection of 3,000 garments and ephemera for costume construction and material culture studies.","t":"Fashion & Costume,Education"},{"n":"People's Graphic Design Archive","u":"https://peoplesgdarchive.org/","d":"Revolutionary crowdsourced archive preserving an inclusive history of graphic design.","t":"Graphic Design,Culture & History"},{"n":"Public Domain Review","u":"https://publicdomainreview.org/","d":"Online journal and digital Wunderkammer celebrating out-of-copyright works and historically compelling images.","t":"Digital & Tech,Fine Art"},{"n":"Quixel Megascans","u":"https://quixel.com/","d":"Massive library of photogrammetry-based 3D assets and textures for video game and virtual production.","t":"CGI & Textures,Digital & Tech"},{"n":"RIBA British Architecture","u":"https://www.ribapix.com/","d":"Visual archive of the Royal Institute of British Architects — photographs, drawings, and manuscripts.","t":"Architecture & Space,Digital & Tech"},{"n":"Richard Roberts Archive","u":"https://www.richardrobertsarchive.org.uk/","d":"Meticulous preservation of vintage print advertising from the 20th century.","t":"Fashion & Costume,Graphic Design"},{"n":"RISD Digital Commons","u":"https://digitalcommons.risd.edu","d":"Institutional repository of Rhode Island School of Design — thesis projects and faculty research.","t":"Digital & Tech,Fine Art"},{"n":"RIT Graphic Design Archive","u":"https://www.rit.edu/","d":"Preserves work of significant American graphic designers active from the 1920s to the 1960s.","t":"Graphic Design"},{"n":"Royal Botanic Kew","u":"https://www.kew.org/science","d":"Exhaustive scientific data on global plant and fungal life — historical botanical illustration meets DNA data.","t":"Science & Nature,Culture & History"},{"n":"Saul Bass Poster Archive","u":"http://saulbassposterarchive.com/","d":"Original silkscreen movie posters, corporate logos, and process drafts from Saul Bass.","t":"Graphic Design,Film & Motion"},{"n":"Savee","u":"https://savee.com","d":"Ad-free, algorithm-free visual bookmarking platform for designers — distraction-free mood boards.","t":"Digital & Tech,Graphic Design"},{"n":"SCI-Arc Library","u":"https://www.sciarc.edu/","d":"Academic resource from the Southern California Institute of Architecture on contemporary architectural theory.","t":"Architecture & Space,Graphic Design"},{"n":"Servier Medical Art","u":"https://smart.servier.com","d":"Free bank of 3,000+ vector graphics of cellular biology, human anatomy, and biomolecular structures.","t":"Science & Nature,Graphic Design"},{"n":"Shot Cafe","u":"https://shot.cafe/","d":"Movie stills database featuring RGB Parades for each shot — for cinematographers studying colour grading.","t":"Film & Motion,Digital & Tech"},{"n":"ShotDeck","u":"https://shotdeck.com/","d":"Created by cinematographer Lawrence Sher — largest library of HD film images with exhaustive metadata.","t":"Film & Motion,Digital & Tech"},{"n":"Smithsonian Open Access","u":"https://www.si.edu/search/images","d":"Download and reuse millions of Smithsonian images without copyright restriction.","t":"Fine Art,Materials & Science"},{"n":"Southeast Asian Archive","u":"https://seaa.lib.uci.edu/","d":"Documents history and culture of the Southeast Asian diaspora — photographs and records of refugees.","t":"Photography,Culture & History"},{"n":"Staatliche Museen zu Berlin","u":"https://recherche.smb.museum/","d":"Digital catalogue for Berlin's state museums — open-access imagery of vast European and Asian art holdings.","t":"Fine Art,Culture & History"},{"n":"Subculture Archives","u":"https://subculturearchives.com/","d":"15,000 flyers, zines, and oral histories from 1960s mods to 1990s ravers.","t":"Photography,Culture & History"},{"n":"Sundance Institute Archive","u":"https://www.sundance.org/","d":"Preserves the history of independent filmmaking and the evolution of the Sundance Film Festival.","t":"Film & Motion,Culture & History"},{"n":"The Athenaeum","u":"http://www.the-athenaeum.org/","d":"Interactive humanities resource presenting thousands of historical artworks with crowdsourced metadata.","t":"Fine Art,Digital & Tech"},{"n":"The John Bright Collection","u":"https://www.thejohnbrightcollection.co.uk/","d":"Online catalogue of original historical garments belonging to Academy Award-winning costume designer John Bright.","t":"Fashion & Costume,Film & Motion"},{"n":"The National Archives (UK)","u":"https://www.nationalarchives.gov.uk/","d":"Exhaustive British governmental records — historical city plans, structural surveys, and infrastructure documentation.","t":"Architecture & Space,Culture & History"},{"n":"The Ringling","u":"https://emuseum.ringling.org/","d":"Digital collection of the State Art Museum of Florida — European painting and circus history archive.","t":"Fine Art,Culture & History"},{"n":"The Strong National Museum of Play","u":"https://onlinecollection.museumofplay.org/","d":"Cultural archive of play — vintage toys, video games, and recreational artifacts.","t":"Fine Art,Culture & History"},{"n":"TM Research Archive","u":"http://www.tm-research-archive.ch/","d":"Typographische Monatsblätter issues 1960–1990 — Swiss typography and modernist grid systems.","t":"Graphic Design"},{"n":"Typographica","u":"https://typographica.org","d":"Reviews of typefaces and typographic design — essential critical journal for type designers.","t":"Graphic Design"},{"n":"UbuWeb","u":"https://www.ubu.com","d":"Independent educational resource for avant-garde material — experimental film, concrete poetry, sound art.","t":"Digital & Tech,Fine Art"},{"n":"UNT Texas Fashion","u":"https://fashioncollection.unt.edu/","d":"World-class repository of 20,000 garments spanning 250 years — haute couture for design education.","t":"Fashion & Costume,Fine Art"},{"n":"US Modernist","u":"https://www.usmodernist.org","d":"America's largest open digital archive dedicated to residential modernist architecture.","t":"Architecture & Space,Culture & History"},{"n":"V&A Fashion","u":"https://www.vam.ac.uk/collections/fashion","d":"Largest comprehensive collection of dress in the world — five centuries including 17th-century gowns.","t":"Fashion & Costume,Fine Art"},{"n":"V&A Poster Collection","u":"https://www.vam.ac.uk/","d":"26,000 posters from the Victoria & Albert Museum — from 19th-century cabaret to modern political activism.","t":"Graphic Design,Fine Art"},{"n":"Van Alen Institute","u":"https://www.vanalen.org/","d":"Archive documenting inclusive urban planning and community-led infrastructure design.","t":"Architecture & Space,Culture & History"},{"n":"Vogue Archive","u":"https://archive.vogue.com/","d":"Fully searchable database of American Vogue from 1892 to the present.","t":"Fashion & Costume,Digital & Tech"},{"n":"Web Gallery of Art","u":"https://www.wga.hu/","d":"Virtual museum and searchable database of European fine arts from the 3rd to 19th centuries.","t":"Fine Art,Digital & Tech"},{"n":"Wellcome Collection","u":"https://wellcomecollection.org/","d":"Archive exploring medicine, life, and art — historical sociology of human health.","t":"Science & Nature,Fine Art"},{"n":"Yale Daily News Archive","u":"https://library.yale.edu/","d":"Historical collegiate journalism — student perspectives on major 20th-century events.","t":"Digital & Tech,Culture & History"},{"n":"Youth & Popular Culture","u":"https://digital.library.wisc.edu/","d":"Specialised digital archive of teen magazines from 1940 to 2020 — evolution of youth activism.","t":"Digital & Tech,Culture & History"}];
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function domain(url) {
+  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function vsRenderResults(items) {
-  if (!items.length) { vsSetState('empty'); return; }
-  vsSetState('results');
-  vsGrid.innerHTML = items.map(item => {
-    const color = INST_COLORS[item.institution] || '#1F2937';
-    const title = item.title.length > 60 ? item.title.slice(0, 60) + '…' : item.title;
-    const sub   = [item.date, item.institution].filter(Boolean).join(' · ');
-    return `
-      <a href="${item.source_url}" target="_blank" rel="noopener noreferrer"
-         class="group relative rounded-sm overflow-hidden border border-white/[0.06]
-                hover:border-primary/30 transition-all duration-200 cursor-pointer block">
-        <div class="relative bg-white/[0.03] overflow-hidden" style="aspect-ratio:4/3">
-          <img src="${item.image_url}" alt="${title.replace(/"/g,'')}"
-               loading="lazy"
-               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-               onerror="this.closest('a').remove()">
-        </div>
-        <div class="p-2.5">
-          <p class="font-syne text-xs text-white/80 leading-snug line-clamp-2 mb-1.5">${title}</p>
-          <span class="inline-block text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] font-medium"
-                style="background:${color};color:rgba(255,255,255,0.75)">
-            ${item.institution}
-          </span>
-        </div>
-      </a>`;
-  }).join('');
+// ── NAVIGATION ───────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  state.view = name;
+  // Mobile nav
+  const mobNav = document.getElementById('mob-nav');
+  mobNav.classList.toggle('dark', name === 'discover');
+  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+  const tabMap = { home:'mtab-home', results:'mtab-search', discover:'mtab-discover', archives:'mtab-archives' };
+  const tabEl = document.getElementById(tabMap[name]);
+  if (tabEl) tabEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function goHome() { showView('home'); }
+function showArchives() { renderArchives(); showView('archives'); }
+function focusSearch() {
+  showView('home');
+  setTimeout(() => document.getElementById('home-input').focus(), 100);
 }
 
-async function vsSearch() {
-  const q = vsInput.value.trim();
+// ── CHIP SELECTION ───────────────────────────────────────────────
+document.querySelectorAll('.chip[data-type]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip[data-type]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.typeFilter = chip.dataset.type;
+  });
+});
+
+// ── SEARCH ───────────────────────────────────────────────────────
+function triggerSearch(from = 'home') {
+  const input = from === 'results'
+    ? document.getElementById('res-input')
+    : document.getElementById('home-input');
+  const q = input.value.trim();
   if (!q) return;
+  state.query = q;
+  runSearch(q);
+}
 
-  vsClear.classList.remove('hidden');
-  vsSetState('loading');
+async function runSearch(q) {
+  showView('results');
+  document.getElementById('res-input').value = q;
+  document.getElementById('res-count').textContent = 'Searching…';
+  document.getElementById('results-grid').innerHTML = skeletonGrid(12);
+  document.getElementById('res-empty').style.display = 'none';
+  document.getElementById('archives-cta').style.display = 'none';
+
+  // Build type modifier
+  const typeQ = state.typeFilter !== 'any' ? `${q} ${state.typeFilter}` : q;
 
   try {
-    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(q)}`, {
-      headers: { 'x-api-secret': VS_SECRET },
+    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(typeQ)}`, {
+      headers: { 'x-api-secret': VS_SECRET }
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error('API error');
     const items = await res.json();
-    vsRenderResults(items);
-  } catch {
-    vsSetState('error');
+    state.allResults = items;
+    renderResults(items);
+  } catch(e) {
+    document.getElementById('res-count').textContent = 'Error loading results.';
+    document.getElementById('results-grid').innerHTML = '';
   }
 }
 
-vsBtn.addEventListener('click', vsSearch);
-vsInput.addEventListener('keydown', e => { if (e.key === 'Enter') vsSearch(); });
-vsClear.addEventListener('click', () => {
-  vsInput.value = '';
-  vsClear.classList.add('hidden');
-  vsGrid.innerHTML = '';
-  vsSetState('');
+function skeletonGrid(n) {
+  return Array(n).fill(0).map(() => `
+    <div class="img-card skel-card">
+      <div class="img-card-wrap"></div>
+      <div class="img-card-title skeleton" style="height:10px;width:70%;margin-bottom:4px"></div>
+      <div class="img-card-title skeleton" style="height:9px;width:40%"></div>
+    </div>`).join('');
+}
+
+function renderResults(items) {
+  // Count per source
+  const counts = {};
+  items.forEach(item => {
+    const key = Object.entries(SRC_KEY_MAP).find(([,v]) => v === item.institution)?.[0];
+    if (key) counts[key] = (counts[key] || 0) + 1;
+  });
+  Object.keys(SRC_KEY_MAP).forEach(key => {
+    const el = document.getElementById('cnt-' + key);
+    if (el) el.textContent = counts[key] ? counts[key] : '';
+  });
+
+  // Filter by checked sources
+  const checked = [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
+  const checkedNames = checked.map(k => SRC_KEY_MAP[k]);
+  const filtered = items.filter(item => checkedNames.includes(item.institution));
+
+  const grid = document.getElementById('results-grid');
+  const empty = document.getElementById('res-empty');
+  const cta   = document.getElementById('archives-cta');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    cta.style.display = 'flex';
+    document.getElementById('res-count').textContent = '0 results';
+    return;
+  }
+
+  document.getElementById('res-count').textContent =
+    `${filtered.length} result${filtered.length !== 1 ? 's' : ''} · ${state.query}`;
+  empty.style.display = 'none';
+  cta.style.display = filtered.length < 10 ? 'flex' : 'none';
+
+  grid.innerHTML = filtered.map((item, i) => {
+    const color = SRC_COLOR[item.institution] || '#888';
+    return `<div class="img-card" onclick="openModal(${i})">
+      <div class="img-card-wrap">
+        <img src="${escHtml(item.image_url)}" alt="${escHtml(item.title)}" loading="lazy"
+             onerror="this.closest('.img-card').style.display='none'"/>
+      </div>
+      <div class="img-card-title">${escHtml(item.title)}</div>
+      <div class="img-card-src">
+        <div class="src-dot" style="background:${color}"></div>
+        ${escHtml(item.institution)}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Store filtered for modal index
+  state.displayedResults = filtered;
+}
+
+// ── SOURCE FILTER CHECKBOXES ─────────────────────────────────────
+function handleSourceAll(cb) {
+  document.querySelectorAll('.src-cb').forEach(c => c.checked = cb.checked);
+  renderResults(state.allResults);
+}
+function handleSourceCb() {
+  const all = [...document.querySelectorAll('.src-cb')].every(c => c.checked);
+  document.getElementById('src-all').checked = all;
+  renderResults(state.allResults);
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openModal(idx) {
+  const item = state.displayedResults?.[idx] || state.allResults?.[idx];
+  if (!item) return;
+  state.activeItem = item;
+  document.getElementById('modal-img').src = item.image_url;
+  document.getElementById('modal-img').alt = item.title;
+  document.getElementById('modal-source').textContent = item.institution;
+  document.getElementById('modal-title').textContent = item.title;
+  document.getElementById('modal-link').href = item.source_url;
+  const meta = document.getElementById('modal-meta');
+  meta.innerHTML = '';
+  if (item.date) {
+    meta.innerHTML += `<div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${escHtml(item.date)}</span></div>`;
+  }
+  meta.innerHTML += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function openModalFromDiscover() {
+  const item = state.discoverBatch[state.discoverIdx];
+  if (!item) return;
+  state.activeItem = item;
+  document.getElementById('modal-img').src = item.image_url;
+  document.getElementById('modal-img').alt = item.title;
+  document.getElementById('modal-source').textContent = item.institution;
+  document.getElementById('modal-title').textContent = item.title;
+  document.getElementById('modal-link').href = item.source_url;
+  const meta = document.getElementById('modal-meta');
+  meta.innerHTML = '';
+  if (item.date) {
+    meta.innerHTML += `<div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${escHtml(item.date)}</span></div>`;
+  }
+  meta.innerHTML += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('modal').classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('modal').classList.remove('open');
 });
+
+// ── DISCOVER MODE ─────────────────────────────────────────────────
+async function startDiscover() {
+  showView('discover');
+  document.getElementById('disc-loading').style.display = 'flex';
+  document.getElementById('disc-main').style.display = 'none';
+
+  try {
+    const res = await fetch(`${VS_API}/api/search?discover=1`, {
+      headers: { 'x-api-secret': VS_SECRET }
+    });
+    const items = await res.json();
+    state.discoverBatch = items.filter(i => i.image_url);
+    state.discoverIdx = 0;
+    document.getElementById('disc-loading').style.display = 'none';
+    document.getElementById('disc-main').style.display = 'flex';
+    renderDiscoverCard();
+  } catch {
+    document.getElementById('disc-loading').innerHTML = '<p>Error loading images. Try again.</p>';
+  }
+}
+
+function renderDiscoverCard() {
+  const batch = state.discoverBatch;
+  if (!batch.length) return;
+  const idx = state.discoverIdx % batch.length;
+  const item = batch[idx];
+
+  document.getElementById('disc-img').src = item.image_url;
+  document.getElementById('disc-img').alt = item.title;
+  document.getElementById('disc-title').textContent = item.title;
+  document.getElementById('disc-meta').textContent =
+    [item.date, item.institution].filter(Boolean).join(' · ');
+  document.getElementById('disc-source-label').textContent = item.institution;
+
+  // Progress dots (show up to 7)
+  const total = Math.min(batch.length, 7);
+  const dots = document.getElementById('disc-progress');
+  dots.innerHTML = Array(total).fill(0).map((_, i) =>
+    `<div class="disc-dot ${i === idx % total ? 'on' : ''}"></div>`
+  ).join('');
+
+  // Touch/swipe support
+  setupSwipe();
+}
+
+function discoverNext() {
+  state.discoverIdx++;
+  if (state.discoverIdx >= state.discoverBatch.length) {
+    // Reload a new batch
+    startDiscover();
+    return;
+  }
+  renderDiscoverCard();
+}
+
+// Swipe support for discover mode
+let touchStartX = 0;
+function setupSwipe() {
+  const card = document.getElementById('disc-card');
+  card.ontouchstart = e => { touchStartX = e.touches[0].clientX; };
+  card.ontouchend = e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) discoverNext();
+  };
+}
+
+// ── ARCHIVES ──────────────────────────────────────────────────────
+let archActiveFilter = 'All';
+
+function renderArchives() {
+  // Build tag list
+  const tagSet = new Set(['All']);
+  ARCHIVES.forEach(a => a.t.split(',').forEach(t => tagSet.add(t.trim())));
+  const tags = ['All', ...Array.from(tagSet).filter(t => t !== 'All').sort()];
+
+  // Filter row
+  const filterRow = document.getElementById('arch-filter-row');
+  filterRow.innerHTML = tags.map(t =>
+    `<button class="arch-filter ${t === archActiveFilter ? 'active' : ''}"
+             onclick="setArchFilter('${t.replace(/'/g,"\\'")}')">
+       ${escHtml(t)}
+     </button>`
+  ).join('');
+
+  // Content grouped by tag
+  renderArchContent();
+}
+
+function setArchFilter(tag) {
+  archActiveFilter = tag;
+  renderArchives();
+}
+
+function renderArchContent() {
+  const content = document.getElementById('arch-content');
+  const filtered = archActiveFilter === 'All'
+    ? ARCHIVES
+    : ARCHIVES.filter(a => a.t.split(',').map(t => t.trim()).includes(archActiveFilter));
+
+  // Group by primary tag
+  const groups = {};
+  filtered.forEach(a => {
+    const primaryTag = archActiveFilter === 'All'
+      ? a.t.split(',')[0].trim()
+      : archActiveFilter;
+    if (!groups[primaryTag]) groups[primaryTag] = [];
+    groups[primaryTag].push(a);
+  });
+
+  content.innerHTML = Object.entries(groups).sort(([a],[b]) => a.localeCompare(b)).map(([tag, items]) => `
+    <div class="arch-cat">
+      <div class="arch-cat-title">${escHtml(tag)}</div>
+      <div class="arch-list">
+        ${items.map(a => `
+          <a class="arch-item" href="${escHtml(a.u)}" target="_blank" rel="noopener">
+            <div class="arch-item-name">${escHtml(a.n)}</div>
+            <div class="arch-item-desc">${escHtml(a.d)}</div>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+showView('home');
 </script>
 </body>
 </html>
