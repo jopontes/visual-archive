@@ -136,29 +136,30 @@
     .state-msg p { font-size: 15px; color: var(--ink-2); }
 
     /* ── DISCOVER VIEW ──────────────────────────────── */
-    #view-discover { background: var(--ink); height: 100vh; min-height: unset; display: none; flex-direction: column; overflow: hidden; }
+    /* Desktop: dark bg fills viewport, content centered as compact card */
+    #view-discover { background: var(--ink); min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
     #view-discover.active { display: flex; }
-    .disc-header { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    .disc-header { width: 100%; max-width: 640px; padding: 0 0 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
     .disc-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); cursor: pointer; }
     .disc-source { font-family: var(--font-ui); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.35); }
-    .disc-card-area { flex: 1; padding: 0 20px 16px; display: flex; flex-direction: column; min-height: 0; }
-    .disc-card { background: #111; border-radius: 4px; overflow: hidden; flex: 1; min-height: 0; display: flex; flex-direction: column; }
-    .disc-card-img-wrap { flex: 1; min-height: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #111; }
-    .disc-card img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
-    .disc-card-info { padding: 14px 18px; flex-shrink: 0; background: var(--paper-dark); }
+    .disc-card-area { width: 100%; max-width: 640px; padding: 0; flex-shrink: 0; }
+    .disc-card { background: #111; border-radius: 4px; overflow: hidden; }
+    .disc-card-img-wrap { overflow: hidden; display: flex; align-items: center; justify-content: center; background: #111; }
+    .disc-card img { max-width: 100%; max-height: 520px; width: auto; height: auto; object-fit: contain; display: block; }
+    .disc-card-info { padding: 14px 18px; background: var(--paper-dark); }
     .disc-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 400; line-height: 1.3; color: var(--ink); margin-bottom: 5px; }
     .disc-card-meta { font-family: var(--font-ui); font-size: 12px; color: var(--ink-2); }
-    .disc-actions { display: flex; gap: 10px; padding: 0 20px 20px; flex-shrink: 0; }
+    .disc-actions { width: 100%; max-width: 640px; display: flex; gap: 10px; padding: 16px 0 0; flex-shrink: 0; }
     .disc-btn { flex: 1; padding: 12px; text-align: center; border-radius: 2px; font-family: var(--font-ui); font-size: 13px; }
     .disc-btn-skip { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; }
     .disc-btn-skip:hover { background: rgba(255,255,255,.14); }
     .disc-btn-info { background: rgba(255,255,255,.15); color: white; border: none; }
     .disc-btn-info:hover { background: rgba(255,255,255,.22); }
-    .disc-progress { display: flex; gap: 4px; justify-content: center; padding: 0 20px 12px; flex-shrink: 0; }
+    .disc-progress { width: 100%; max-width: 640px; display: flex; gap: 4px; justify-content: center; padding: 14px 0 0; flex-shrink: 0; }
     .disc-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.2); }
     .disc-dot.on { background: rgba(255,255,255,.6); width: 14px; border-radius: 2px; }
-    .disc-hint { text-align: center; padding: 0 20px 16px; font-family: var(--font-ui); font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
-    .disc-loading { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .disc-hint { width: 100%; max-width: 640px; text-align: center; padding: 10px 0 0; font-family: var(--font-ui); font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+    .disc-loading { min-height: 300px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 640px; }
     .disc-loading p { font-size: 14px; color: rgba(255,255,255,.3); letter-spacing: .04em; }
 
     /* ── ARCHIVES VIEW ──────────────────────────────── */
@@ -259,7 +260,17 @@
       #view-home { padding-bottom: 60px; }
       #view-results { padding-bottom: 60px; }
       #view-archives { padding-bottom: 60px; }
-      #view-discover { padding-bottom: 60px; }
+      /* Discover: full-screen on mobile */
+      #view-discover { height: 100vh; min-height: unset; overflow: hidden; padding: 0; align-items: stretch; justify-content: flex-start; padding-bottom: 60px; }
+      .disc-header { max-width: none; width: auto; padding: 16px 24px 0; }
+      .disc-card-area { flex: 1; max-width: none; padding: 16px 20px 0; display: flex; flex-direction: column; min-height: 0; }
+      .disc-card { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+      .disc-card-img-wrap { flex: 1; min-height: 0; }
+      .disc-card img { max-height: 100%; }
+      .disc-actions { max-width: none; padding: 12px 20px 0; }
+      .disc-progress { max-width: none; padding: 10px 20px 0; }
+      .disc-hint { max-width: none; padding: 8px 20px 0; }
+      .disc-loading { max-width: none; min-height: unset; }
     }
     @media (min-width: 769px) {
       #mob-nav { display: none !important; }
