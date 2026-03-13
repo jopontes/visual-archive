@@ -132,7 +132,7 @@ async function searchSmithsonian(term) {
   if (!key) return [];
   try {
     const res = await fetch(
-      `https://api.si.edu/openaccess/api/v1.0/search?q=${term}&api_key=${key}&rows=12`
+      `https://api.si.edu/openaccess/api/v1.0/search?q=${term}&api_key=${key}&rows=12&has_media=true&online_media_type=Images`
     );
     const data = await res.json();
     const rows = data.response?.rows;
