@@ -175,6 +175,67 @@
 </header>
 
 
+<!-- ── VISUAL SEARCH ──────────────────────────────────────────── -->
+<section class="max-w-screen-2xl mx-auto px-6 pt-10 pb-2">
+
+  <!-- Section header -->
+  <div class="flex items-center gap-3 mb-5">
+    <span class="material-symbols-outlined text-primary/60" style="font-variation-settings:'wght' 200;font-size:20px">image_search</span>
+    <h2 class="font-syne text-sm uppercase tracking-widest text-white/40">Buscar em acervos institucionais</h2>
+  </div>
+
+  <!-- Search bar -->
+  <div class="flex gap-2 mb-6 max-w-xl">
+    <div class="flex-1 flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-sm px-3 py-2
+                focus-within:border-primary/30 transition-colors">
+      <span class="material-symbols-outlined text-white/30 shrink-0" style="font-variation-settings:'wght' 200;font-size:18px">search</span>
+      <input id="vs-input" type="text" autocomplete="off" placeholder="portrait, landscape, architecture…"
+             class="flex-1 bg-transparent border-none text-white text-sm font-syne focus:ring-0 outline-none
+                    placeholder:text-white/25"/>
+      <button id="vs-clear" class="material-symbols-outlined text-white/25 hover:text-white/60 transition-colors hidden cursor-pointer"
+              style="font-variation-settings:'wght' 200;font-size:15px">close</button>
+    </div>
+    <button id="vs-btn"
+            class="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40
+                   text-primary font-syne text-xs uppercase tracking-widest rounded-sm transition-all cursor-pointer shrink-0">
+      Search
+    </button>
+  </div>
+
+  <!-- Results grid -->
+  <div id="vs-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 mb-10"></div>
+
+  <!-- States -->
+  <div id="vs-skeleton" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 mb-10">
+    <!-- 10 skeleton cards -->
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden sm:block"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden md:block"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden md:block"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden xl:block"></div>
+    <div class="rounded-sm bg-white/[0.04] animate-pulse h-52 hidden xl:block"></div>
+  </div>
+
+  <div id="vs-empty" class="hidden text-center py-16">
+    <span class="material-symbols-outlined text-4xl text-white/10 mb-3 block" style="font-variation-settings:'wght' 200">image_not_supported</span>
+    <p class="font-syne text-white/30 text-sm">Nenhum resultado encontrado</p>
+    <p class="text-white/15 text-xs mt-1">Tente outro termo em inglês — ex: portrait, textile, map</p>
+  </div>
+
+  <div id="vs-error" class="hidden text-center py-16">
+    <span class="material-symbols-outlined text-4xl text-white/10 mb-3 block" style="font-variation-settings:'wght' 200">cloud_off</span>
+    <p class="font-syne text-white/30 text-sm">Servidor indisponível</p>
+    <p class="text-white/15 text-xs mt-1">Verifique se o backend está rodando</p>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-white/[0.05] mb-8"></div>
+</section>
+
 <!-- ── MAIN CONTENT ──────────────────────────────────────────── -->
 <main class="max-w-screen-2xl mx-auto px-6 py-8">
   <div id="refs-container"></div>
@@ -555,6 +616,86 @@ document.addEventListener('keydown', e=>{
 const savedView = localStorage.getItem('va-view');
 if(savedView === 'list' || savedView === 'grid') view = savedView;
 renderRefs();
+
+// ─── VISUAL SEARCH ───────────────────────────────────────────
+const VS_API = 'https://visual-archive-jopontes.vercel.app';  // updated after deploy
+
+const vsInput   = document.getElementById('vs-input');
+const vsBtn     = document.getElementById('vs-btn');
+const vsClear   = document.getElementById('vs-clear');
+const vsGrid    = document.getElementById('vs-grid');
+const vsSkel    = document.getElementById('vs-skeleton');
+const vsEmpty   = document.getElementById('vs-empty');
+const vsError   = document.getElementById('vs-error');
+
+const INST_COLORS = {
+  'Met Museum':              '#7F1D1D',
+  'Art Institute Chicago':   '#7C2D12',
+  'Rijksmuseum':             '#1E3A5F',
+  'Smithsonian':             '#064E3B',
+  'Europeana':               '#3B0764',
+};
+
+function vsSetState(state) {
+  vsGrid.classList.toggle('hidden', state !== 'results');
+  vsSkel.classList.toggle('hidden', state !== 'loading');
+  vsEmpty.classList.toggle('hidden', state !== 'empty');
+  vsError.classList.toggle('hidden', state !== 'error');
+}
+
+function vsRenderResults(items) {
+  if (!items.length) { vsSetState('empty'); return; }
+  vsSetState('results');
+  vsGrid.innerHTML = items.map(item => {
+    const color = INST_COLORS[item.institution] || '#1F2937';
+    const title = item.title.length > 60 ? item.title.slice(0, 60) + '…' : item.title;
+    const sub   = [item.date, item.institution].filter(Boolean).join(' · ');
+    return `
+      <a href="${item.source_url}" target="_blank" rel="noopener noreferrer"
+         class="group relative rounded-sm overflow-hidden border border-white/[0.06]
+                hover:border-primary/30 transition-all duration-200 cursor-pointer block">
+        <div class="relative bg-white/[0.03] overflow-hidden" style="aspect-ratio:4/3">
+          <img src="${item.image_url}" alt="${title.replace(/"/g,'')}"
+               loading="lazy"
+               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+               onerror="this.closest('a').remove()">
+        </div>
+        <div class="p-2.5">
+          <p class="font-syne text-xs text-white/80 leading-snug line-clamp-2 mb-1.5">${title}</p>
+          <span class="inline-block text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] font-medium"
+                style="background:${color};color:rgba(255,255,255,0.75)">
+            ${item.institution}
+          </span>
+        </div>
+      </a>`;
+  }).join('');
+}
+
+async function vsSearch() {
+  const q = vsInput.value.trim();
+  if (!q) return;
+
+  vsClear.classList.remove('hidden');
+  vsSetState('loading');
+
+  try {
+    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const items = await res.json();
+    vsRenderResults(items);
+  } catch {
+    vsSetState('error');
+  }
+}
+
+vsBtn.addEventListener('click', vsSearch);
+vsInput.addEventListener('keydown', e => { if (e.key === 'Enter') vsSearch(); });
+vsClear.addEventListener('click', () => {
+  vsInput.value = '';
+  vsClear.classList.add('hidden');
+  vsGrid.innerHTML = '';
+  vsSetState('');
+});
 </script>
 </body>
 </html>
