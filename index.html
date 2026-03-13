@@ -136,7 +136,7 @@
     .state-msg p { font-size: 15px; color: var(--ink-2); }
 
     /* ── DISCOVER VIEW ──────────────────────────────── */
-    #view-discover { background: var(--ink); min-height: 100vh; display: none; flex-direction: column; }
+    #view-discover { background: var(--ink); height: 100vh; min-height: unset; display: none; flex-direction: column; overflow: hidden; }
     #view-discover.active { display: flex; }
     .disc-header { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
     .disc-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); cursor: pointer; }
@@ -145,7 +145,7 @@
     .disc-card { background: #111; border-radius: 4px; overflow: hidden; flex: 1; min-height: 0; display: flex; flex-direction: column; }
     .disc-card-img-wrap { flex: 1; min-height: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #111; }
     .disc-card img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
-    .disc-card-info { padding: 14px 18px; flex-shrink: 0; }
+    .disc-card-info { padding: 14px 18px; flex-shrink: 0; background: var(--paper-dark); }
     .disc-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 400; line-height: 1.3; color: var(--ink); margin-bottom: 5px; }
     .disc-card-meta { font-family: var(--font-ui); font-size: 12px; color: var(--ink-2); }
     .disc-actions { display: flex; gap: 10px; padding: 0 20px 20px; flex-shrink: 0; }
