@@ -343,6 +343,23 @@ const REFS = RAW.map(([name,url,desc,tags],i)=>({
   tags: tags ? tags.split(',').map(t=>t.trim()) : []
 }));
 
+// ─── CATEGORY COLORS ─────────────────────────────────────────
+const TAG_COLORS = {
+  'Fine Art':             { bg: '#3B0764', border: '#7C3AED', text: '#DDD6FE' },
+  'Film & Motion':        { bg: '#7F1D1D', border: '#DC2626', text: '#FECACA' },
+  'Graphic Design':       { bg: '#7C2D12', border: '#EA580C', text: '#FED7AA' },
+  'Photography':          { bg: '#1E3A5F', border: '#3B82F6', text: '#BFDBFE' },
+  'Architecture & Space': { bg: '#1C1C22', border: '#6B7280', text: '#D1D5DB' },
+  'Fashion & Costume':    { bg: '#500724', border: '#E11D48', text: '#FBCFE8' },
+  'Culture & History':    { bg: '#451A03', border: '#92400E', text: '#FDE68A' },
+  'Digital & Tech':       { bg: '#052E16', border: '#16A34A', text: '#BBF7D0' },
+  'Science & Nature':     { bg: '#082F49', border: '#0EA5E9', text: '#BAE6FD' },
+  'Materials & Science':  { bg: '#042F2E', border: '#0D9488', text: '#99F6E4' },
+  'CGI & Textures':       { bg: '#1E1B4B', border: '#6366F1', text: '#C7D2FE' },
+  'Business & Law':       { bg: '#0F172A', border: '#475569', text: '#CBD5E1' },
+  'Education':            { bg: '#052E16', border: '#15803D', text: '#86EFAC' },
+};
+
 // ─── TAGS ────────────────────────────────────────────────────
 const tagSet = new Set();
 REFS.forEach(r=>r.tags.forEach(t=>tagSet.add(t)));
@@ -411,8 +428,13 @@ function detailHTML(r){
         <p class="text-xs text-white/55 leading-relaxed mb-4">${r.desc}</p>
         <div class="flex items-center justify-between flex-wrap gap-3">
           <div class="flex flex-wrap gap-1.5">
-            ${r.tags.map(t=>`<span class="tag-chip ${activeTag===t?'active':''}"
-              onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`).join('')}
+            ${r.tags.map(t=>{
+              const c = TAG_COLORS[t] || { bg: '#1F2937', border: '#4B5563', text: '#9CA3AF' };
+              const isActive = activeTag === t;
+              return `<span class="tag-chip ${isActive?'active':''}"
+                style="background:${c.bg};border-color:${isActive?'rgba(167,139,250,0.8)':c.border};color:${c.text};font-weight:500"
+                onclick="event.stopPropagation();window.setTagFilter('${t}')">${t}</span>`;
+            }).join('')}
           </div>
           <a href="${r.url}" target="_blank" rel="noopener noreferrer"
              class="inline-flex items-center gap-1.5 text-primary hover:text-white text-xs font-syne
@@ -430,28 +452,42 @@ function detailHTML(r){
 
 // ─── RENDER: GRID ─────────────────────────────────────────────
 function renderGrid(){
-  container.className = 'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 fade-up';
-  container.innerHTML = visibleRefs.map(r=>`
+  container.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 fade-up';
+  container.innerHTML = visibleRefs.map(r=>{
+    const dom = domain(r.url);
+    const faviconUrl = `https://www.google.com/s2/favicons?domain=${dom}&sz=64`;
+    return `
     <div class="archive-card expanded p-4" data-ref-id="${r.id}">
+      <img src="${faviconUrl}" width="28" height="28"
+           style="border-radius:4px;margin-bottom:8px;display:block"
+           onerror="this.style.display='none'" alt="" loading="lazy">
       <h2 class="font-syne text-base font-semibold text-white/90 leading-snug tracking-tight mb-1">${r.name}</h2>
       ${detailHTML(r)}
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ─── RENDER: LIST ─────────────────────────────────────────────
 function renderList(){
   container.className = 'flex flex-col fade-up max-w-3xl mx-auto border border-white/[0.05] rounded-sm overflow-hidden';
-  container.innerHTML = visibleRefs.map(r=>`
+  container.innerHTML = visibleRefs.map(r=>{
+    const dom = domain(r.url);
+    const faviconUrl = `https://www.google.com/s2/favicons?domain=${dom}&sz=32`;
+    return `
     <div class="list-row expanded px-5 py-3" data-ref-id="${r.id}">
-      <div class="flex items-center gap-4 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <img src="${faviconUrl}" width="16" height="16"
+             style="border-radius:2px;flex-shrink:0"
+             onerror="this.style.display='none'" alt="" loading="lazy">
         <h2 class="font-syne text-sm font-semibold text-white/90 tracking-tight w-64 shrink-0 truncate">${r.name}</h2>
         <div class="flex-1"></div>
-        <span class="text-[11px] text-white/30 font-display truncate shrink-0 hidden lg:block">${domain(r.url)}</span>
+        <span class="text-[11px] text-white/30 font-display truncate shrink-0 hidden lg:block">${dom}</span>
       </div>
       ${detailHTML(r)}
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ─── RENDER: FILTER ROW ──────────────────────────────────────
