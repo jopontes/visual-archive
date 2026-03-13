@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Visual Archive</title>
-  <meta name="description" content="Search 5 major museum archives simultaneously — art, photography, design, objects."/>
+  <meta name="description" content="Search 10 major museum and institutional archives simultaneously — art, photography, science, design, objects."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
@@ -25,6 +25,7 @@
     body { font-family: var(--font-ui); background: var(--warm-white); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
     button { font-family: var(--font-ui); cursor: pointer; }
     input  { font-family: var(--font-ui); }
+    a { color: inherit; }
 
     /* ── VIEWS ─────────────────────────────────────── */
     .view { display: none; min-height: 100vh; }
@@ -37,87 +38,89 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 40px; height: 52px;
     }
-    #nav-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); cursor: pointer; }
+    #nav-logo { font-family: var(--font-display); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); cursor: pointer; }
     #nav-links { display: flex; gap: 28px; }
-    #nav-links span { font-size: 11px; color: var(--ink-3); cursor: pointer; transition: color .2s ease; }
+    #nav-links span { font-size: 13px; color: var(--ink-3); cursor: pointer; transition: color .2s ease; }
     #nav-links span:hover { color: var(--ink); }
 
     /* ── HOME VIEW ──────────────────────────────────── */
     #view-home { padding-top: 52px; }
-    .home-inner { max-width: 640px; margin: 0 auto; padding: 100px 40px 60px; }
-    .home-eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; }
+    .home-inner { max-width: 900px; margin: 0 auto; padding: 80px 40px 60px; }
+    .home-eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; }
     .home-title { font-family: var(--font-display); font-size: clamp(44px, 6vw, 80px); font-weight: 300; line-height: 1.05; letter-spacing: -.01em; margin-bottom: 20px; }
     .home-title em { font-style: italic; }
-    .home-sub { font-size: 13px; color: var(--ink-2); line-height: 1.75; margin-bottom: 40px; max-width: 420px; }
+    .home-sub { font-size: 15px; color: var(--ink-2); line-height: 1.75; margin-bottom: 40px; max-width: 560px; }
     .home-search-row { display: flex; border: 1.5px solid var(--ink); border-radius: 2px; margin-bottom: 14px; background: var(--warm-white); }
-    .home-search-row input { flex: 1; border: none; outline: none; padding: 13px 18px; font-size: 14px; color: var(--ink); background: transparent; }
+    .home-search-row input { flex: 1; border: none; outline: none; padding: 14px 20px; font-size: 15px; color: var(--ink); background: transparent; }
     .home-search-row input::placeholder { color: var(--ink-3); }
-    .home-search-btn { background: var(--ink); color: white; border: none; padding: 0 24px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; border-radius: 0; }
+    .home-search-btn { background: var(--ink); color: white; border: none; padding: 0 28px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; border-radius: 0; }
     .home-chips { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 28px; }
-    .chips-label { font-size: 10px; color: var(--ink-3); letter-spacing: .04em; }
-    .chip { border: 1px solid var(--rule); padding: 5px 11px; font-size: 11px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); font-family: var(--font-ui); }
+    .chips-label { font-size: 12px; color: var(--ink-3); letter-spacing: .04em; }
+    .chip { border: 1px solid var(--rule); padding: 6px 13px; font-size: 12px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); font-family: var(--font-ui); }
     .chip:hover { border-color: var(--ink-3); color: var(--ink); }
     .chip.active { border-color: var(--ink); color: var(--ink); background: var(--paper); }
     .home-divider { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
     .home-divider hr { flex: 1; border: none; border-top: 1px solid var(--rule); }
-    .home-divider span { font-size: 10px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+    .home-divider span { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
     /* Desktop: dashed discover button */
     .home-discover-btn {
       display: flex; align-items: center; gap: 14px;
-      padding: 15px 20px; border: 1.5px dashed var(--rule); border-radius: 2px;
+      padding: 16px 22px; border: 1.5px dashed var(--rule); border-radius: 2px;
       cursor: pointer; background: var(--paper);
     }
     .home-discover-btn:hover { border-color: var(--ink-3); }
     .home-discover-icon { font-size: 20px; line-height: 1; }
-    .home-discover-text strong { font-size: 13px; color: var(--ink); font-weight: 500; display: block; margin-bottom: 2px; }
-    .home-discover-text small { font-size: 11px; color: var(--ink-3); }
+    .home-discover-text strong { font-size: 14px; color: var(--ink); font-weight: 500; display: block; margin-bottom: 3px; }
+    .home-discover-text small { font-size: 12px; color: var(--ink-3); }
     .home-discover-arrow { margin-left: auto; color: var(--ink-3); font-size: 16px; }
     /* Mobile: solid dark discover button */
     .mobile-discover-btn {
       display: none; align-items: center; gap: 12px;
-      padding: 12px 14px; background: var(--ink); color: white;
+      padding: 13px 16px; background: var(--ink); color: white;
       border-radius: 2px; cursor: pointer; border: none; width: 100%;
     }
-    .mobile-discover-btn strong { font-size: 13px; font-weight: 500; display: block; margin-bottom: 1px; }
-    .mobile-discover-btn small { font-size: 9px; color: rgba(255,255,255,.5); }
+    .mobile-discover-btn strong { font-size: 14px; font-weight: 500; display: block; margin-bottom: 1px; }
+    .mobile-discover-btn small { font-size: 11px; color: rgba(255,255,255,.5); }
     .mobile-discover-btn .mdb-arrow { margin-left: auto; opacity: .6; }
     /* Sources strip — full width below home-inner */
     .home-sources-wrap { border-top: 1px solid var(--rule); margin-top: 0; }
-    .home-sources { display: flex; }
-    .home-source { flex: 1; padding: 16px 20px; border-right: 1px solid var(--rule); transition: background .15s ease; cursor: pointer; }
+    .home-sources { display: flex; flex-wrap: wrap; }
+    .home-source { flex: 1; min-width: 120px; padding: 14px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); transition: background .15s ease; cursor: pointer; }
     .home-source:hover { background: var(--paper); }
     .home-source:last-child { border-right: none; }
-    .home-source-name { font-size: 10px; font-weight: 500; letter-spacing: .04em; color: var(--ink); margin-bottom: 3px; }
-    .home-source-n { font-size: 9px; color: var(--ink-3); }
+    .home-source-name { font-size: 11px; font-weight: 500; letter-spacing: .03em; color: var(--ink); margin-bottom: 3px; }
+    .home-source-n { font-size: 10px; color: var(--ink-3); }
 
     /* ── RESULTS VIEW ───────────────────────────────── */
     #view-results { padding-top: 52px; }
     .res-header { padding: 12px 40px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 16px; background: var(--warm-white); }
-    .res-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; color: var(--ink); cursor: pointer; }
-    .res-search-wrap { flex: 1; display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 7px 14px; gap: 8px; background: var(--paper); max-width: 520px; }
-    .res-search-wrap input { border: none; background: transparent; outline: none; font-size: 13px; flex: 1; color: var(--ink); }
-    .res-search-ic { color: var(--ink-3); font-size: 13px; }
-    .res-body { display: flex; min-height: calc(100vh - 105px); max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 40px; }
+    .res-logo { font-family: var(--font-display); font-size: 14px; letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; color: var(--ink); cursor: pointer; }
+    .res-search-wrap { flex: 1; display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 8px 14px; gap: 8px; background: var(--paper); max-width: 600px; }
+    .res-search-wrap input { border: none; background: transparent; outline: none; font-size: 14px; flex: 1; color: var(--ink); }
+    .res-search-ic { color: var(--ink-3); font-size: 14px; }
+    .res-body { display: flex; min-height: calc(100vh - 105px); max-width: 1400px; margin: 0 auto; width: 100%; padding: 0 40px; }
     /* Sidebar */
-    .res-sidebar { width: 188px; flex-shrink: 0; border-right: 1px solid var(--rule); padding: 20px 16px; background: var(--warm-white); overflow-y: auto; }
-    .filter-group { margin-bottom: 24px; }
-    .filter-title { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
-    .filter-opt { display: flex; align-items: center; gap: 7px; padding: 3px 0; cursor: pointer; }
-    .filter-opt input[type=checkbox] { width: 11px; height: 11px; accent-color: var(--ink); flex-shrink: 0; cursor: pointer; }
-    .filter-opt-label { font-size: 11px; color: var(--ink-2); flex: 1; }
-    .filter-count { font-size: 10px; color: var(--ink-3); }
+    .res-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--rule); padding: 24px 20px; background: var(--warm-white); overflow-y: auto; }
+    .sidebar-header { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+    .filter-group { margin-bottom: 28px; }
+    .filter-title { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 12px; }
+    .filter-opt { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
+    .filter-opt input[type=checkbox],
+    .filter-opt input[type=radio] { width: 13px; height: 13px; accent-color: var(--ink); flex-shrink: 0; cursor: pointer; }
+    .filter-opt-label { font-size: 13px; color: var(--ink-2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .filter-count { font-size: 11px; color: var(--ink-3); flex-shrink: 0; }
     /* Main results */
-    .res-main { flex: 1; padding: 20px 0 20px 24px; min-width: 0; }
-    .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .res-count { font-size: 11px; color: var(--ink-2); }
-    .img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .res-main { flex: 1; padding: 24px 0 24px 28px; min-width: 0; }
+    .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .res-count { font-size: 13px; color: var(--ink-2); }
+    .img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .img-card { cursor: pointer; min-width: 0; }
-    .img-card-wrap { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--rule); margin-bottom: 6px; background: var(--paper-dark); width: 100%; }
+    .img-card-wrap { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--rule); margin-bottom: 7px; background: var(--paper-dark); width: 100%; }
     .img-card-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .img-card:hover .img-card-wrap img { opacity: 0.85; }
-    .img-card-title { font-family: var(--font-ui); font-size: 10px; color: var(--ink); line-height: 1.35; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .img-card-src { font-family: var(--font-ui); font-size: 9px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
-    .src-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .img-card-title { font-family: var(--font-ui); font-size: 12px; color: var(--ink); line-height: 1.35; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-card-src { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
+    .src-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     /* Skeleton */
     @keyframes skel-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
     .skel-card .img-card-wrap { background: var(--paper-dark); }
@@ -126,26 +129,26 @@
     /* Archives CTA */
     .archives-cta { margin-top: 40px; padding: 20px; border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); display: flex; align-items: flex-start; gap: 14px; }
     .archives-cta-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
-    .archives-cta p { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+    .archives-cta p { font-size: 14px; color: var(--ink-2); line-height: 1.6; }
     .archives-cta a { color: var(--ink); text-decoration: underline; cursor: pointer; }
     /* Empty / Error states */
     .state-msg { text-align: center; padding: 80px 20px; }
-    .state-msg p { font-size: 14px; color: var(--ink-2); }
+    .state-msg p { font-size: 15px; color: var(--ink-2); }
 
     /* ── DISCOVER VIEW ──────────────────────────────── */
     #view-discover { background: var(--ink); min-height: 100vh; display: none; flex-direction: column; }
     #view-discover.active { display: flex; }
     .disc-header { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-    .disc-logo { font-family: var(--font-display); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); cursor: pointer; }
-    .disc-source { font-family: var(--font-ui); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.35); }
+    .disc-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); cursor: pointer; }
+    .disc-source { font-family: var(--font-ui); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.35); }
     .disc-card-area { flex: 1; padding: 0 20px 16px; display: flex; flex-direction: column; }
     .disc-card { background: var(--paper-dark); border-radius: 4px; overflow: hidden; flex: 1; min-height: 0; }
     .disc-card img { width: 100%; height: 280px; object-fit: cover; display: block; }
-    .disc-card-info { padding: 14px 16px; }
-    .disc-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 400; line-height: 1.3; color: var(--ink); margin-bottom: 4px; }
-    .disc-card-meta { font-family: var(--font-ui); font-size: 10px; color: var(--ink-2); }
+    .disc-card-info { padding: 16px 18px; }
+    .disc-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 400; line-height: 1.3; color: var(--ink); margin-bottom: 5px; }
+    .disc-card-meta { font-family: var(--font-ui); font-size: 12px; color: var(--ink-2); }
     .disc-actions { display: flex; gap: 10px; padding: 0 20px 20px; flex-shrink: 0; }
-    .disc-btn { flex: 1; padding: 11px; text-align: center; border-radius: 2px; font-family: var(--font-ui); font-size: 11px; }
+    .disc-btn { flex: 1; padding: 12px; text-align: center; border-radius: 2px; font-family: var(--font-ui); font-size: 13px; }
     .disc-btn-skip { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; }
     .disc-btn-skip:hover { background: rgba(255,255,255,.14); }
     .disc-btn-info { background: rgba(255,255,255,.15); color: white; border: none; }
@@ -153,30 +156,30 @@
     .disc-progress { display: flex; gap: 4px; justify-content: center; padding: 0 20px 12px; flex-shrink: 0; }
     .disc-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.2); }
     .disc-dot.on { background: rgba(255,255,255,.6); width: 14px; border-radius: 2px; }
-    .disc-hint { text-align: center; padding: 0 20px 16px; font-family: var(--font-ui); font-size: 9px; color: rgba(255,255,255,.25); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+    .disc-hint { text-align: center; padding: 0 20px 16px; font-family: var(--font-ui); font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
     .disc-loading { flex: 1; display: flex; align-items: center; justify-content: center; }
-    .disc-loading p { font-size: 13px; color: rgba(255,255,255,.3); letter-spacing: .04em; }
+    .disc-loading p { font-size: 14px; color: rgba(255,255,255,.3); letter-spacing: .04em; }
 
     /* ── ARCHIVES VIEW ──────────────────────────────── */
     #view-archives { padding-top: 52px; }
-    .arch-inner { max-width: 1200px; margin: 0 auto; padding: 48px 40px 80px; }
+    .arch-inner { max-width: 1400px; margin: 0 auto; padding: 48px 40px 80px; }
     .arch-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
-    .arch-title { font-family: var(--font-display); font-size: 22px; font-weight: 300; }
-    .arch-sub { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); }
+    .arch-title { font-family: var(--font-display); font-size: 28px; font-weight: 300; }
+    .arch-sub { font-family: var(--font-ui); font-size: 13px; color: var(--ink-3); }
     .arch-banner { background: var(--paper-dark); border: 1px solid var(--rule); padding: 16px 18px; margin-bottom: 36px; display: flex; gap: 14px; align-items: flex-start; border-radius: 2px; }
     .arch-banner-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
-    .arch-banner-text { font-family: var(--font-ui); font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+    .arch-banner-text { font-family: var(--font-ui); font-size: 14px; color: var(--ink-2); line-height: 1.65; }
     .arch-banner-text strong { color: var(--ink); }
     .arch-filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
-    .arch-filter { border: 1px solid var(--rule); padding: 5px 12px; font-family: var(--font-ui); font-size: 11px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); }
+    .arch-filter { border: 1px solid var(--rule); padding: 6px 14px; font-family: var(--font-ui); font-size: 12px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); }
     .arch-filter:hover, .arch-filter.active { border-color: var(--ink); color: var(--ink); background: var(--paper); }
     .arch-cat { margin-bottom: 28px; }
-    .arch-cat-title { font-family: var(--font-ui); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+    .arch-cat-title { font-family: var(--font-ui); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
     .arch-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
-    .arch-item { background: var(--warm-white); padding: 12px 14px; cursor: pointer; text-decoration: none; display: block; }
+    .arch-item { background: var(--warm-white); padding: 14px 16px; cursor: pointer; text-decoration: none; display: block; }
     .arch-item:hover { background: var(--paper); }
-    .arch-item-name { font-family: var(--font-ui); font-size: 12px; color: var(--ink); margin-bottom: 3px; }
-    .arch-item-desc { font-family: var(--font-ui); font-size: 10px; color: var(--ink-3); line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .arch-item-name { font-family: var(--font-ui); font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+    .arch-item-desc { font-family: var(--font-ui); font-size: 12px; color: var(--ink-3); line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
     /* ── MODAL ──────────────────────────────────────── */
     #modal { display: none; position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 40px; }
@@ -187,14 +190,14 @@
     .modal-right { width: 280px; flex-shrink: 0; padding: 28px 24px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
     .modal-close { position: absolute; top: 50px; right: 50px; background: none; border: none; font-size: 22px; color: white; cursor: pointer; line-height: 1; opacity: .7; }
     .modal-close:hover { opacity: 1; }
-    .modal-source { font-family: var(--font-ui); font-size: 9px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
-    .modal-title { font-family: var(--font-display); font-size: 20px; font-weight: 400; line-height: 1.3; color: var(--ink); }
-    .modal-meta { display: flex; flex-direction: column; gap: 7px; }
-    .modal-row { display: flex; gap: 10px; font-size: 11px; }
+    .modal-source { font-family: var(--font-ui); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+    .modal-title { font-family: var(--font-display); font-size: 22px; font-weight: 400; line-height: 1.3; color: var(--ink); }
+    .modal-meta { display: flex; flex-direction: column; gap: 8px; }
+    .modal-row { display: flex; gap: 10px; font-size: 13px; }
     .modal-key { font-family: var(--font-ui); color: var(--ink-3); width: 64px; flex-shrink: 0; }
     .modal-val { font-family: var(--font-ui); color: var(--ink-2); }
     .modal-actions { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
-    .modal-btn { padding: 10px 14px; font-family: var(--font-ui); font-size: 11px; letter-spacing: .05em; text-align: center; border-radius: 2px; text-decoration: none; display: block; cursor: pointer; width: 100%; box-sizing: border-box; }
+    .modal-btn { padding: 11px 14px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .04em; text-align: center; border-radius: 2px; text-decoration: none; display: block; cursor: pointer; width: 100%; box-sizing: border-box; }
     .modal-btn-primary { background: var(--ink); color: white; border: none; }
     .modal-btn-primary:hover { background: #2d2924; }
     .modal-btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--rule); opacity: .5; cursor: not-allowed; }
@@ -205,7 +208,7 @@
     .mob-tab { flex: 1; padding: 8px 6px; text-align: center; cursor: pointer; border-right: 1px solid var(--rule); display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .mob-tab:last-child { border-right: none; }
     .mob-tab-icon { font-size: 16px; margin-bottom: 2px; line-height: 1; color: var(--ink-3); }
-    .mob-tab-label { font-family: var(--font-ui); font-size: 9px; color: var(--ink-3); letter-spacing: .03em; }
+    .mob-tab-label { font-family: var(--font-ui); font-size: 10px; color: var(--ink-3); letter-spacing: .03em; }
     .mob-tab.active .mob-tab-icon { color: var(--ink); }
     .mob-tab.active .mob-tab-label { color: var(--ink); }
     /* Discover nav (dark version) */
@@ -230,7 +233,7 @@
     }
 
     /* ── RESPONSIVE ─────────────────────────────────── */
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
       .img-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 768px) {
@@ -278,7 +281,7 @@
   <div class="home-inner">
     <div class="home-eyebrow">Visual Research Tool</div>
     <h1 class="home-title">Visual research<br><em>across institutions</em></h1>
-    <p class="home-sub">Search 5 major museum archives simultaneously — art, photography, architecture, design, objects. All in one place.</p>
+    <p class="home-sub">Search 10 major museum and institutional archives simultaneously — art, photography, science, design, objects, historical illustrations. All in one place.</p>
 
     <div class="home-search-row">
       <input id="home-input" type="text" placeholder="Search by theme, style, object, period, technique…"
@@ -305,7 +308,7 @@
       <span class="home-discover-icon">✦</span>
       <div class="home-discover-text">
         <strong>Discover something unexpected</strong>
-        <small>Random images from all 5 archives — no search term needed</small>
+        <small>Random images from all 10 archives — no search term needed</small>
       </div>
       <span class="home-discover-arrow">→</span>
     </div>
@@ -329,6 +332,11 @@
       <div class="home-source" onclick="triggerSourceSearch('smithsonian')"><div class="home-source-name">Smithsonian</div><div class="home-source-n">5.1M items</div></div>
       <div class="home-source" onclick="triggerSourceSearch('europeana')"><div class="home-source-name">Europeana</div><div class="home-source-n">50M+ items</div></div>
       <div class="home-source" onclick="triggerSourceSearch('met')"><div class="home-source-name">Met Museum</div><div class="home-source-n">470k objects</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('wellcome')"><div class="home-source-name">Wellcome</div><div class="home-source-n">Medicine &amp; art</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('nasa')"><div class="home-source-name">NASA</div><div class="home-source-n">Space imagery</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('loc')"><div class="home-source-name">Lib. of Congress</div><div class="home-source-n">Prints &amp; photos</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('nypl')"><div class="home-source-name">NYPL</div><div class="home-source-n">1.5M images</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('bhl')"><div class="home-source-name">Bio. Heritage</div><div class="home-source-n">Illustrations</div></div>
     </div>
   </div>
 </div>
@@ -347,6 +355,20 @@
   <div class="res-body">
     <!-- Sidebar -->
     <aside class="res-sidebar">
+      <div class="sidebar-header">Filters</div>
+
+      <div class="filter-group">
+        <div class="filter-title">Type</div>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="any" checked onchange="setTypeFilter('any')"/><span class="filter-opt-label">Any</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="painting" onchange="setTypeFilter('painting')"/><span class="filter-opt-label">Painting</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="photography" onchange="setTypeFilter('photography')"/><span class="filter-opt-label">Photography</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="drawing" onchange="setTypeFilter('drawing')"/><span class="filter-opt-label">Drawing</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="object" onchange="setTypeFilter('object')"/><span class="filter-opt-label">Object</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="architecture" onchange="setTypeFilter('architecture')"/><span class="filter-opt-label">Architecture</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="textile" onchange="setTypeFilter('textile')"/><span class="filter-opt-label">Textile</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="illustration" onchange="setTypeFilter('illustration')"/><span class="filter-opt-label">Illustration</span></label>
+      </div>
+
       <div class="filter-group">
         <div class="filter-title">Source</div>
         <label class="filter-opt">
@@ -358,6 +380,11 @@
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian</span><span class="filter-count" id="cnt-smithsonian"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Met Museum</span><span class="filter-count" id="cnt-met"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome</span><span class="filter-count" id="cnt-wellcome"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nasa" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NASA</span><span class="filter-count" id="cnt-nasa"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Lib. of Congress</span><span class="filter-count" id="cnt-loc"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL</span><span class="filter-count" id="cnt-nypl"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="bhl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Bio. Heritage</span><span class="filter-count" id="cnt-bhl"></span></label>
       </div>
     </aside>
 
@@ -466,11 +493,16 @@ const VS_API    = 'https://visual-archive-one.vercel.app';
 const VS_SECRET = 'f9d804150d638857ce4d20a039617be11fc460d42aa67bc1c47eead8c32c2e2c';
 
 const SRC_COLOR = {
-  'V&A Museum':            '#5C3D1A',
-  'Art Institute Chicago': '#1A5C8B',
-  'Smithsonian':           '#3D1A5C',
-  'Europeana':             '#1A5C2A',
-  'Met Museum':            '#5C1A1A',
+  'V&A Museum':                   '#5C3D1A',
+  'Art Institute Chicago':         '#1A5C8B',
+  'Smithsonian':                   '#3D1A5C',
+  'Europeana':                     '#1A5C2A',
+  'Met Museum':                    '#5C1A1A',
+  'Wellcome Collection':           '#1A3D5C',
+  'NASA':                          '#0B2C4A',
+  'Library of Congress':           '#5C2C1A',
+  'NYPL':                          '#2C1A5C',
+  'Biodiversity Heritage Library': '#1A4C2C',
 };
 
 const SRC_KEY_MAP = {
@@ -479,6 +511,11 @@ const SRC_KEY_MAP = {
   smithsonian: 'Smithsonian',
   europeana:   'Europeana',
   met:         'Met Museum',
+  wellcome:    'Wellcome Collection',
+  nasa:        'NASA',
+  loc:         'Library of Congress',
+  nypl:        'NYPL',
+  bhl:         'Biodiversity Heritage Library',
 };
 
 // ── STATE ─────────────────────────────────────────────────────────
@@ -515,6 +552,9 @@ function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
   state.view = name;
+  // Sync sidebar type-filter radio to current state
+  const radio = document.querySelector(`input[name="type-filter"][value="${state.typeFilter}"]`);
+  if (radio) radio.checked = true;
   // Hide global nav in discover (it has its own header)
   document.getElementById('nav').style.display = name === 'discover' ? 'none' : '';
   // Mobile nav
@@ -533,7 +573,7 @@ function focusSearch() {
   setTimeout(() => document.getElementById('home-input').focus(), 100);
 }
 
-// ── CHIP SELECTION ───────────────────────────────────────────────
+// ── CHIP SELECTION (home page) ───────────────────────────────────
 document.querySelectorAll('.chip[data-type]').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.chip[data-type]').forEach(c => c.classList.remove('active'));
@@ -541,6 +581,17 @@ document.querySelectorAll('.chip[data-type]').forEach(chip => {
     state.typeFilter = chip.dataset.type;
   });
 });
+
+// ── TYPE FILTER (results sidebar) ────────────────────────────────
+function setTypeFilter(type) {
+  state.typeFilter = type;
+  // Sync home chips
+  document.querySelectorAll('.chip[data-type]').forEach(c => {
+    c.classList.toggle('active', c.dataset.type === type);
+  });
+  // Re-run search with new type if query exists
+  if (state.query) runSearch(state.query);
+}
 
 // ── SEARCH ───────────────────────────────────────────────────────
 function triggerSearch(from = 'home') {

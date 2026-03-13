@@ -1,5 +1,5 @@
 // Visual Archive — Serverless Search Function (Vercel)
-// Queries 5 institutional APIs in parallel and returns normalised results.
+// Queries 10 institutional APIs in parallel and returns normalised results.
 // NOTE: Rijksmuseum removed in March 2026 — old API (rijksmuseum.nl/api) returned HTTP 410 Gone.
 // New API (data.rijksmuseum.nl) only supports filters (creator=, type=), not free-text search.
 //
@@ -8,13 +8,17 @@
 //   ?discover=1       — returns random results from a curated term set (no q needed)
 //   ?sources=vam,artic,met — comma-separated source filter (default: all)
 
-const SOURCE_KEYS = ['vam', 'artic', 'smithsonian', 'europeana', 'met'];
+const SOURCE_KEYS = [
+  'vam', 'artic', 'smithsonian', 'europeana', 'met',
+  'wellcome', 'nasa', 'loc', 'nypl', 'bhl',
+];
 
 const DISCOVER_TERMS = [
   'portrait', 'landscape', 'textile', 'vessel', 'garden',
   'costume', 'drawing', 'ornament', 'ritual', 'map',
   'manuscript', 'flower', 'mask', 'figure', 'architecture',
   'still life', 'monument', 'ceramic', 'tapestry', 'light',
+  'botanical', 'astronomical', 'specimen', 'anatomy', 'insect',
 ];
 
 export default async function handler(req, res) {
@@ -53,6 +57,11 @@ export default async function handler(req, res) {
     smithsonian: () => searchSmithsonian(term),
     europeana:   () => searchEuropeana(term),
     met:         () => searchMet(term),
+    wellcome:    () => searchWellcome(term),
+    nasa:        () => searchNASA(term),
+    loc:         () => searchLOC(term),
+    nypl:        () => searchNYPL(term),
+    bhl:         () => searchBHL(term),
   };
 
   const results = await Promise.allSettled(
@@ -60,11 +69,16 @@ export default async function handler(req, res) {
   );
 
   const institutionPriority = {
-    'V&A Museum':           0,
-    'Art Institute Chicago': 1,
-    'Smithsonian':           2,
-    'Europeana':             3,
-    'Met Museum':            4,
+    'V&A Museum':                   0,
+    'Art Institute Chicago':         1,
+    'Smithsonian':                   2,
+    'Europeana':                     3,
+    'Met Museum':                    4,
+    'Wellcome Collection':           5,
+    'NASA':                          6,
+    'Library of Congress':           7,
+    'NYPL':                          8,
+    'Biodiversity Heritage Library': 9,
   };
 
   let items = results
@@ -73,7 +87,6 @@ export default async function handler(req, res) {
     .filter(item => item && item.image_url);
 
   if (discover === '1') {
-    // Shuffle for discover mode
     items = items.sort(() => Math.random() - 0.5);
   } else {
     items = items.sort((a, b) =>
@@ -81,7 +94,7 @@ export default async function handler(req, res) {
     );
   }
 
-  return res.status(200).json(items.slice(0, 60));
+  return res.status(200).json(items.slice(0, 100));
 }
 
 // ── 1. V&A Museum ──────────────────────────────────────────────
@@ -127,14 +140,13 @@ async function searchArtic(term) {
 }
 
 // ── 3. Smithsonian ─────────────────────────────────────────────
+// Fix: must use has_media=true&online_media_type=Images, otherwise rows have no online_media.
 async function searchSmithsonian(term) {
   const key = process.env.SMITHSONIAN_KEY;
   if (!key) return [];
   try {
-    // Use the art_design category endpoint — the generic /search endpoint
-    // returns mostly library books (unitCode=SIL) with no online_media.
     const res = await fetch(
-      `https://api.si.edu/openaccess/api/v1.0/category/art_design/search?q=${term}&api_key=${key}&rows=12`
+      `https://api.si.edu/openaccess/api/v1.0/search?q=${term}&api_key=${key}&rows=24&has_media=true&online_media_type=Images`
     );
     const data = await res.json();
     const rows = data.response?.rows;
@@ -157,6 +169,7 @@ async function searchSmithsonian(term) {
           institution: 'Smithsonian',
           date:        row.content?.freetext?.date?.[0]?.content || '',
         });
+        if (items.length >= 12) break;
       } catch { /* skip malformed row */ }
     }
     return items;
@@ -210,6 +223,138 @@ async function searchMet(term) {
         source_url:  r.value.objectURL,
         institution: 'Met Museum',
         date:        r.value.objectDate || '',
+      }));
+  } catch { return []; }
+}
+
+// ── 6. Wellcome Collection ─────────────────────────────────────
+async function searchWellcome(term) {
+  try {
+    const res = await fetch(
+      `https://api.wellcomecollection.org/catalogue/v2/images?query=${term}&pageSize=12`
+    );
+    const data = await res.json();
+    if (!data.results?.length) return [];
+    return data.results
+      .filter(item => item.thumbnail?.url)
+      .map(item => ({
+        id:          `wellcome-${item.id}`,
+        title:       item.source?.title || 'Untitled',
+        image_url:   item.thumbnail.url.replace(/\/full\/.*?\/0\//, '/full/600,/0/'),
+        source_url:  `https://wellcomecollection.org/works/${item.source?.id || item.id}`,
+        institution: 'Wellcome Collection',
+        date:        item.source?.productionDates?.[0]?.label || '',
+      }));
+  } catch { return []; }
+}
+
+// ── 7. NASA Images & Video Library ────────────────────────────
+async function searchNASA(term) {
+  try {
+    const res = await fetch(
+      `https://images-api.nasa.gov/search?q=${term}&media_type=image`
+    );
+    const data = await res.json();
+    const items = data.collection?.items;
+    if (!items?.length) return [];
+    return items
+      .slice(0, 12)
+      .filter(item => item.links?.[0]?.href)
+      .map(item => {
+        const meta = item.data?.[0] || {};
+        return {
+          id:          `nasa-${meta.nasa_id || item.href}`,
+          title:       meta.title || 'Untitled',
+          image_url:   item.links[0].href,
+          source_url:  meta.nasa_id
+            ? `https://images.nasa.gov/details/${meta.nasa_id}`
+            : 'https://images.nasa.gov/',
+          institution: 'NASA',
+          date:        meta.date_created ? meta.date_created.substring(0, 4) : '',
+        };
+      });
+  } catch { return []; }
+}
+
+// ── 8. Library of Congress ─────────────────────────────────────
+async function searchLOC(term) {
+  try {
+    const res = await fetch(
+      `https://www.loc.gov/photos/?q=${term}&fo=json&c=12`
+    );
+    const data = await res.json();
+    if (!data.results?.length) return [];
+    return data.results
+      .filter(item => item.image?.thumb || item.image?.small)
+      .map(item => ({
+        id:          `loc-${encodeURIComponent(item.id || item.url || String(Math.random()))}`,
+        title:       Array.isArray(item.title) ? item.title[0] : (item.title || 'Untitled'),
+        image_url:   item.image.thumb || item.image.small,
+        source_url:  item.url || 'https://www.loc.gov/photos/',
+        institution: 'Library of Congress',
+        date:        item.date || '',
+      }));
+  } catch { return []; }
+}
+
+// ── 9. NYPL Digital Collections ───────────────────────────────
+async function searchNYPL(term) {
+  const key = process.env.NYPL_KEY;
+  if (!key) return [];
+  try {
+    const res = await fetch(
+      `https://api.repo.nypl.org/api/v2/items/search?q=${term}&publicDomainOnly=true&per_page=12`,
+      { headers: { 'Authorization': `Token token="${key}"` } }
+    );
+    const data = await res.json();
+    const results = data.nyplAPI?.response?.result;
+    if (!results?.length) return [];
+    return results
+      .filter(item => item.imageLinks?.imageLink?.length)
+      .map(item => {
+        const links = Array.isArray(item.imageLinks.imageLink)
+          ? item.imageLinks.imageLink : [item.imageLinks.imageLink];
+        // Prefer 'q' (large ~760px) then 'r' (regular ~400px), fallback first
+        const img = links.find(l => l['$']?.t === 'q')
+                 || links.find(l => l['$']?.t === 'r')
+                 || links[0];
+        const imgUrl = img?.['_'] || (typeof img === 'string' ? img : '');
+        if (!imgUrl) return null;
+        const title = Array.isArray(item.title) ? item.title[0] : (item.title || 'Untitled');
+        return {
+          id:          `nypl-${item.uuid}`,
+          title,
+          image_url:   imgUrl,
+          source_url:  `https://digitalcollections.nypl.org/items/${item.uuid}`,
+          institution: 'NYPL',
+          date:        item.dateStart ? String(item.dateStart) : '',
+        };
+      })
+      .filter(Boolean);
+  } catch { return []; }
+}
+
+// ── 10. Biodiversity Heritage Library ─────────────────────────
+async function searchBHL(term) {
+  const key = process.env.BHL_KEY;
+  if (!key) return [];
+  try {
+    const res = await fetch(
+      `https://www.biodiversitylibrary.org/api2/httpquery.ashx?op=SearchFullText&searchterm=${term}&page=1&pagesize=20&apikey=${key}&format=json`
+    );
+    const data = await res.json();
+    const items = data.Result;
+    if (!items?.length) return [];
+    return items
+      .filter(item => item.PageID)
+      .slice(0, 12)
+      .map(item => ({
+        id:          `bhl-${item.PageID}`,
+        title:       item.Title || 'Untitled',
+        image_url:   `https://www.biodiversitylibrary.org/pagethumb/${item.PageID}`,
+        source_url:  `https://www.biodiversitylibrary.org/page/${item.PageID}`,
+        institution: 'Biodiversity Heritage Library',
+        date:        item.Year || '',
       }));
   } catch { return []; }
 }
