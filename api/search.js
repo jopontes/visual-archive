@@ -1,5 +1,7 @@
 // Visual Archive — Serverless Search Function (Vercel)
-// Queries 6 institutional APIs in parallel and returns normalised results (prioritised by relevance).
+// Queries 5 institutional APIs in parallel and returns normalised results (prioritised by relevance).
+// NOTE: Rijksmuseum removed in March 2026 — old API (rijksmuseum.nl/api) returned HTTP 410 Gone.
+// New API (data.rijksmuseum.nl) only supports filters (creator=, type=), not free-text search.
 
 export default async function handler(req, res) {
   // CORS — allow requests from any origin (GitHub Pages, localhost, etc.)
@@ -28,7 +30,6 @@ export default async function handler(req, res) {
   const results = await Promise.allSettled([
     searchMet(term),
     searchArtic(term),
-    searchRijksmuseum(term),
     searchSmithsonian(term),
     searchEuropeana(term),
     searchVAMuseum(term),
@@ -38,10 +39,9 @@ export default async function handler(req, res) {
   const institutionPriority = {
     'V&A Museum': 0,
     'Art Institute Chicago': 1,
-    'Rijksmuseum': 2,
-    'Smithsonian': 3,
-    'Europeana': 4,
-    'Met Museum': 5,
+    'Smithsonian': 2,
+    'Europeana': 3,
+    'Met Museum': 4,
   };
 
   const items = results
@@ -114,33 +114,7 @@ async function searchArtic(term) {
   }
 }
 
-// ── 3. Rijksmuseum ─────────────────────────────────────────────
-async function searchRijksmuseum(term) {
-  const key = process.env.RIJKSMUSEUM_KEY;
-  if (!key) return [];
-  try {
-    const res = await fetch(
-      `https://www.rijksmuseum.nl/api/nl/collection?q=${term}&key=${key}&imgonly=True&ps=12`
-    );
-    const data = await res.json();
-    if (!data.artObjects?.length) return [];
-
-    return data.artObjects
-      .filter(item => item.webImage?.url)
-      .map(item => ({
-        id:          `rijks-${item.objectNumber}`,
-        title:       item.title || 'Untitled',
-        image_url:   item.webImage.url,
-        source_url:  item.links?.web || `https://www.rijksmuseum.nl/nl/collectie/${item.objectNumber}`,
-        institution: 'Rijksmuseum',
-        date:        item.longTitle || '',
-      }));
-  } catch {
-    return [];
-  }
-}
-
-// ── 4. Smithsonian ─────────────────────────────────────────────
+// ── 3. Smithsonian ─────────────────────────────────────────────
 async function searchSmithsonian(term) {
   const key = process.env.SMITHSONIAN_KEY;
   if (!key) return [];
