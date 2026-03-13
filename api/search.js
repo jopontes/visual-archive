@@ -1,5 +1,5 @@
 // Visual Archive — Serverless Search Function (Vercel)
-// Queries 5 institutional APIs in parallel and returns normalised results.
+// Queries 6 institutional APIs in parallel and returns normalised results (prioritised by relevance).
 
 export default async function handler(req, res) {
   // CORS — allow requests from any origin (GitHub Pages, localhost, etc.)
@@ -34,11 +34,25 @@ export default async function handler(req, res) {
     searchVAMuseum(term),
   ]);
 
-  // Flatten, filter items without images, cap at 60
+  // Reorder by institution priority (most relevant first), filter items without images, cap at 60
+  const institutionPriority = {
+    'V&A Museum': 0,
+    'Art Institute Chicago': 1,
+    'Rijksmuseum': 2,
+    'Smithsonian': 3,
+    'Europeana': 4,
+    'Met Museum': 5,
+  };
+
   const items = results
     .filter(r => r.status === 'fulfilled')
     .flatMap(r => r.value)
     .filter(item => item && item.image_url)
+    .sort((a, b) => {
+      const aPriority = institutionPriority[a.institution] ?? 999;
+      const bPriority = institutionPriority[b.institution] ?? 999;
+      return aPriority - bPriority;
+    })
     .slice(0, 60);
 
   return res.status(200).json(items);
@@ -53,7 +67,7 @@ async function searchMet(term) {
     const searchData = await searchRes.json();
     if (!searchData.objectIDs?.length) return [];
 
-    const ids = searchData.objectIDs.slice(0, 12);
+    const ids = searchData.objectIDs.slice(0, 6);
     const objects = await Promise.allSettled(
       ids.map(id =>
         fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
