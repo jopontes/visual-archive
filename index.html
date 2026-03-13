@@ -618,7 +618,8 @@ if(savedView === 'list' || savedView === 'grid') view = savedView;
 renderRefs();
 
 // ─── VISUAL SEARCH ───────────────────────────────────────────
-const VS_API = 'https://visual-archive-one.vercel.app';
+const VS_API    = 'https://visual-archive-one.vercel.app';
+const VS_SECRET = 'f9d804150d638857ce4d20a039617be11fc460d42aa67bc1c47eead8c32c2e2c';
 
 const vsInput   = document.getElementById('vs-input');
 const vsBtn     = document.getElementById('vs-btn');
@@ -679,7 +680,9 @@ async function vsSearch() {
   vsSetState('loading');
 
   try {
-    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(q)}`);
+    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(q)}`, {
+      headers: { 'x-api-secret': VS_SECRET },
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const items = await res.json();
     vsRenderResults(items);

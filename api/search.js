@@ -5,11 +5,17 @@ export default async function handler(req, res) {
   // CORS — allow requests from any origin (GitHub Pages, localhost, etc.)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-secret');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
+  }
+
+  // Auth — reject requests without the correct secret token
+  const secret = process.env.API_SECRET;
+  if (secret && req.headers['x-api-secret'] !== secret) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { q } = req.query;
