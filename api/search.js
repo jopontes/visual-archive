@@ -31,6 +31,7 @@ export default async function handler(req, res) {
     searchRijksmuseum(term),
     searchSmithsonian(term),
     searchEuropeana(term),
+    searchVAMuseum(term),
   ]);
 
   // Flatten, filter items without images, cap at 60
@@ -165,6 +166,30 @@ async function searchSmithsonian(term) {
       }
     }
     return items;
+  } catch {
+    return [];
+  }
+}
+
+// ── 6. V&A Museum ─────────────────────────────────────────────
+async function searchVAMuseum(term) {
+  try {
+    const res = await fetch(
+      `https://api.vam.ac.uk/v2/objects/search?q=${term}&images_exist=1&page_size=12`
+    );
+    const data = await res.json();
+    if (!data.records?.length) return [];
+
+    return data.records
+      .filter(item => item._primaryImageId)
+      .map(item => ({
+        id:          `va-${item.systemNumber}`,
+        title:       item._primaryTitle || 'Untitled',
+        image_url:   `https://framemark.vam.ac.uk/collections/${item._primaryImageId}/full/600,/0/default.jpg`,
+        source_url:  `https://collections.vam.ac.uk/item/${item.systemNumber}`,
+        institution: 'V&A Museum',
+        date:        item._primaryDate || '',
+      }));
   } catch {
     return [];
   }
