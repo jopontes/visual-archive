@@ -342,7 +342,8 @@ async function searchNYPL(term) {
 async function searchBHL(term) {
   try {
     const res = await fetch(
-      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime&format=json`
+      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime&format=json`,
+      { headers: { 'User-Agent': 'VisualArchive/1.0 (https://visual-archive-one.vercel.app; contact@visualarchive.app) node-fetch/3' } }
     );
     const data = await res.json();
     const pages = data.query?.pages;
