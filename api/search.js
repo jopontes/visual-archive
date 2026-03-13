@@ -131,8 +131,10 @@ async function searchSmithsonian(term) {
   const key = process.env.SMITHSONIAN_KEY;
   if (!key) return [];
   try {
+    // Use the art_design category endpoint — the generic /search endpoint
+    // returns mostly library books (unitCode=SIL) with no online_media.
     const res = await fetch(
-      `https://api.si.edu/openaccess/api/v1.0/search?q=${term}&api_key=${key}&rows=12&has_media=true&online_media_type=Images`
+      `https://api.si.edu/openaccess/api/v1.0/category/art_design/search?q=${term}&api_key=${key}&rows=12`
     );
     const data = await res.json();
     const rows = data.response?.rows;
