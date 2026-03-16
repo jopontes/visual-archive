@@ -224,6 +224,9 @@
     .modal-row { display: flex; gap: 10px; font-size: 13px; }
     .modal-key { font-family: var(--font-ui); color: var(--ink-3); width: 64px; flex-shrink: 0; }
     .modal-val { font-family: var(--font-ui); color: var(--ink-2); }
+    .modal-row-desc .modal-val { line-height: 1.6; color: var(--ink-2); }
+    .modal-enrich { font-size: 11px; color: var(--ink-3); margin-top: 4px; display: none; }
+    .modal-enrich.loading { display: block; }
     .modal-actions { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
     .modal-btn { padding: 11px 14px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .04em; text-align: center; border-radius: 2px; text-decoration: none; display: block; cursor: pointer; width: 100%; box-sizing: border-box; }
     .modal-btn-primary { background: var(--ink); color: white; border: none; }
@@ -909,18 +912,36 @@ function handleSourceCb() {
 // ── MODAL ─────────────────────────────────────────────────────────
 function buildModalMeta(item) {
   let html = '';
+  const row = (key, val) => val
+    ? `<div class="modal-row"><span class="modal-key">${key}</span><span class="modal-val">${escHtml(String(val))}</span></div>`
+    : '';
+
   if (item.creator) {
     const c = item.creator.replace(/\n/g, ', ');
-    html += `<div class="modal-row"><span class="modal-key">Artist</span><span class="modal-val">${escHtml(c)}</span></div>`;
+    html += row('Artist', c);
   }
-  if (item.date) {
-    html += `<div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${escHtml(item.date)}</span></div>`;
-  }
+  html += row('Date',        item.date);
   if (item.medium) {
-    const m = item.medium.replace(/\n/g, ', ').substring(0, 120);
-    html += `<div class="modal-row"><span class="modal-key">Medium</span><span class="modal-val">${escHtml(m)}</span></div>`;
+    html += row('Medium', item.medium.replace(/\n/g, ', ').substring(0, 160));
+  }
+  html += row('Type',        item.object_type);
+  html += row('Place',       item.place);
+  html += row('Culture',     item.culture);
+  html += row('Period',      item.period);
+  html += row('Style',       item.style);
+  html += row('Held by',     item.institution_detail);
+  if (item.keywords) {
+    html += row('Keywords', item.keywords);
+  }
+  if (item.subject) {
+    html += row('Subject', item.subject);
+  }
+  if (item.description) {
+    const desc = item.description.replace(/\n/g, ' ').trim().substring(0, 320);
+    html += `<div class="modal-row modal-row-desc"><span class="modal-key">About</span><span class="modal-val">${escHtml(desc)}${item.description.length > 320 ? '…' : ''}</span></div>`;
   }
   html += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+  html += `<div class="modal-enrich" id="modal-enrich-status"></div>`;
   return html;
 }
 function openModal(idx) {
@@ -934,6 +955,7 @@ function openModal(idx) {
   document.getElementById('modal-link').href = item.source_url;
   document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
   document.getElementById('modal').classList.add('open');
+  enrichModalLazy(item);
 }
 function openModalFromDiscover() {
   const item = state.discoverBatch[state.discoverIdx];
@@ -946,6 +968,53 @@ function openModalFromDiscover() {
   document.getElementById('modal-link').href = item.source_url;
   document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
   document.getElementById('modal').classList.add('open');
+  enrichModalLazy(item);
+}
+
+// ── LAZY DETAIL ENRICHMENT ──────────────────────────────────────
+// For V&A and ARTIC (both have public APIs with no key needed),
+// fetch richer detail when the modal opens and update in place.
+async function enrichModalLazy(item) {
+  if (!item?.id) return;
+  let enriched = null;
+  try {
+    if (item.id.startsWith('va-')) {
+      const sysNum = item.id.replace('va-', '');
+      const status = document.getElementById('modal-enrich-status');
+      if (status) { status.textContent = 'Loading details…'; status.classList.add('loading'); }
+      const res = await fetch(`https://api.vam.ac.uk/v2/object/${sysNum}`);
+      const data = await res.json();
+      const rec = data.record;
+      if (rec) {
+        enriched = { ...item };
+        if (!enriched.medium && rec.physicalDescription?.[0]?.value) enriched.medium = rec.physicalDescription[0].value;
+        if (!enriched.place && rec.placesOfOrigin?.[0]?.place?.text) enriched.place = rec.placesOfOrigin[0].place.text;
+        if (!enriched.period && rec.historicPeriod?.[0]?.text) enriched.period = rec.historicPeriod[0].text;
+        if (!enriched.object_type && rec.objectType) enriched.object_type = rec.objectType;
+        if (!enriched.description && rec.summaryDescription) enriched.description = rec.summaryDescription;
+        if (!enriched.style && rec.styles?.[0]?.text) enriched.style = rec.styles[0].text;
+      }
+    } else if (item.id.startsWith('artic-')) {
+      const id = item.id.replace('artic-', '');
+      const status = document.getElementById('modal-enrich-status');
+      if (status) { status.textContent = 'Loading details…'; status.classList.add('loading'); }
+      const res = await fetch(`https://api.artic.edu/api/v1/artworks/${id}?fields=place_of_origin,style_title,classification_title,description,dimensions,provenance_text`);
+      const data = await res.json();
+      const d = data.data;
+      if (d) {
+        enriched = { ...item };
+        if (!enriched.place && d.place_of_origin) enriched.place = d.place_of_origin;
+        if (!enriched.style && d.style_title) enriched.style = d.style_title;
+        if (!enriched.object_type && d.classification_title) enriched.object_type = d.classification_title;
+        if (!enriched.description && d.description) enriched.description = d.description.replace(/<[^>]+>/g, '').trim();
+      }
+    }
+  } catch { /* silently ignore — detail enrichment is best-effort */ }
+
+  if (enriched && state.activeItem?.id === item.id) {
+    state.activeItem = enriched;
+    document.getElementById('modal-meta').innerHTML = buildModalMeta(enriched);
+  }
 }
 function closeModal(e) {
   if (e && e.target !== document.getElementById('modal') && !e.target.classList.contains('modal-close')) return;

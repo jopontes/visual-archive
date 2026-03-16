@@ -123,6 +123,8 @@ async function searchVAMuseum(term) {
         date:        item._primaryDate || '',
         creator:     item._primaryMaker?.name || '',
         medium:      item._primaryMaterials || '',
+        object_type: item._objectType || '',
+        place:       item._primaryPlace || '',
       }));
   } catch { return []; }
 }
@@ -131,7 +133,7 @@ async function searchVAMuseum(term) {
 async function searchArtic(term) {
   try {
     const res = await fetch(
-      `https://api.artic.edu/api/v1/artworks/search?q=${term}&fields=id,title,image_id,date_display,artist_display,medium_display&limit=12`
+      `https://api.artic.edu/api/v1/artworks/search?q=${term}&fields=id,title,image_id,date_display,artist_display,medium_display,place_of_origin,style_title,classification_title&limit=12`
     );
     const data = await res.json();
     if (!data.data?.length) return [];
@@ -146,6 +148,9 @@ async function searchArtic(term) {
         date:        item.date_display || '',
         creator:     item.artist_display || '',
         medium:      item.medium_display || '',
+        place:       item.place_of_origin || '',
+        style:       item.style_title || '',
+        object_type: item.classification_title || '',
       }));
   } catch { return []; }
 }
@@ -210,6 +215,9 @@ async function searchEuropeana(term) {
         date:        item.year?.[0] || '',
         creator:     item.dcCreator?.[0] || '',
         medium:      '',
+        institution_detail: item.dataProvider?.[0] || '',
+        description: Array.isArray(item.dcDescription) ? item.dcDescription[0] : (item.dcDescription || ''),
+        subject:     Array.isArray(item.dcSubject) ? item.dcSubject.slice(0, 5).join(', ') : '',
       }));
   } catch { return []; }
 }
@@ -240,6 +248,10 @@ async function searchMet(term) {
         date:        r.value.objectDate || '',
         creator:     r.value.artistDisplayName || '',
         medium:      r.value.medium || '',
+        culture:     r.value.culture || '',
+        period:      r.value.period || '',
+        object_type: r.value.classification || '',
+        place:       r.value.country || r.value.region || '',
       }));
   } catch { return []; }
 }
@@ -263,6 +275,8 @@ async function searchWellcome(term) {
         date:        item.source?.productionDates?.[0]?.label || '',
         creator:     item.source?.contributors?.[0]?.agent?.label || '',
         medium:      item.source?.physicalDescription || '',
+        object_type: item.source?.format?.label || '',
+        description: item.source?.description || '',
       }));
   } catch { return []; }
 }
@@ -292,6 +306,8 @@ async function searchNASA(term) {
           date:        meta.date_created ? meta.date_created.substring(0, 4) : '',
           creator:     meta.center || '',
           medium:      '',
+          description: meta.description ? meta.description.substring(0, 300) : '',
+          keywords:    Array.isArray(meta.keywords) ? meta.keywords.slice(0, 6).join(', ') : '',
         };
       });
   } catch { return []; }
@@ -318,6 +334,8 @@ async function searchLOC(term) {
         date:        item.date || '',
         creator:     Array.isArray(item.contributor) ? item.contributor[0] : (item.contributor || ''),
         medium:      '',
+        description: Array.isArray(item.description) ? item.description[0] : (item.description || ''),
+        subject:     Array.isArray(item.subject) ? item.subject.slice(0, 4).join(', ') : (item.subject || ''),
       }));
   } catch { return []; }
 }
@@ -352,7 +370,9 @@ async function searchNYPL(term) {
           image_url:   `https://images.nypl.org/index.php?id=${item.imageID}&t=q`,
           source_url:  item.itemLink || `https://digitalcollections.nypl.org/items/${item.uuid}`,
           institution: 'NYPL',
-          date:        '',
+          date:        item.captureDate?.substring(0, 4) || item.dateDigitized?.substring(0, 4) || '',
+          creator:     '',
+          medium:      '',
         };
       });
   } catch { return []; }
@@ -365,7 +385,7 @@ async function searchNYPL(term) {
 async function searchBHL(term) {
   try {
     const res = await fetch(
-      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime&format=json`,
+      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${term}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime|extmetadata&iiextmetadatafilter=Artist|DateTimeOriginal|DateTime|ImageDescription&format=json`,
       { headers: { 'User-Agent': 'VisualArchive/1.0 (https://visual-archive-one.vercel.app; contact@visualarchive.app) node-fetch/3' } }
     );
     const data = await res.json();
@@ -393,13 +413,18 @@ async function searchBHL(term) {
         const ii = p.imageinfo[0];
         const title = p.title?.replace(/^File:/, '').replace(/\.[^.]+$/, '') || 'Untitled';
         const slug = encodeURIComponent(p.title?.replace(/^File:/, '') || '');
+        const ext = ii.extmetadata || {};
+        const stripHtml = s => (s || '').replace(/<[^>]+>/g, '').trim();
         return {
           id:          `wikimedia-${p.pageid}`,
           title,
           image_url:   toThumb(ii.url),
           source_url:  `https://commons.wikimedia.org/wiki/File:${slug}`,
           institution: 'Wikimedia Commons',
-          date:        '',
+          date:        ext.DateTimeOriginal?.value?.substring(0, 4) || ext.DateTime?.value?.substring(0, 4) || '',
+          creator:     stripHtml(ext.Artist?.value) || '',
+          description: stripHtml(ext.ImageDescription?.value)?.substring(0, 250) || '',
+          medium:      '',
         };
       });
   } catch { return []; }
