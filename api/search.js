@@ -1,16 +1,18 @@
 // Visual Archive — Serverless Search Function (Vercel)
-// Queries 10 institutional APIs in parallel and returns normalised results.
+// Queries 10 institutional APIs + Meilisearch static index in parallel.
 // NOTE: Rijksmuseum removed in March 2026 — old API (rijksmuseum.nl/api) returned HTTP 410 Gone.
 // New API (data.rijksmuseum.nl) only supports filters (creator=, type=), not free-text search.
 //
 // Parameters:
-//   ?q=TERM           — search term (required unless discover=1)
-//   ?discover=1       — returns random results from a curated term set (no q needed)
+//   ?q=TERM                — search term (required unless discover=1)
+//   ?discover=1            — returns random results from a curated term set (no q needed)
 //   ?sources=vam,artic,met — comma-separated source filter (default: all)
+//   ?category=film         — filter static index by category (film|art|photography|design|typography)
 
 const SOURCE_KEYS = [
   'vam', 'artic', 'smithsonian', 'europeana', 'met',
   'wellcome', 'nasa', 'loc', 'nypl', 'bhl',
+  'meilisearch',  // ← static scraped databases
 ];
 
 const DISCOVER_TERMS = [
@@ -51,6 +53,7 @@ export default async function handler(req, res) {
   }
 
   // Build fetch promises for active sources only
+  const { category } = req.query;
   const fetchers = {
     vam:         () => searchVAMuseum(term),
     artic:       () => searchArtic(term),
@@ -62,6 +65,7 @@ export default async function handler(req, res) {
     loc:         () => searchLOC(term),
     nypl:        () => searchNYPL(term),
     bhl:         () => searchBHL(term),
+    meilisearch: () => searchMeilisearch(term, { category }),
   };
 
   const results = await Promise.allSettled(
@@ -375,6 +379,77 @@ async function searchNYPL(term) {
           medium:      '',
         };
       });
+  } catch { return []; }
+}
+
+// ── 11. Meilisearch — Static Scraped Databases ────────────────
+// Queries our self-hosted Meilisearch index (hosted on Render.com).
+// Covers: FilmGrab, Booooooom TV, Directors Notes, Beyond the Short,
+//         Web Gallery of Art, M+B Collection, Letterform Archive,
+//         + Duke AdAccess, Fonts In Use, Peoples GD, ICP (when scraped).
+//
+// Env vars required:
+//   MEILI_URL  — e.g. https://visual-archive-search.onrender.com
+//   MEILI_KEY  — search-only API key (NOT the master key)
+async function searchMeilisearch(term, { category } = {}) {
+  const meiliUrl = process.env.MEILI_URL;
+  const meiliKey = process.env.MEILI_KEY;
+  if (!meiliUrl || !meiliKey) return [];
+
+  try {
+    // Build filter string (only filterable fields: category, source_slug, year, medium)
+    const filters = [];
+    if (category) filters.push(`category = "${category}"`);
+
+    const body = {
+      q:                    decodeURIComponent(term),
+      limit:                30,
+      attributesToRetrieve: [
+        'id', 'title', 'creator', 'year', 'medium', 'category',
+        'source', 'source_slug', 'description', 'tags',
+        'image_url', 'stills', 'item_url', 'location', 'dimensions',
+      ],
+      attributesToHighlight: ['title', 'creator'],
+      highlightPreTag:       '<mark>',
+      highlightPostTag:      '</mark>',
+      filter:                filters.length ? filters.join(' AND ') : undefined,
+    };
+
+    const res = await fetch(
+      `${meiliUrl.replace(/\/$/, '')}/indexes/visual_archive/search`,
+      {
+        method:  'POST',
+        headers: {
+          'Authorization': `Bearer ${meiliKey}`,
+          'Content-Type':  'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data.hits?.length) return [];
+
+    return data.hits.map(hit => ({
+      id:          hit.id,
+      title:       hit._formatted?.title || hit.title || 'Untitled',
+      image_url:   hit.image_url,
+      source_url:  hit.item_url || '',
+      institution: hit.source || 'Visual Archive',
+      date:        hit.year ? String(hit.year) : '',
+      creator:     hit._formatted?.creator || hit.creator || '',
+      medium:      hit.medium || '',
+      category:    hit.category || '',
+      source_slug: hit.source_slug || '',
+      description: hit.description || '',
+      tags:        hit.tags || [],
+      stills:      hit.stills || [],
+      location:    hit.location || '',
+      dimensions:  hit.dimensions || '',
+      // Flag so the frontend knows this came from static index
+      _static:     true,
+    }));
   } catch { return []; }
 }
 
