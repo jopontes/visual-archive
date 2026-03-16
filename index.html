@@ -113,11 +113,15 @@
     .res-main { flex: 1; padding: 24px 0 24px 28px; min-width: 0; }
     .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
     .res-count { font-size: 13px; color: var(--ink-2); }
-    .img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .img-card { cursor: pointer; min-width: 0; }
-    .img-card-wrap { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--rule); margin-bottom: 7px; background: var(--paper-dark); width: 100%; }
-    .img-card-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-grid { columns: 4; column-gap: 12px; }
+    .img-card { cursor: pointer; break-inside: avoid; margin-bottom: 12px; display: block; width: 100%; }
+    .img-card-wrap { overflow: hidden; border: 1px solid var(--rule); margin-bottom: 7px; background: var(--paper-dark); width: 100%; }
+    .img-card-wrap img { width: 100%; height: auto; display: block; }
     .img-card:hover .img-card-wrap img { opacity: 0.85; }
+    /* Skeleton: simulate natural heights while loading */
+    .skel-card .img-card-wrap { aspect-ratio: 4/3; }
+    .skel-card:nth-child(3n) .img-card-wrap { aspect-ratio: 3/4; }
+    .skel-card:nth-child(5n) .img-card-wrap { aspect-ratio: 16/9; }
     .img-card-title { font-family: var(--font-ui); font-size: 12px; color: var(--ink); line-height: 1.35; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .img-card-detail { font-family: var(--font-ui); font-size: 11px; color: var(--ink-2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .img-card-src { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
@@ -126,7 +130,7 @@
     @keyframes skel-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
     .skel-card .img-card-wrap { background: var(--paper-dark); }
     .skel-card .img-card-wrap::after { content:''; display:block; width:100%;height:100%; background: var(--paper-dark); animation: skel-pulse 1.4s ease-in-out infinite; }
-    .skel-card .img-card-title { height: 10px; width: 80%; background: var(--paper-dark); animation: skel-pulse 1.4s ease-in-out infinite; }
+    .skel-card .img-card-title { height: 10px; width: 80%; background: var(--paper-dark); animation: skel-pulse 1.4s ease-in-out infinite; border-radius: 2px; }
     /* Archives CTA */
     .archives-cta { margin-top: 40px; padding: 20px; border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); display: flex; align-items: flex-start; gap: 14px; }
     .archives-cta-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
@@ -265,7 +269,7 @@
 
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 1100px) {
-      .img-grid { grid-template-columns: repeat(3, 1fr); }
+      .img-grid { columns: 3; }
     }
     @media (max-width: 768px) {
       #nav { padding: 0 20px; }
@@ -276,7 +280,7 @@
       .home-sources-wrap { display: none; }
       .res-body { padding: 0; }
       .res-header { padding: 12px 16px; }
-      .img-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .img-grid { columns: 2; column-gap: 8px; }
       .res-sidebar { display: none; }
       .res-main { padding: 14px 16px; }
       .arch-inner { padding: 32px 20px 80px; }
