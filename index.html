@@ -339,10 +339,12 @@
     <div class="home-chips">
       <span class="chips-label">Type:</span>
       <span class="chip active" data-type="any">Any</span>
+      <span class="chip" data-type="film">Film</span>
       <span class="chip" data-type="painting">Painting</span>
       <span class="chip" data-type="photography">Photography</span>
+      <span class="chip" data-type="typography">Typography</span>
+      <span class="chip" data-type="design">Design</span>
       <span class="chip" data-type="object">Object</span>
-      <span class="chip" data-type="drawing">Drawing</span>
       <span class="chip" data-type="architecture">Architecture</span>
     </div>
 
@@ -380,10 +382,13 @@
       <div class="home-source" onclick="triggerSourceSearch('europeana')"><div class="home-source-name">Europeana</div><div class="home-source-n">50M+ items</div></div>
       <div class="home-source" onclick="triggerSourceSearch('met')"><div class="home-source-name">Met Museum</div><div class="home-source-n">470k objects</div></div>
       <div class="home-source" onclick="triggerSourceSearch('wellcome')"><div class="home-source-name">Wellcome</div><div class="home-source-n">Medicine &amp; art</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('nasa')"><div class="home-source-name">NASA</div><div class="home-source-n">Space imagery</div></div>
       <div class="home-source" onclick="triggerSourceSearch('loc')"><div class="home-source-name">Lib. of Congress</div><div class="home-source-n">Prints &amp; photos</div></div>
       <div class="home-source" onclick="triggerSourceSearch('nypl')"><div class="home-source-name">NYPL</div><div class="home-source-n">1.5M images</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('bhl')"><div class="home-source-name">Wikimedia</div><div class="home-source-n">Commons</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('filmgrab')"><div class="home-source-name">FilmGrab</div><div class="home-source-n">3,967 film stills</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('booooooom')"><div class="home-source-name">Booooooom TV</div><div class="home-source-n">8,900 short films</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('directors_notes')"><div class="home-source-name">Directors Notes</div><div class="home-source-n">6,338 films</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('wga')"><div class="home-source-name">Web Gallery of Art</div><div class="home-source-n">52,866 paintings</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('letterform')"><div class="home-source-name">Letterform Archive</div><div class="home-source-n">3,666 type items</div></div>
     </div>
   </div>
 </div>
@@ -408,13 +413,13 @@
       <div class="filter-group">
         <div class="filter-title">Type</div>
         <label class="filter-opt"><input type="radio" name="type-filter" value="any" checked onchange="setTypeFilter('any')"/><span class="filter-opt-label">Any</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="film" onchange="setTypeFilter('film')"/><span class="filter-opt-label">Film</span></label>
         <label class="filter-opt"><input type="radio" name="type-filter" value="painting" onchange="setTypeFilter('painting')"/><span class="filter-opt-label">Painting</span></label>
         <label class="filter-opt"><input type="radio" name="type-filter" value="photography" onchange="setTypeFilter('photography')"/><span class="filter-opt-label">Photography</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="drawing" onchange="setTypeFilter('drawing')"/><span class="filter-opt-label">Drawing</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="typography" onchange="setTypeFilter('typography')"/><span class="filter-opt-label">Typography</span></label>
+        <label class="filter-opt"><input type="radio" name="type-filter" value="design" onchange="setTypeFilter('design')"/><span class="filter-opt-label">Design</span></label>
         <label class="filter-opt"><input type="radio" name="type-filter" value="object" onchange="setTypeFilter('object')"/><span class="filter-opt-label">Object</span></label>
         <label class="filter-opt"><input type="radio" name="type-filter" value="architecture" onchange="setTypeFilter('architecture')"/><span class="filter-opt-label">Architecture</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="textile" onchange="setTypeFilter('textile')"/><span class="filter-opt-label">Textile</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="illustration" onchange="setTypeFilter('illustration')"/><span class="filter-opt-label">Illustration</span></label>
       </div>
 
       <div class="filter-group">
@@ -429,10 +434,19 @@
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Met Museum</span><span class="filter-count" id="cnt-met"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome</span><span class="filter-count" id="cnt-wellcome"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nasa" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NASA</span><span class="filter-count" id="cnt-nasa"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Lib. of Congress</span><span class="filter-count" id="cnt-loc"></span></label>
         <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL</span><span class="filter-count" id="cnt-nypl"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="bhl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia</span><span class="filter-count" id="cnt-bhl"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA</span><span class="filter-count" id="cnt-nasa"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia</span><span class="filter-count" id="cnt-bhl"></span></label>
+        <div class="filter-title" style="margin-top:16px;margin-bottom:10px;">Our databases</div>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab</span><span class="filter-count" id="cnt-filmgrab"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV</span><span class="filter-count" id="cnt-booooooom"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes</span><span class="filter-count" id="cnt-directors_notes"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library</span><span class="filter-count" id="cnt-directors_library"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short</span><span class="filter-count" id="cnt-beyond_short"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art</span><span class="filter-count" id="cnt-wga"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Collection</span><span class="filter-count" id="cnt-mb_collection"></span></label>
+        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive</span><span class="filter-count" id="cnt-letterform"></span></label>
       </div>
     </aside>
 
@@ -516,13 +530,13 @@
       <label class="adv-label">Type</label>
       <div class="adv-type-chips">
         <span class="chip active" data-type="any">Any</span>
+        <span class="chip" data-type="film">Film</span>
         <span class="chip" data-type="painting">Painting</span>
         <span class="chip" data-type="photography">Photography</span>
+        <span class="chip" data-type="typography">Typography</span>
+        <span class="chip" data-type="design">Design</span>
         <span class="chip" data-type="object">Object</span>
-        <span class="chip" data-type="drawing">Drawing</span>
         <span class="chip" data-type="architecture">Architecture</span>
-        <span class="chip" data-type="textile">Textile</span>
-        <span class="chip" data-type="illustration">Illustration</span>
       </div>
     </div>
 
@@ -552,10 +566,18 @@
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="europeana" checked/> Europeana</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="met" checked/> Met Museum</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="wellcome" checked/> Wellcome Collection</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nasa" checked/> NASA</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="loc" checked/> Library of Congress</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nypl" checked/> NYPL</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="bhl" checked/> Wikimedia Commons</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nasa"/> NASA</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="bhl"/> Wikimedia Commons</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="filmgrab" checked/> FilmGrab</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="booooooom" checked/> Booooooom TV</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="directors_notes" checked/> Directors Notes</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="directors_library" checked/> Directors Library</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="beyond_short" checked/> Beyond the Short</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="wga" checked/> Web Gallery of Art</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="mb_collection" checked/> M+B Collection</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="letterform" checked/> Letterform Archive</label>
       </div>
     </div>
 
@@ -606,6 +628,7 @@ const VS_API    = 'https://visual-archive-one.vercel.app';
 const VS_SECRET = 'f9d804150d638857ce4d20a039617be11fc460d42aa67bc1c47eead8c32c2e2c';
 
 const SRC_COLOR = {
+  // Institutional APIs
   'V&A Museum':                   '#5C3D1A',
   'Art Institute Chicago':         '#1A5C8B',
   'Smithsonian':                   '#3D1A5C',
@@ -616,19 +639,38 @@ const SRC_COLOR = {
   'Library of Congress':           '#5C2C1A',
   'NYPL':                          '#2C1A5C',
   'Wikimedia Commons':             '#1A4C2C',
+  // Scraped databases
+  'FilmGrab':                      '#2C2C1A',
+  'Booooooom TV':                  '#1A2C2C',
+  'Directors Notes':               '#2C1A2C',
+  'Directors Library':             '#1A1A3D',
+  'Beyond the Short':              '#3D2C1A',
+  'Web Gallery of Art':            '#1A3D2C',
+  'M+B Collection':                '#3D1A3D',
+  'Letterform Archive':            '#2C3D1A',
 };
 
 const SRC_KEY_MAP = {
-  vam:         'V&A Museum',
-  artic:       'Art Institute Chicago',
-  smithsonian: 'Smithsonian',
-  europeana:   'Europeana',
-  met:         'Met Museum',
-  wellcome:    'Wellcome Collection',
-  nasa:        'NASA',
-  loc:         'Library of Congress',
-  nypl:        'NYPL',
-  bhl:         'Wikimedia Commons',
+  // Institutional APIs
+  vam:               'V&A Museum',
+  artic:             'Art Institute Chicago',
+  smithsonian:       'Smithsonian',
+  europeana:         'Europeana',
+  met:               'Met Museum',
+  wellcome:          'Wellcome Collection',
+  nasa:              'NASA',
+  loc:               'Library of Congress',
+  nypl:              'NYPL',
+  bhl:               'Wikimedia Commons',
+  // Scraped databases (institution = source name from Meilisearch)
+  filmgrab:          'FilmGrab',
+  booooooom:         'Booooooom TV',
+  directors_notes:   'Directors Notes',
+  directors_library: 'Directors Library',
+  beyond_short:      'Beyond the Short',
+  wga:               'Web Gallery of Art',
+  mb_collection:     'M+B Collection',
+  letterform:        'Letterform Archive',
 };
 
 // ── STATE ─────────────────────────────────────────────────────────
@@ -798,10 +840,14 @@ async function runSearch(q, onlySources = null, pushHistory = true) {
     document.getElementById('src-all').checked = false;
   }
 
+  // Map type filters to Meilisearch category (passed as ?category= param)
+  const TYPE_TO_CATEGORY = { film: 'film', photography: 'photography', typography: 'typography', design: 'design', art: 'art' };
+  const category = TYPE_TO_CATEGORY[state.typeFilter];
+
   try {
-    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(typeQ)}`, {
-      headers: { 'x-api-secret': VS_SECRET }
-    });
+    let url = `${VS_API}/api/search?q=${encodeURIComponent(typeQ)}`;
+    if (category) url += `&category=${category}`;
+    const res = await fetch(url, { headers: { 'x-api-secret': VS_SECRET } });
     if (!res.ok) throw new Error('API error');
     const items = await res.json();
     state.allResults = items;
@@ -830,7 +876,7 @@ function renderResults(items) {
   });
   Object.keys(SRC_KEY_MAP).forEach(key => {
     const el = document.getElementById('cnt-' + key);
-    if (el) el.textContent = counts[key] ? counts[key] : '';
+    if (el) el.textContent = counts[key] || '';
   });
 
   // Filter by checked sources
@@ -904,8 +950,15 @@ function handleSourceAll(cb) {
   renderResults(state.allResults);
 }
 function handleSourceCb() {
-  const all = [...document.querySelectorAll('.src-cb')].every(c => c.checked);
-  document.getElementById('src-all').checked = all;
+  // "All sources" = all checked sources include the default set (NASA/Wikimedia are opt-in)
+  const allCbs = [...document.querySelectorAll('.src-cb')];
+  const defaultOn = ['vam','artic','smithsonian','europeana','met','wellcome','loc','nypl',
+                     'filmgrab','booooooom','directors_notes','directors_library','beyond_short','wga','mb_collection','letterform'];
+  const allDefaultChecked = defaultOn.every(k => {
+    const cb = document.querySelector(`.src-cb[data-src="${k}"]`);
+    return cb ? cb.checked : true;
+  });
+  document.getElementById('src-all').checked = allDefaultChecked && allCbs.every(c => c.checked);
   renderResults(state.allResults);
 }
 
