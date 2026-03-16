@@ -118,18 +118,19 @@
     .res-main { flex: 1; padding: 24px 0 24px 28px; min-width: 0; }
     .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
     .res-count { font-size: 13px; color: var(--ink-2); }
-    .img-grid { columns: 4; column-gap: 12px; }
-    .img-card { cursor: pointer; break-inside: avoid; margin-bottom: 12px; display: block; width: 100%; }
-    .img-card-wrap { overflow: hidden; border: 1px solid var(--rule); margin-bottom: 7px; background: var(--paper-dark); width: 100%; }
+    .img-grid { columns: 4; column-gap: 6px; }
+    .img-card { cursor: pointer; break-inside: avoid; margin-bottom: 6px; display: block; width: 100%; }
+    .img-card-wrap { overflow: hidden; background: var(--paper-dark); width: 100%; }
     .img-card-wrap img { width: 100%; height: auto; display: block; }
-    .img-card:hover .img-card-wrap img { opacity: 0.85; }
+    .img-card:hover .img-card-wrap img { opacity: 0.82; }
     /* Skeleton: simulate natural heights while loading */
     .skel-card .img-card-wrap { aspect-ratio: 4/3; }
     .skel-card:nth-child(3n) .img-card-wrap { aspect-ratio: 3/4; }
     .skel-card:nth-child(5n) .img-card-wrap { aspect-ratio: 16/9; }
-    .img-card-title { font-family: var(--font-ui); font-size: 12px; color: var(--ink); line-height: 1.35; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .img-card-detail { font-family: var(--font-ui); font-size: 11px; color: var(--ink-2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .img-card-src { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
+    /* Keep these classes defined but unused — modal still needs src-dot concept */
+    .img-card-title { display: none; }
+    .img-card-detail { display: none; }
+    .img-card-src { display: none; }
     .src-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     /* Skeleton */
     @keyframes skel-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
@@ -222,7 +223,20 @@
     #view-picker { padding-top: 52px; }
     .picker-inner { max-width: 960px; margin: 0 auto; padding: 48px 40px 80px; }
     .picker-query-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
-    .picker-query-text { font-family: var(--font-display); font-size: clamp(22px, 3vw, 32px); font-weight: 300; line-height: 1.2; color: var(--ink); margin-bottom: 36px; }
+    .picker-query-text { font-family: var(--font-display); font-size: clamp(22px, 3vw, 32px); font-weight: 300; line-height: 1.2; color: var(--ink); margin-bottom: 28px; }
+    /* Type row */
+    .picker-type-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+    .picker-type-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); align-self: center; margin-right: 4px; }
+    .picker-type-chip { border: 1px solid var(--rule); padding: 7px 14px; font-size: 12px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); font-family: var(--font-ui); user-select: none; }
+    .picker-type-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+    .picker-type-chip.active { border-color: var(--ink); color: var(--ink); background: var(--paper-dark); }
+    /* Sources section header */
+    .picker-sources-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .picker-sources-title { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+    .picker-select-actions { display: flex; gap: 8px; }
+    .picker-select-btn { font-size: 12px; color: var(--ink-3); background: none; border: none; cursor: pointer; font-family: var(--font-ui); padding: 2px 0; text-decoration: underline; text-underline-offset: 2px; }
+    .picker-select-btn:hover { color: var(--ink); }
+    /* Source cards grid */
     .picker-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 36px; }
     .picker-section-title { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
     .picker-cards { display: flex; flex-direction: column; gap: 4px; }
@@ -240,6 +254,10 @@
     .picker-btn-search { padding: 11px 28px; border: none; border-radius: 2px; font-size: 13px; letter-spacing: .04em; font-family: var(--font-ui); cursor: pointer; background: var(--ink); color: white; white-space: nowrap; }
     .picker-btn-search:hover { background: #2d2924; }
     .picker-btn-search:disabled { background: var(--rule); cursor: not-allowed; color: var(--ink-3); }
+    /* Load more */
+    #load-more-btn { text-align: center; padding: 28px 0 12px; }
+    #load-more-btn button { padding: 11px 36px; border: 1px solid var(--rule); border-radius: 2px; font-family: var(--font-ui); font-size: 13px; color: var(--ink-2); background: var(--warm-white); cursor: pointer; letter-spacing: .03em; }
+    #load-more-btn button:hover { border-color: var(--ink-3); color: var(--ink); }
     @media (max-width: 768px) {
       .picker-inner { padding: 32px 20px 80px; }
       .picker-sections { grid-template-columns: 1fr; gap: 28px; }
@@ -315,7 +333,7 @@
       .home-sources-wrap { display: none; }
       .res-body { padding: 0; }
       .res-header { padding: 12px 16px; }
-      .img-grid { columns: 2; column-gap: 8px; }
+      .img-grid { columns: 2; column-gap: 4px; }
       .res-sidebar { display: none; }
       .res-main { padding: 14px 16px; }
       .arch-inner { padding: 32px 20px 80px; }
@@ -437,6 +455,29 @@
   <div class="picker-inner">
     <div class="picker-query-label">Searching for</div>
     <div class="picker-query-text" id="picker-query-text"></div>
+
+    <!-- Type row -->
+    <div class="picker-type-row">
+      <span class="picker-type-label">Type:</span>
+      <span class="picker-type-chip active" data-ptype="any">Any</span>
+      <span class="picker-type-chip" data-ptype="film">Film</span>
+      <span class="picker-type-chip" data-ptype="photography">Photography</span>
+      <span class="picker-type-chip" data-ptype="painting">Painting</span>
+      <span class="picker-type-chip" data-ptype="design">Design</span>
+      <span class="picker-type-chip" data-ptype="typography">Typography</span>
+      <span class="picker-type-chip" data-ptype="object">Object</span>
+      <span class="picker-type-chip" data-ptype="architecture">Architecture</span>
+    </div>
+
+    <!-- Sources header + select controls -->
+    <div class="picker-sources-header">
+      <span class="picker-sources-title">Sources</span>
+      <div class="picker-select-actions">
+        <button class="picker-select-btn" onclick="pickerSelectAll()">Select all</button>
+        <button class="picker-select-btn" onclick="pickerDeselectAll()">Deselect all</button>
+      </div>
+    </div>
+
     <div class="picker-sections">
       <div>
         <div class="picker-section-title">Institutions</div>
@@ -735,17 +776,23 @@ const SRC_KEY_MAP = {
   letterform:        'Letterform Archive',
 };
 
+// ── CONFIG ─────────────────────────────────────────────────────────
+const BATCH_SIZE = 48;  // cards per load-more batch
+
 // ── STATE ─────────────────────────────────────────────────────────
 let state = {
-  view:          'home',
-  query:         '',
-  typeFilter:    'any',
-  allResults:    [],  // full result set (unfiltered)
-  discoverBatch: [],
-  discoverIdx:   0,
-  activeItem:    null,
-  advDateFrom:   null,
-  advDateTo:     null,
+  view:             'home',
+  query:            '',
+  typeFilter:       'any',
+  allResults:       [],  // full result set from API (unfiltered)
+  filteredResults:  [],  // after source + date filters
+  displayedResults: [],  // currently rendered (used by openModal)
+  displayedCount:   0,
+  discoverBatch:    [],
+  discoverIdx:      0,
+  activeItem:       null,
+  advDateFrom:      null,
+  advDateTo:        null,
 };
 
 // ── PICKER ───────────────────────────────────────────────────────
@@ -781,15 +828,36 @@ const DEFAULT_PICKER_KEYS = new Set([
 
 let pickerQuery    = '';
 let pickerSelected = new Set(DEFAULT_PICKER_KEYS);
+let pickerType     = 'any';  // mirrors state.typeFilter
 
 function showPicker(q) {
   pickerQuery = q;
+  pickerType  = state.typeFilter; // inherit current type selection
   document.getElementById('picker-query-text').textContent = `"${q}"`;
   renderPickerUI();
   showView('picker');
 }
 
+function pickerSelectAll() {
+  const allKeys = [
+    ...PICKER_SOURCES.institutions.map(s => s.key),
+    ...PICKER_SOURCES.databases.map(s => s.key),
+  ];
+  pickerSelected = new Set(allKeys);
+  renderPickerUI();
+}
+
+function pickerDeselectAll() {
+  pickerSelected = new Set();
+  renderPickerUI();
+}
+
 function renderPickerUI() {
+  // Sync type chips
+  document.querySelectorAll('.picker-type-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.ptype === pickerType);
+  });
+
   function cardHtml(src) {
     const sel = pickerSelected.has(src.key);
     return `<div class="picker-card ${sel ? 'selected' : ''}" onclick="pickerToggle('${src.key}')">
@@ -833,6 +901,13 @@ function updatePickerActions() {
 
 function pickerSearch() {
   if (pickerSelected.size === 0) return;
+  // Apply type selection
+  state.typeFilter = pickerType;
+  document.querySelectorAll('.chip[data-type]').forEach(c => {
+    c.classList.toggle('active', c.dataset.type === pickerType);
+  });
+  const radio = document.querySelector(`input[name="type-filter"][value="${pickerType}"]`);
+  if (radio) radio.checked = true;
   // Sync picker selection to sidebar checkboxes
   document.querySelectorAll('.src-cb').forEach(cb => {
     cb.checked = pickerSelected.has(cb.dataset.src);
@@ -954,12 +1029,20 @@ window.addEventListener('popstate', e => {
 document.addEventListener('click', e => {
   const chip = e.target.closest('.chip[data-type]');
   if (!chip) return;
-  // Find the chip group (parent container)
   const group = chip.closest('.home-chips, .adv-type-chips');
   if (!group) return;
   group.querySelectorAll('.chip[data-type]').forEach(c => c.classList.remove('active'));
   chip.classList.add('active');
   state.typeFilter = chip.dataset.type;
+});
+
+// ── PICKER TYPE CHIPS ─────────────────────────────────────────────
+document.addEventListener('click', e => {
+  const chip = e.target.closest('.picker-type-chip[data-ptype]');
+  if (!chip) return;
+  pickerType = chip.dataset.ptype;
+  document.querySelectorAll('.picker-type-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
 });
 
 // ── TYPE FILTER (results sidebar) ────────────────────────────────
@@ -1031,12 +1114,9 @@ async function runSearch(q, onlySources = null, pushHistory = true) {
 }
 
 function skeletonGrid(n) {
-  return Array(n).fill(0).map(() => `
-    <div class="img-card skel-card">
-      <div class="img-card-wrap"></div>
-      <div class="img-card-title skeleton" style="height:10px;width:70%;margin-bottom:4px"></div>
-      <div class="img-card-title skeleton" style="height:9px;width:40%"></div>
-    </div>`).join('');
+  return Array(n).fill(0).map(() =>
+    `<div class="img-card skel-card"><div class="img-card-wrap"></div></div>`
+  ).join('');
 }
 
 function renderResults(items) {
@@ -1086,18 +1166,46 @@ function renderResults(items) {
   empty.style.display = 'none';
   cta.style.display = filtered.length < 10 ? 'flex' : 'none';
 
-  grid.innerHTML = filtered.map((item, i) => {
-    return `<div class="img-card" onclick="openModal(${i})">
-      <div class="img-card-wrap">
-        <img src="${escHtml(item.image_url)}" alt="${escHtml(item.title)}" loading="lazy"
-             onerror="this.style.display='none';this.parentNode.style.background='var(--paper-dark)'"/>
-      </div>
-      <div class="img-card-title">${escHtml(item.title)}</div>
-    </div>`;
-  }).join('');
+  state.filteredResults  = filtered;
+  state.displayedCount   = Math.min(BATCH_SIZE, filtered.length);
+  state.displayedResults = filtered.slice(0, state.displayedCount);
 
-  // Store filtered for modal index
-  state.displayedResults = filtered;
+  grid.innerHTML = state.displayedResults.map((item, i) => cardHtml(item, i)).join('');
+  renderLoadMore();
+}
+
+function cardHtml(item, idx) {
+  return `<div class="img-card" onclick="openModal(${idx})">
+    <div class="img-card-wrap">
+      <img src="${escHtml(item.image_url)}" alt="${escHtml(item.title)}" loading="lazy"
+           onerror="this.style.display='none';this.parentNode.style.background='var(--paper-dark)'"/>
+    </div>
+  </div>`;
+}
+
+function renderLoadMore() {
+  const existing = document.getElementById('load-more-btn');
+  if (existing) existing.remove();
+  const remaining = state.filteredResults.length - state.displayedCount;
+  if (remaining <= 0) return;
+  const btn = document.createElement('div');
+  btn.id = 'load-more-btn';
+  btn.innerHTML = `<button onclick="loadMore()">Load more &nbsp;·&nbsp; ${remaining} more images</button>`;
+  document.getElementById('results-grid').after(btn);
+}
+
+function loadMore() {
+  const offset    = state.displayedCount;
+  const nextItems = state.filteredResults.slice(offset, offset + BATCH_SIZE);
+  state.displayedCount   += nextItems.length;
+  state.displayedResults  = state.filteredResults.slice(0, state.displayedCount);
+
+  const grid = document.getElementById('results-grid');
+  const tmp  = document.createElement('div');
+  tmp.innerHTML = nextItems.map((item, i) => cardHtml(item, offset + i)).join('');
+  while (tmp.firstChild) grid.appendChild(tmp.firstChild);
+
+  renderLoadMore();
 }
 
 // ── SOURCE FILTER CHECKBOXES ─────────────────────────────────────
