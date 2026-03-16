@@ -81,10 +81,17 @@ export default async function handler(req, res) {
     'Wikimedia Commons':             9,
   };
 
+  // Non-image extension filter — catch PDFs, DjVu, etc. that slip through
+  const NON_IMAGE_EXTS = ['.pdf', '.djvu', '.epub', '.doc', '.docx', '.ps', '.eps'];
+
   let items = results
     .filter(r => r.status === 'fulfilled')
     .flatMap(r => r.value)
-    .filter(item => item && item.image_url);
+    .filter(item => {
+      if (!item || !item.image_url) return false;
+      const urlPath = item.image_url.toLowerCase().split('?')[0];
+      return !NON_IMAGE_EXTS.some(ext => urlPath.endsWith(ext));
+    });
 
   if (discover === '1') {
     items = items.sort(() => Math.random() - 0.5);
@@ -114,6 +121,8 @@ async function searchVAMuseum(term) {
         source_url:  `https://collections.vam.ac.uk/item/${item.systemNumber}`,
         institution: 'V&A Museum',
         date:        item._primaryDate || '',
+        creator:     item._primaryMaker?.name || '',
+        medium:      item._primaryMaterials || '',
       }));
   } catch { return []; }
 }
@@ -122,7 +131,7 @@ async function searchVAMuseum(term) {
 async function searchArtic(term) {
   try {
     const res = await fetch(
-      `https://api.artic.edu/api/v1/artworks/search?q=${term}&fields=id,title,image_id,date_display&limit=12`
+      `https://api.artic.edu/api/v1/artworks/search?q=${term}&fields=id,title,image_id,date_display,artist_display,medium_display&limit=12`
     );
     const data = await res.json();
     if (!data.data?.length) return [];
@@ -135,6 +144,8 @@ async function searchArtic(term) {
         source_url:  `https://www.artic.edu/artworks/${item.id}`,
         institution: 'Art Institute Chicago',
         date:        item.date_display || '',
+        creator:     item.artist_display || '',
+        medium:      item.medium_display || '',
       }));
   } catch { return []; }
 }
@@ -168,6 +179,8 @@ async function searchSmithsonian(term) {
           source_url:  dnr.record_link || `https://www.si.edu/object/${row.id}`,
           institution: 'Smithsonian',
           date:        row.content?.freetext?.date?.[0]?.content || '',
+          creator:     row.content?.freetext?.name?.[0]?.content || '',
+          medium:      row.content?.freetext?.physicalDescription?.[0]?.content || '',
         });
         if (items.length >= 12) break;
       } catch { /* skip malformed row */ }
@@ -182,7 +195,7 @@ async function searchEuropeana(term) {
   if (!key) return [];
   try {
     const res = await fetch(
-      `https://api.europeana.eu/record/v2/search.json?query=${term}&wskey=${key}&rows=12&media=true`
+      `https://api.europeana.eu/record/v2/search.json?query=${term}&wskey=${key}&rows=12&media=true&qf=TYPE:IMAGE`
     );
     const data = await res.json();
     if (!data.items?.length) return [];
@@ -195,6 +208,8 @@ async function searchEuropeana(term) {
         source_url:  item.guid || `https://www.europeana.eu/item${item.id}`,
         institution: 'Europeana',
         date:        item.year?.[0] || '',
+        creator:     item.dcCreator?.[0] || '',
+        medium:      '',
       }));
   } catch { return []; }
 }
@@ -223,6 +238,8 @@ async function searchMet(term) {
         source_url:  r.value.objectURL,
         institution: 'Met Museum',
         date:        r.value.objectDate || '',
+        creator:     r.value.artistDisplayName || '',
+        medium:      r.value.medium || '',
       }));
   } catch { return []; }
 }
@@ -244,6 +261,8 @@ async function searchWellcome(term) {
         source_url:  `https://wellcomecollection.org/works/${item.source?.id || item.id}`,
         institution: 'Wellcome Collection',
         date:        item.source?.productionDates?.[0]?.label || '',
+        creator:     item.source?.contributors?.[0]?.agent?.label || '',
+        medium:      item.source?.physicalDescription || '',
       }));
   } catch { return []; }
 }
@@ -271,6 +290,8 @@ async function searchNASA(term) {
             : 'https://images.nasa.gov/',
           institution: 'NASA',
           date:        meta.date_created ? meta.date_created.substring(0, 4) : '',
+          creator:     meta.center || '',
+          medium:      '',
         };
       });
   } catch { return []; }
@@ -295,6 +316,8 @@ async function searchLOC(term) {
         source_url:  item.url || 'https://www.loc.gov/photos/',
         institution: 'Library of Congress',
         date:        item.date || '',
+        creator:     Array.isArray(item.contributor) ? item.contributor[0] : (item.contributor || ''),
+        medium:      '',
       }));
   } catch { return []; }
 }

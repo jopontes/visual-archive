@@ -118,7 +118,8 @@
     .img-card-wrap { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--rule); margin-bottom: 7px; background: var(--paper-dark); width: 100%; }
     .img-card-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .img-card:hover .img-card-wrap img { opacity: 0.85; }
-    .img-card-title { font-family: var(--font-ui); font-size: 12px; color: var(--ink); line-height: 1.35; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-card-title { font-family: var(--font-ui); font-size: 12px; color: var(--ink); line-height: 1.35; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-card-detail { font-family: var(--font-ui); font-size: 11px; color: var(--ink-2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .img-card-src { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
     .src-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     /* Skeleton */
@@ -162,8 +163,33 @@
     .disc-loading { min-height: 300px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 640px; }
     .disc-loading p { font-size: 14px; color: rgba(255,255,255,.3); letter-spacing: .04em; }
 
-    /* ── ARCHIVES VIEW ──────────────────────────────── */
-    #view-archives { padding-top: 52px; }
+    /* ── ADVANCED SEARCH VIEW ───────────────────────── */
+    #view-advanced { padding-top: 52px; }
+    .adv-inner { max-width: 720px; margin: 0 auto; padding: 60px 40px 80px; }
+    .adv-title { font-family: var(--font-display); font-size: 32px; font-weight: 300; margin-bottom: 6px; }
+    .adv-sub { font-size: 14px; color: var(--ink-2); margin-bottom: 40px; }
+    .adv-section { margin-bottom: 32px; }
+    .adv-label { font-size: 11px; font-weight: 500; letter-spacing: .10em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 12px; display: block; }
+    .adv-input { width: 100%; border: 1.5px solid var(--ink); border-radius: 2px; padding: 12px 16px; font-size: 15px; font-family: var(--font-ui); color: var(--ink); background: var(--warm-white); outline: none; }
+    .adv-input:focus { border-color: var(--ink); }
+    .adv-date-row { display: flex; gap: 12px; }
+    .adv-date-row .adv-date-field { flex: 1; }
+    .adv-date-field label { font-size: 12px; color: var(--ink-3); display: block; margin-bottom: 5px; }
+    .adv-date-field input { width: 100%; border: 1px solid var(--rule); border-radius: 2px; padding: 9px 12px; font-size: 14px; font-family: var(--font-ui); color: var(--ink); background: var(--warm-white); outline: none; }
+    .adv-date-field input:focus { border-color: var(--ink-3); }
+    .adv-type-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .adv-sources-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .adv-src-opt { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 2px; cursor: pointer; font-size: 13px; color: var(--ink-2); }
+    .adv-src-opt input[type=checkbox] { accent-color: var(--ink); width: 13px; height: 13px; cursor: pointer; }
+    .adv-src-opt:has(input:checked) { border-color: var(--ink-2); color: var(--ink); background: var(--paper); }
+    .adv-src-all { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-3); margin-bottom: 8px; cursor: pointer; }
+    .adv-src-all input { accent-color: var(--ink); width: 13px; height: 13px; cursor: pointer; }
+    .adv-submit { background: var(--ink); color: white; border: none; padding: 14px 36px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; border-radius: 2px; cursor: pointer; margin-top: 8px; }
+    .adv-submit:hover { background: #2d2924; }
+    .adv-divider { border: none; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+    /* ── SOURCES VIEW ────────────────────────────────── */
+    #view-sources { padding-top: 52px; }
     .arch-inner { max-width: 1400px; margin: 0 auto; padding: 48px 40px 80px; }
     .arch-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
     .arch-title { font-family: var(--font-display); font-size: 28px; font-weight: 300; }
@@ -259,7 +285,10 @@
       #mob-nav { display: block; }
       #view-home { padding-bottom: 60px; }
       #view-results { padding-bottom: 60px; }
-      #view-archives { padding-bottom: 60px; }
+      #view-sources { padding-bottom: 60px; }
+      #view-advanced { padding-bottom: 60px; }
+      .adv-inner { padding: 40px 20px 80px; }
+      .adv-sources-grid { grid-template-columns: 1fr; }
       /* Discover: full-screen on mobile */
       #view-discover { height: 100vh; min-height: unset; overflow: hidden; padding: 0; align-items: stretch; justify-content: flex-start; padding-bottom: 60px; }
       .disc-header { max-width: none; width: auto; padding: 16px 24px 0; }
@@ -283,7 +312,7 @@
 <nav id="nav">
   <div id="nav-logo" onclick="goHome()">Visual Archive</div>
   <div id="nav-links">
-    <span onclick="showArchives()">Archives</span>
+    <span onclick="showSources()">Sources</span>
     <span onclick="startDiscover()">Discover</span>
   </div>
 </nav>
@@ -299,6 +328,9 @@
       <input id="home-input" type="text" placeholder="Search by theme, style, object, period, technique…"
              onkeydown="if(event.key==='Enter') triggerSearch()"/>
       <button class="home-search-btn" onclick="triggerSearch()">Search</button>
+    </div>
+    <div style="margin-bottom:8px;margin-top:-6px;text-align:right;">
+      <span onclick="showAdvanced()" style="font-size:12px;color:var(--ink-3);cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Advanced search</span>
     </div>
 
     <div class="home-chips">
@@ -362,6 +394,7 @@
       <input id="res-input" type="text" placeholder="Search…"
              onkeydown="if(event.key==='Enter') triggerSearch('results')"/>
     </div>
+    <span onclick="showAdvanced()" style="font-size:12px;color:var(--ink-3);cursor:pointer;white-space:nowrap;padding-left:12px;" title="Advanced search">Advanced</span>
   </div>
 
   <div class="res-body">
@@ -409,7 +442,7 @@
       <div id="res-empty" class="state-msg" style="display:none"><p>No results found. Try a different term.</p></div>
       <div class="archives-cta" id="archives-cta" style="display:none">
         <span class="archives-cta-icon">↖</span>
-        <p>Didn't find what you needed? <a onclick="showArchives()">Explore these 137 curated archives</a> — each has its own search tools and may surface exactly what you're looking for.</p>
+        <p>Didn't find what you needed? <a onclick="showSources()">Explore these 137 curated sources</a> — each has its own search tools and may surface exactly what you're looking for.</p>
       </div>
     </main>
   </div>
@@ -443,24 +476,87 @@
   </div>
 </div>
 
-<!-- ── ARCHIVES VIEW ─────────────────────────────────────────── -->
-<div id="view-archives" class="view">
+<!-- ── SOURCES VIEW ──────────────────────────────────────────── -->
+<div id="view-sources" class="view">
   <div class="arch-inner">
     <div class="arch-head">
-      <div class="arch-title">Curated Archives</div>
-      <div class="arch-sub">137 sources organised by area</div>
+      <div class="arch-title">Curated Sources</div>
+      <div class="arch-sub">137 archives organised by area</div>
     </div>
 
     <div class="arch-banner">
       <div class="arch-banner-icon">↖</div>
       <div class="arch-banner-text">
         Didn't find what you needed in the search?
-        <strong>Each archive below has its own search tools</strong> and may have exactly what you're looking for — including things our API doesn't surface yet.
+        <strong>Each source below has its own search tools</strong> and may have exactly what you're looking for — including things our API doesn't surface yet.
       </div>
     </div>
 
     <div class="arch-filter-row" id="arch-filter-row"></div>
     <div id="arch-content"></div>
+  </div>
+</div>
+
+<!-- ── ADVANCED SEARCH VIEW ──────────────────────────────────── -->
+<div id="view-advanced" class="view">
+  <div class="adv-inner">
+    <div class="adv-title">Advanced Search</div>
+    <p class="adv-sub">Narrow your search across all 10 institutional archives.</p>
+
+    <div class="adv-section">
+      <label class="adv-label">Query</label>
+      <input id="adv-input" class="adv-input" type="text" placeholder="Search by theme, object, period, technique…"
+             onkeydown="if(event.key==='Enter') runAdvancedSearch()"/>
+    </div>
+
+    <div class="adv-section">
+      <label class="adv-label">Type</label>
+      <div class="adv-type-chips">
+        <span class="chip active" data-type="any">Any</span>
+        <span class="chip" data-type="painting">Painting</span>
+        <span class="chip" data-type="photography">Photography</span>
+        <span class="chip" data-type="object">Object</span>
+        <span class="chip" data-type="drawing">Drawing</span>
+        <span class="chip" data-type="architecture">Architecture</span>
+        <span class="chip" data-type="textile">Textile</span>
+        <span class="chip" data-type="illustration">Illustration</span>
+      </div>
+    </div>
+
+    <div class="adv-section">
+      <label class="adv-label">Date range</label>
+      <div class="adv-date-row">
+        <div class="adv-date-field">
+          <label>From year</label>
+          <input id="adv-date-from" type="number" placeholder="e.g. 1800" min="1000" max="2025"/>
+        </div>
+        <div class="adv-date-field">
+          <label>To year</label>
+          <input id="adv-date-to" type="number" placeholder="e.g. 1950" min="1000" max="2025"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="adv-section">
+      <label class="adv-label">Sources</label>
+      <label class="adv-src-all">
+        <input type="checkbox" id="adv-src-all" checked onchange="advToggleAll(this)"/> Select all
+      </label>
+      <div class="adv-sources-grid">
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="vam" checked/> V&amp;A Museum</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="artic" checked/> Art Institute Chicago</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="smithsonian" checked/> Smithsonian</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="europeana" checked/> Europeana</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="met" checked/> Met Museum</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="wellcome" checked/> Wellcome Collection</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nasa" checked/> NASA</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="loc" checked/> Library of Congress</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nypl" checked/> NYPL</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="bhl" checked/> Wikimedia Commons</label>
+      </div>
+    </div>
+
+    <button class="adv-submit" onclick="runAdvancedSearch()">Search →</button>
   </div>
 </div>
 
@@ -476,7 +572,7 @@
       <div class="modal-title" id="modal-title"></div>
       <div class="modal-meta" id="modal-meta"></div>
       <div class="modal-actions">
-        <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">View in archive ↗</a>
+        <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">View in source ↗</a>
         <span class="modal-btn modal-btn-secondary">+ Save to collection</span>
       </div>
     </div>
@@ -495,8 +591,8 @@
     <div class="mob-tab" id="mtab-search" onclick="focusSearch()">
       <div class="mob-tab-icon">⌕</div><div class="mob-tab-label">Search</div>
     </div>
-    <div class="mob-tab" id="mtab-archives" onclick="showArchives()">
-      <div class="mob-tab-icon">▦</div><div class="mob-tab-label">Archives</div>
+    <div class="mob-tab" id="mtab-sources" onclick="showSources()">
+      <div class="mob-tab-icon">▦</div><div class="mob-tab-label">Sources</div>
     </div>
   </div>
 </nav>
@@ -534,13 +630,15 @@ const SRC_KEY_MAP = {
 
 // ── STATE ─────────────────────────────────────────────────────────
 let state = {
-  view:        'home',
-  query:       '',
-  typeFilter:  'any',
-  allResults:  [],  // full result set (unfiltered)
+  view:          'home',
+  query:         '',
+  typeFilter:    'any',
+  allResults:    [],  // full result set (unfiltered)
   discoverBatch: [],
   discoverIdx:   0,
   activeItem:    null,
+  advDateFrom:   null,
+  advDateTo:     null,
 };
 
 // ── ARCHIVES DATA ─────────────────────────────────────────────────
@@ -562,7 +660,7 @@ function triggerSourceSearch(srcKey) {
 }
 
 // ── NAVIGATION ───────────────────────────────────────────────────
-function showView(name) {
+function showView(name, pushHistory = true) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
   state.view = name;
@@ -575,25 +673,81 @@ function showView(name) {
   const mobNav = document.getElementById('mob-nav');
   mobNav.classList.toggle('dark', name === 'discover');
   document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
-  const tabMap = { home:'mtab-home', results:'mtab-search', discover:'mtab-discover', archives:'mtab-archives' };
+  const tabMap = { home:'mtab-home', results:'mtab-search', discover:'mtab-discover', sources:'mtab-sources', advanced:'mtab-home' };
   const tabEl = document.getElementById(tabMap[name]);
   if (tabEl) tabEl.classList.add('active');
   window.scrollTo(0, 0);
+
+  // Update browser URL
+  if (pushHistory) {
+    const urlMap = {
+      home:     '/',
+      results:  `/search?q=${encodeURIComponent(state.query)}${state.typeFilter !== 'any' ? '&type=' + encodeURIComponent(state.typeFilter) : ''}`,
+      discover: '/discover',
+      sources:  '/sources',
+      advanced: '/advanced',
+    };
+    const url = urlMap[name] || '/';
+    history.pushState({ view: name, query: state.query, type: state.typeFilter }, '', url);
+  }
 }
 function goHome() { showView('home'); }
-function showArchives() { renderArchives(); showView('archives'); }
+function showSources() { renderSources(); showView('sources'); }
+function showAdvanced() { showView('advanced'); }
 function focusSearch() {
   showView('home');
   setTimeout(() => document.getElementById('home-input').focus(), 100);
 }
 
-// ── CHIP SELECTION (home page) ───────────────────────────────────
-document.querySelectorAll('.chip[data-type]').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.chip[data-type]').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    state.typeFilter = chip.dataset.type;
-  });
+// ── URL ROUTING (on load + back/forward) ─────────────────────────
+function initFromURL() {
+  const path = window.location.pathname;
+  const params = new URLSearchParams(window.location.search);
+  if (path === '/discover') {
+    startDiscover();
+  } else if (path === '/sources') {
+    showSources();
+  } else if (path === '/advanced') {
+    showView('advanced', false);
+  } else if (path === '/search' && params.get('q')) {
+    const q = params.get('q');
+    const type = params.get('type') || 'any';
+    state.query = q;
+    state.typeFilter = type;
+    document.getElementById('home-input').value = q;
+    runSearch(q, null, false);
+  } else {
+    showView('home', false);
+  }
+}
+window.addEventListener('popstate', e => {
+  if (!e.state) { showView('home', false); return; }
+  const { view, query, type } = e.state;
+  if (view === 'results' && query) {
+    state.query = query;
+    state.typeFilter = type || 'any';
+    runSearch(query, null, false);
+  } else if (view === 'sources') {
+    renderSources(); showView('sources', false);
+  } else if (view === 'discover') {
+    startDiscover();
+  } else if (view === 'advanced') {
+    showView('advanced', false);
+  } else {
+    showView('home', false);
+  }
+});
+
+// ── CHIP SELECTION (home page + advanced search) ─────────────────
+document.addEventListener('click', e => {
+  const chip = e.target.closest('.chip[data-type]');
+  if (!chip) return;
+  // Find the chip group (parent container)
+  const group = chip.closest('.home-chips, .adv-type-chips');
+  if (!group) return;
+  group.querySelectorAll('.chip[data-type]').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.typeFilter = chip.dataset.type;
 });
 
 // ── TYPE FILTER (results sidebar) ────────────────────────────────
@@ -615,11 +769,15 @@ function triggerSearch(from = 'home') {
   const q = input.value.trim();
   if (!q) return;
   state.query = q;
+  // Clear any advanced search date filters when doing a plain search
+  state.advDateFrom = null;
+  state.advDateTo = null;
   runSearch(q);
 }
 
-async function runSearch(q, onlySources = null) {
-  showView('results');
+async function runSearch(q, onlySources = null, pushHistory = true) {
+  state.query = q;
+  showView('results', pushHistory);
   document.getElementById('res-input').value = q;
   document.getElementById('res-count').textContent = 'Searching…';
   document.getElementById('results-grid').innerHTML = skeletonGrid(12);
@@ -675,7 +833,20 @@ function renderResults(items) {
   // Filter by checked sources
   const checked = [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
   const checkedNames = checked.map(k => SRC_KEY_MAP[k]);
-  const filtered = items.filter(item => checkedNames.includes(item.institution));
+  let filtered = items.filter(item => checkedNames.includes(item.institution));
+
+  // Filter by date range (from advanced search)
+  if (state.advDateFrom || state.advDateTo) {
+    filtered = filtered.filter(item => {
+      if (!item.date) return true; // keep if no date
+      const yearMatch = item.date.match(/\d{4}/);
+      if (!yearMatch) return true;
+      const year = parseInt(yearMatch[0]);
+      if (state.advDateFrom && year < state.advDateFrom) return false;
+      if (state.advDateTo   && year > state.advDateTo)   return false;
+      return true;
+    });
+  }
 
   const grid = document.getElementById('results-grid');
   const empty = document.getElementById('res-empty');
@@ -696,12 +867,23 @@ function renderResults(items) {
 
   grid.innerHTML = filtered.map((item, i) => {
     const color = SRC_COLOR[item.institution] || '#888';
+    // Build detail line: date and/or creator
+    const detailParts = [];
+    if (item.date) detailParts.push(escHtml(item.date));
+    if (item.creator) {
+      const c = item.creator.replace(/\n/g, ', ').substring(0, 40);
+      detailParts.push(escHtml(c));
+    }
+    const detailLine = detailParts.length
+      ? `<div class="img-card-detail">${detailParts.join(' · ')}</div>`
+      : '';
     return `<div class="img-card" onclick="openModal(${i})">
       <div class="img-card-wrap">
         <img src="${escHtml(item.image_url)}" alt="${escHtml(item.title)}" loading="lazy"
              onerror="this.style.display='none';this.parentNode.style.background='var(--paper-dark)'"/>
       </div>
       <div class="img-card-title">${escHtml(item.title)}</div>
+      ${detailLine}
       <div class="img-card-src">
         <div class="src-dot" style="background:${color}"></div>
         ${escHtml(item.institution)}
@@ -725,6 +907,22 @@ function handleSourceCb() {
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
+function buildModalMeta(item) {
+  let html = '';
+  if (item.creator) {
+    const c = item.creator.replace(/\n/g, ', ');
+    html += `<div class="modal-row"><span class="modal-key">Artist</span><span class="modal-val">${escHtml(c)}</span></div>`;
+  }
+  if (item.date) {
+    html += `<div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${escHtml(item.date)}</span></div>`;
+  }
+  if (item.medium) {
+    const m = item.medium.replace(/\n/g, ', ').substring(0, 120);
+    html += `<div class="modal-row"><span class="modal-key">Medium</span><span class="modal-val">${escHtml(m)}</span></div>`;
+  }
+  html += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+  return html;
+}
 function openModal(idx) {
   const item = state.displayedResults?.[idx] || state.allResults?.[idx];
   if (!item) return;
@@ -734,12 +932,7 @@ function openModal(idx) {
   document.getElementById('modal-source').textContent = item.institution;
   document.getElementById('modal-title').textContent = item.title;
   document.getElementById('modal-link').href = item.source_url;
-  const meta = document.getElementById('modal-meta');
-  meta.innerHTML = '';
-  if (item.date) {
-    meta.innerHTML += `<div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${escHtml(item.date)}</span></div>`;
-  }
-  meta.innerHTML += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+  document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
   document.getElementById('modal').classList.add('open');
 }
 function openModalFromDiscover() {
@@ -751,12 +944,7 @@ function openModalFromDiscover() {
   document.getElementById('modal-source').textContent = item.institution;
   document.getElementById('modal-title').textContent = item.title;
   document.getElementById('modal-link').href = item.source_url;
-  const meta = document.getElementById('modal-meta');
-  meta.innerHTML = '';
-  if (item.date) {
-    meta.innerHTML += `<div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${escHtml(item.date)}</span></div>`;
-  }
-  meta.innerHTML += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+  document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(e) {
@@ -833,10 +1021,10 @@ function setupSwipe() {
   };
 }
 
-// ── ARCHIVES ──────────────────────────────────────────────────────
+// ── SOURCES ───────────────────────────────────────────────────────
 let archActiveFilter = 'All';
 
-function renderArchives() {
+function renderSources() {
   // Build tag list
   const tagSet = new Set(['All']);
   ARCHIVES.forEach(a => a.t.split(',').forEach(t => tagSet.add(t.trim())));
@@ -846,21 +1034,21 @@ function renderArchives() {
   const filterRow = document.getElementById('arch-filter-row');
   filterRow.innerHTML = tags.map(t =>
     `<button class="arch-filter ${t === archActiveFilter ? 'active' : ''}"
-             onclick="setArchFilter('${t.replace(/'/g,"\\'")}')">
+             onclick="setSourceFilter('${t.replace(/'/g,"\\'")}')">
        ${escHtml(t)}
      </button>`
   ).join('');
 
   // Content grouped by tag
-  renderArchContent();
+  renderSourceContent();
 }
 
-function setArchFilter(tag) {
+function setSourceFilter(tag) {
   archActiveFilter = tag;
-  renderArchives();
+  renderSources();
 }
 
-function renderArchContent() {
+function renderSourceContent() {
   const content = document.getElementById('arch-content');
   const filtered = archActiveFilter === 'All'
     ? ARCHIVES
@@ -891,8 +1079,28 @@ function renderArchContent() {
   `).join('');
 }
 
+// ── ADVANCED SEARCH ───────────────────────────────────────────────
+function advToggleAll(cb) {
+  document.querySelectorAll('.adv-src-cb').forEach(c => c.checked = cb.checked);
+}
+
+function runAdvancedSearch() {
+  const q = document.getElementById('adv-input').value.trim();
+  if (!q) { document.getElementById('adv-input').focus(); return; }
+
+  // Collect selected sources
+  const selectedSrcs = [...document.querySelectorAll('.adv-src-cb:checked')].map(c => c.dataset.src);
+
+  // Date range
+  state.advDateFrom = parseInt(document.getElementById('adv-date-from').value) || null;
+  state.advDateTo   = parseInt(document.getElementById('adv-date-to').value)   || null;
+
+  state.query = q;
+  runSearch(q, selectedSrcs.length === 10 ? null : selectedSrcs);
+}
+
 // ── INIT ──────────────────────────────────────────────────────────
-showView('home');
+initFromURL();
 </script>
 </body>
 </html>
