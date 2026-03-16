@@ -80,54 +80,58 @@ export default async function handler(req, res) {
     activeSources.map(key => fetchers[key]())
   );
 
-  const institutionPriority = {
-    'V&A Museum':                   0,
-    'Art Institute Chicago':         1,
-    'Smithsonian':                   2,
-    'Europeana':                     3,
-    'Met Museum':                    4,
-    'Wellcome Collection':           5,
-    'Library of Congress':           6,
-    'NYPL':                          7,
-    'NASA':                          8,
-    'Wikimedia Commons':             9,
+  // ── Reciprocal Rank Fusion (RRF) ──
+  // Each source returns results in relevance order. RRF assigns a score
+  // based on rank position: score = weight / (k + rank). This ensures
+  // top results from ALL sources cluster at the top, regardless of which
+  // API they came from. Source weights bias toward curated creative archives.
+  const RRF_K = 60;
+  const SOURCE_WEIGHTS = {
+    meilisearch:  1.5,   // Curated creative databases — core value
+    artic:        1.2,   // Excellent metadata + high-res
+    vam:          1.0,   // Reliable institutional baselines
+    met:          1.0,
+    smithsonian:  1.0,
+    wellcome:     0.9,   // Slightly niche
+    loc:          0.9,
+    nypl:         0.8,   // Slow, often partial
+    europeana:    0.4,   // Very noisy, lots of non-visual items
+    nasa:         0.3,   // Opt-in only
+    bhl:          0.3,   // Opt-in only
   };
 
   // Non-image extension filter — catch PDFs, DjVu, etc. that slip through
   const NON_IMAGE_EXTS = ['.pdf', '.djvu', '.epub', '.doc', '.docx', '.ps', '.eps'];
 
-  const allItems = results
-    .filter(r => r.status === 'fulfilled')
-    .flatMap(r => r.value)
-    .filter(item => {
-      if (!item || !item.image_url) return false;
+  // Tag each source's items with _sourceKey and _rank, then flatten
+  const allItems = [];
+  results.forEach((r, idx) => {
+    if (r.status !== 'fulfilled' || !Array.isArray(r.value)) return;
+    const sourceKey = activeSources[idx];
+    r.value.forEach((item, rank) => {
+      if (!item || !item.image_url) return;
       const urlPath = item.image_url.toLowerCase().split('?')[0];
-      return !NON_IMAGE_EXTS.some(ext => urlPath.endsWith(ext));
+      if (NON_IMAGE_EXTS.some(ext => urlPath.endsWith(ext))) return;
+      item._sourceKey = sourceKey;
+      item._rank = rank;
+      allItems.push(item);
     });
-
-  // Separate scraped database results (_static) from live API results
-  const staticItems = allItems.filter(i => i._static);
-  const liveItems   = allItems.filter(i => !i._static);
+  });
 
   let items;
   if (discover === '1') {
+    // Discover mode: random shuffle
     items = allItems.sort(() => Math.random() - 0.5);
   } else {
-    // Sort live results by institution priority
-    liveItems.sort((a, b) =>
-      (institutionPriority[a.institution] ?? 999) - (institutionPriority[b.institution] ?? 999)
-    );
-    // Interleave: 2 live results then 1 static, so scraped items always appear
-    items = [];
-    let l = 0, s = 0;
-    while (l < liveItems.length || s < staticItems.length) {
-      if (l < liveItems.length) items.push(liveItems[l++]);
-      if (l < liveItems.length) items.push(liveItems[l++]);
-      if (s < staticItems.length) items.push(staticItems[s++]);
-    }
+    // Apply RRF scoring and sort
+    allItems.forEach(item => {
+      const w = SOURCE_WEIGHTS[item._sourceKey] || 1.0;
+      item._rrfScore = w / (RRF_K + item._rank);
+    });
+    items = allItems.sort((a, b) => b._rrfScore - a._rrfScore);
   }
 
-  return res.status(200).json(items.slice(0, 120));
+  return res.status(200).json(items.slice(0, 150));
 }
 
 // ── 1. V&A Museum ──────────────────────────────────────────────

@@ -1099,9 +1099,13 @@ async function runSearch(q, onlySources = null, pushHistory = true) {
   const TYPE_TO_CATEGORY = { film: 'film', photography: 'photography', typography: 'typography', design: 'design', art: 'art' };
   const category = TYPE_TO_CATEGORY[state.typeFilter];
 
+  // Build sources param from checked checkboxes (or onlySources override)
+  const srcKeys = onlySources || [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
+
   try {
     let url = `${VS_API}/api/search?q=${encodeURIComponent(typeQ)}`;
     if (category) url += `&category=${category}`;
+    if (srcKeys.length) url += `&sources=${srcKeys.join(',')}`;
     const res = await fetch(url, { headers: { 'x-api-secret': VS_SECRET } });
     if (!res.ok) throw new Error('API error');
     const items = await res.json();
@@ -1209,12 +1213,15 @@ function loadMore() {
 }
 
 // ── SOURCE FILTER CHECKBOXES ─────────────────────────────────────
+let _srcFilterTimer = null;
+
 function handleSourceAll(cb) {
   document.querySelectorAll('.src-cb').forEach(c => c.checked = cb.checked);
-  renderResults(state.allResults);
+  debouncedRequery();
 }
+
 function handleSourceCb() {
-  // "All sources" = all checked sources include the default set (NASA/Wikimedia are opt-in)
+  // Update "All sources" checkbox state
   const allCbs = [...document.querySelectorAll('.src-cb')];
   const defaultOn = ['vam','artic','smithsonian','europeana','met','wellcome','loc','nypl',
                      'filmgrab','booooooom','directors_notes','directors_library','beyond_short','wga','mb_collection','letterform'];
@@ -1223,7 +1230,20 @@ function handleSourceCb() {
     return cb ? cb.checked : true;
   });
   document.getElementById('src-all').checked = allDefaultChecked && allCbs.every(c => c.checked);
-  renderResults(state.allResults);
+  debouncedRequery();
+}
+
+function debouncedRequery() {
+  // Re-query the API with updated sources after 400ms debounce
+  clearTimeout(_srcFilterTimer);
+  _srcFilterTimer = setTimeout(() => {
+    if (!state.query) return;
+    // Show skeleton while reloading
+    document.getElementById('results-grid').innerHTML = skeletonGrid(12);
+    document.getElementById('res-count').textContent = 'Searching…';
+    const srcKeys = [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
+    runSearch(state.query, srcKeys, false);
+  }, 400);
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
