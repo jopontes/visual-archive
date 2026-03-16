@@ -109,6 +109,11 @@
     .filter-opt input[type=radio] { width: 13px; height: 13px; accent-color: var(--ink); flex-shrink: 0; cursor: pointer; }
     .filter-opt-label { font-size: 13px; color: var(--ink-2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .filter-count { font-size: 11px; color: var(--ink-3); flex-shrink: 0; }
+    /* Source entries with subtitle */
+    .filter-opt--src { align-items: flex-start; }
+    .filter-opt--src input { margin-top: 3px; }
+    .filter-opt--src .filter-opt-label { white-space: normal; overflow: visible; text-overflow: unset; line-height: 1.35; }
+    .filter-opt-sub { display: block; font-size: 10px; color: var(--ink-3); margin-top: 1px; line-height: 1.3; font-weight: 300; }
     /* Main results */
     .res-main { flex: 1; padding: 24px 0 24px 28px; min-width: 0; }
     .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
@@ -381,7 +386,7 @@
   <div class="home-sources-wrap">
     <div class="home-sources">
       <div class="home-source" onclick="triggerSourceSearch('vam')"><div class="home-source-name">V&amp;A Museum</div><div class="home-source-n">1.2M objects</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('artic')"><div class="home-source-name">Art Institute</div><div class="home-source-n">120k+ works</div></div>
+      <div class="home-source" onclick="triggerSourceSearch('artic')"><div class="home-source-name">Art Institute of Chicago</div><div class="home-source-n">120k+ works</div></div>
       <div class="home-source" onclick="triggerSourceSearch('smithsonian')"><div class="home-source-name">Smithsonian</div><div class="home-source-n">5.1M items</div></div>
       <div class="home-source" onclick="triggerSourceSearch('europeana')"><div class="home-source-name">Europeana</div><div class="home-source-n">50M+ items</div></div>
       <div class="home-source" onclick="triggerSourceSearch('met')"><div class="home-source-name">Met Museum</div><div class="home-source-n">470k objects</div></div>
@@ -432,25 +437,25 @@
           <input type="checkbox" id="src-all" checked onchange="handleSourceAll(this)"/>
           <span class="filter-opt-label">All sources</span>
         </label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum</span><span class="filter-count" id="cnt-vam"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute</span><span class="filter-count" id="cnt-artic"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian</span><span class="filter-count" id="cnt-smithsonian"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Met Museum</span><span class="filter-count" id="cnt-met"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome</span><span class="filter-count" id="cnt-wellcome"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Lib. of Congress</span><span class="filter-count" id="cnt-loc"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL</span><span class="filter-count" id="cnt-nypl"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA</span><span class="filter-count" id="cnt-nasa"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia</span><span class="filter-count" id="cnt-bhl"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum<span class="filter-opt-sub">1.2M objects · London</span></span><span class="filter-count" id="cnt-vam"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago<span class="filter-opt-sub">120k works</span></span><span class="filter-count" id="cnt-artic"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">5.1M items · Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana<span class="filter-opt-sub">50M+ items from European institutions</span></span><span class="filter-count" id="cnt-europeana"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">470k objects · New York</span></span><span class="filter-count" id="cnt-met"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art, life &amp; medicine · London</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints &amp; photographs</span></span><span class="filter-count" id="cnt-loc"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">New York Public Library<span class="filter-opt-sub">1M+ digital images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space photography archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons<span class="filter-opt-sub">Open media repository</span></span><span class="filter-count" id="cnt-bhl"></span></label>
         <div class="filter-title" style="margin-top:16px;margin-bottom:10px;">Our databases</div>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab</span><span class="filter-count" id="cnt-filmgrab"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV</span><span class="filter-count" id="cnt-booooooom"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes</span><span class="filter-count" id="cnt-directors_notes"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library</span><span class="filter-count" id="cnt-directors_library"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short</span><span class="filter-count" id="cnt-beyond_short"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art</span><span class="filter-count" id="cnt-wga"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Collection</span><span class="filter-count" id="cnt-mb_collection"></span></label>
-        <label class="filter-opt"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive</span><span class="filter-count" id="cnt-letterform"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab<span class="filter-opt-sub">3,967 curated film stills</span></span><span class="filter-count" id="cnt-filmgrab"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub">8,900 short films &amp; art videos</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub">6,338 films indexed by director</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub">1,000 influential films</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub">1,269 short films</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub">52,866 European paintings 3rd–19th c.</span></span><span class="filter-count" id="cnt-wga"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Gallery<span class="filter-opt-sub">Photography gallery · Los Angeles</span></span><span class="filter-count" id="cnt-mb_collection"></span></label>
+        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive<span class="filter-opt-sub">3,666 typography &amp; lettering works</span></span><span class="filter-count" id="cnt-letterform"></span></label>
       </div>
     </aside>
 
@@ -565,13 +570,13 @@
       </label>
       <div class="adv-sources-grid">
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="vam" checked/> V&amp;A Museum</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="artic" checked/> Art Institute Chicago</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="artic" checked/> Art Institute of Chicago</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="smithsonian" checked/> Smithsonian</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="europeana" checked/> Europeana</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="met" checked/> Met Museum</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="met" checked/> The Met</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="wellcome" checked/> Wellcome Collection</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="loc" checked/> Library of Congress</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nypl" checked/> NYPL</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nypl" checked/> New York Public Library</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nasa"/> NASA</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="bhl"/> Wikimedia Commons</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="filmgrab" checked/> FilmGrab</label>
@@ -580,7 +585,7 @@
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="directors_library" checked/> Directors Library</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="beyond_short" checked/> Beyond the Short</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="wga" checked/> Web Gallery of Art</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="mb_collection" checked/> M+B Collection</label>
+        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="mb_collection" checked/> M+B Gallery</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="letterform" checked/> Letterform Archive</label>
       </div>
     </div>
@@ -634,14 +639,14 @@ const VS_SECRET = 'f9d804150d638857ce4d20a039617be11fc460d42aa67bc1c47eead8c32c2
 const SRC_COLOR = {
   // Institutional APIs
   'V&A Museum':                   '#5C3D1A',
-  'Art Institute Chicago':         '#1A5C8B',
+  'Art Institute of Chicago':      '#1A5C8B',
   'Smithsonian':                   '#3D1A5C',
   'Europeana':                     '#1A5C2A',
-  'Met Museum':                    '#5C1A1A',
+  'The Met':                       '#5C1A1A',
   'Wellcome Collection':           '#1A3D5C',
   'NASA':                          '#0B2C4A',
   'Library of Congress':           '#5C2C1A',
-  'NYPL':                          '#2C1A5C',
+  'New York Public Library':       '#2C1A5C',
   'Wikimedia Commons':             '#1A4C2C',
   // Scraped databases
   'FilmGrab':                      '#2C2C1A',
@@ -657,14 +662,14 @@ const SRC_COLOR = {
 const SRC_KEY_MAP = {
   // Institutional APIs
   vam:               'V&A Museum',
-  artic:             'Art Institute Chicago',
+  artic:             'Art Institute of Chicago',
   smithsonian:       'Smithsonian',
   europeana:         'Europeana',
-  met:               'Met Museum',
+  met:               'The Met',
   wellcome:          'Wellcome Collection',
   nasa:              'NASA',
   loc:               'Library of Congress',
-  nypl:              'NYPL',
+  nypl:              'New York Public Library',
   bhl:               'Wikimedia Commons',
   // Scraped databases (institution = source name from Meilisearch)
   filmgrab:          'FilmGrab',
