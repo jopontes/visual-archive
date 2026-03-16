@@ -15,6 +15,14 @@ const SOURCE_KEYS = [
   'meilisearch',  // ← static scraped databases
 ];
 
+// Sources included by default (no ?sources= param).
+// NASA and Wikimedia Commons are opt-in only (too noisy for most searches).
+const DEFAULT_SOURCES = [
+  'vam', 'artic', 'smithsonian', 'europeana', 'met',
+  'wellcome', 'loc', 'nypl',
+  'meilisearch',
+];
+
 const DISCOVER_TERMS = [
   'portrait', 'landscape', 'textile', 'vessel', 'garden',
   'costume', 'drawing', 'ornament', 'ritual', 'map',
@@ -40,7 +48,7 @@ export default async function handler(req, res) {
   // Resolve active sources
   const activeSources = sourcesParam
     ? sourcesParam.split(',').map(s => s.trim()).filter(s => SOURCE_KEYS.includes(s))
-    : SOURCE_KEYS;
+    : DEFAULT_SOURCES;
 
   // Resolve search term
   let term;
@@ -79,16 +87,16 @@ export default async function handler(req, res) {
     'Europeana':                     3,
     'Met Museum':                    4,
     'Wellcome Collection':           5,
-    'NASA':                          6,
-    'Library of Congress':           7,
-    'NYPL':                          8,
+    'Library of Congress':           6,
+    'NYPL':                          7,
+    'NASA':                          8,
     'Wikimedia Commons':             9,
   };
 
   // Non-image extension filter — catch PDFs, DjVu, etc. that slip through
   const NON_IMAGE_EXTS = ['.pdf', '.djvu', '.epub', '.doc', '.docx', '.ps', '.eps'];
 
-  let items = results
+  const allItems = results
     .filter(r => r.status === 'fulfilled')
     .flatMap(r => r.value)
     .filter(item => {
@@ -97,15 +105,29 @@ export default async function handler(req, res) {
       return !NON_IMAGE_EXTS.some(ext => urlPath.endsWith(ext));
     });
 
+  // Separate scraped database results (_static) from live API results
+  const staticItems = allItems.filter(i => i._static);
+  const liveItems   = allItems.filter(i => !i._static);
+
+  let items;
   if (discover === '1') {
-    items = items.sort(() => Math.random() - 0.5);
+    items = allItems.sort(() => Math.random() - 0.5);
   } else {
-    items = items.sort((a, b) =>
+    // Sort live results by institution priority
+    liveItems.sort((a, b) =>
       (institutionPriority[a.institution] ?? 999) - (institutionPriority[b.institution] ?? 999)
     );
+    // Interleave: 2 live results then 1 static, so scraped items always appear
+    items = [];
+    let l = 0, s = 0;
+    while (l < liveItems.length || s < staticItems.length) {
+      if (l < liveItems.length) items.push(liveItems[l++]);
+      if (l < liveItems.length) items.push(liveItems[l++]);
+      if (s < staticItems.length) items.push(staticItems[s++]);
+    }
   }
 
-  return res.status(200).json(items.slice(0, 100));
+  return res.status(200).json(items.slice(0, 120));
 }
 
 // ── 1. V&A Museum ──────────────────────────────────────────────
