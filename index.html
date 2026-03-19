@@ -474,22 +474,6 @@
       #mob-nav { display: none !important; }
     }
 
-    /* ── SOURCE STRIP ────────────────────────────────────────────── */
-    #source-strip {
-      display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px;
-      scrollbar-width: none; margin-bottom: 4px;
-    }
-    #source-strip::-webkit-scrollbar { display: none; }
-    .src-strip-btn {
-      flex-shrink: 0; border: 1px solid var(--rule); background: var(--warm-white);
-      padding: 4px 10px; font-family: var(--font-ui); font-size: 11px; color: var(--ink-2);
-      cursor: pointer; border-radius: 2px; white-space: nowrap; letter-spacing: .02em;
-      transition: all .12s;
-    }
-    .src-strip-btn.active { background: var(--ink); color: var(--warm-white); border-color: var(--ink); }
-    .src-strip-btn:hover:not(.active) { border-color: var(--ink-3); color: var(--ink); }
-    .src-strip-count { font-size: 10px; opacity: .6; margin-left: 3px; }
-
     /* ── MOBILE: always show card overlay on touch screens ───────── */
     @media (hover: none) {
       .img-card-overlay {
@@ -675,7 +659,7 @@
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub" data-sub-for="booooooom">short film stills</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub" data-sub-for="directors_notes">film stills</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub" data-sub-for="directors_library">film stills</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub" data-sub-for="beyond_short">short film stills</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub" data-sub-for="beyond_the_short">short film stills</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vimeo" onchange="handleSourceCb()"/><span class="filter-opt-label">Vimeo Staff Picks<span class="filter-opt-sub" data-sub-for="vimeo_staff_picks">stills</span></span><span class="filter-count" id="cnt-vimeo"></span></label>
           </div>
 
@@ -685,7 +669,7 @@
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago</span><span class="filter-count" id="cnt-artic"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">New York</span></span><span class="filter-count" id="cnt-met"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub">European paintings</span></span><span class="filter-count" id="cnt-wga"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub" data-sub-for="wga">European paintings</span></span><span class="filter-count" id="cnt-wga"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
           </div>
 
@@ -812,38 +796,6 @@
     <main class="res-main">
       <div class="res-meta">
         <span class="res-count" id="res-count"></span>
-      </div>
-
-      <!-- Quick-access source strip (horizontal scrollable) -->
-      <div id="source-strip">
-        <button class="src-strip-btn active" data-src="" onclick="setSourceStrip('')">All sources</button>
-        <!-- Film & Video -->
-        <button class="src-strip-btn" data-src="filmgrab"          onclick="setSourceStrip('filmgrab')">FilmGrab</button>
-        <button class="src-strip-btn" data-src="booooooom"         onclick="setSourceStrip('booooooom')">Booooooom TV</button>
-        <button class="src-strip-btn" data-src="directors_notes"   onclick="setSourceStrip('directors_notes')">Directors Notes</button>
-        <button class="src-strip-btn" data-src="directors_library" onclick="setSourceStrip('directors_library')">Directors Library</button>
-        <button class="src-strip-btn" data-src="beyond_short"      onclick="setSourceStrip('beyond_short')">Beyond the Short</button>
-        <button class="src-strip-btn" data-src="vimeo"             onclick="setSourceStrip('vimeo')">Vimeo Picks</button>
-        <!-- Museums -->
-        <button class="src-strip-btn" data-src="vam"               onclick="setSourceStrip('vam')">V&amp;A</button>
-        <button class="src-strip-btn" data-src="artic"             onclick="setSourceStrip('artic')">Art Inst. Chicago</button>
-        <button class="src-strip-btn" data-src="smithsonian"       onclick="setSourceStrip('smithsonian')">Smithsonian</button>
-        <button class="src-strip-btn" data-src="met"               onclick="setSourceStrip('met')">The Met</button>
-        <button class="src-strip-btn" data-src="europeana"         onclick="setSourceStrip('europeana')">Europeana</button>
-        <button class="src-strip-btn" data-src="wga"               onclick="setSourceStrip('wga')">Web Gallery</button>
-        <!-- Design -->
-        <button class="src-strip-btn" data-src="letterform"        onclick="setSourceStrip('letterform')">Letterform</button>
-        <button class="src-strip-btn" data-src="fonts_in_use"      onclick="setSourceStrip('fonts_in_use')">Fonts In Use</button>
-        <button class="src-strip-btn" data-src="peoples_gd"        onclick="setSourceStrip('peoples_gd')">People's GD</button>
-        <button class="src-strip-btn" data-src="mb_collection"     onclick="setSourceStrip('mb_collection')">M+B Gallery</button>
-        <button class="src-strip-btn" data-src="icp"               onclick="setSourceStrip('icp')">ICP</button>
-        <!-- Archives -->
-        <button class="src-strip-btn" data-src="loc"               onclick="setSourceStrip('loc')">Lib. of Congress</button>
-        <button class="src-strip-btn" data-src="nypl"              onclick="setSourceStrip('nypl')">NYPL</button>
-        <button class="src-strip-btn" data-src="wellcome"          onclick="setSourceStrip('wellcome')">Wellcome</button>
-        <button class="src-strip-btn" data-src="duke"              onclick="setSourceStrip('duke')">Duke AdAccess</button>
-        <button class="src-strip-btn" data-src="nasa"              onclick="setSourceStrip('nasa')">NASA</button>
-        <button class="src-strip-btn" data-src="bhl"               onclick="setSourceStrip('bhl')">Wikimedia</button>
       </div>
 
       <div id="filter-badges"></div>
