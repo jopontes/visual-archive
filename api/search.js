@@ -15,6 +15,25 @@ const SOURCE_KEYS = [
   'meilisearch',  // ← static scraped databases
 ];
 
+// Scraped database keys → their source_slug in Meilisearch
+const MEILI_SLUG_MAP = {
+  filmgrab:          'filmgrab',
+  booooooom:         'booooooom',
+  directors_notes:   'directors_notes',
+  directors_library: 'directors_library',
+  beyond_short:      'beyond_the_short',
+  wga:               'wga',
+  mb_collection:     'mb_collection',
+  letterform:        'letterform',
+  peoples_gd:        'peoples_gd',
+  vimeo:             'vimeo_staff_picks',
+  fonts_in_use:      'fonts_in_use',
+  icp:               'icp',
+  duke:              'duke',
+};
+const MEILI_KEYS = Object.keys(MEILI_SLUG_MAP);
+const ALL_KNOWN_KEYS = [...SOURCE_KEYS, ...MEILI_KEYS];
+
 // Sources included by default (no ?sources= param).
 // NASA and Wikimedia Commons are opt-in only (too noisy for most searches).
 const DEFAULT_SOURCES = [
@@ -45,10 +64,22 @@ export default async function handler(req, res) {
 
   const { q, discover, sources: sourcesParam } = req.query;
 
-  // Resolve active sources
-  const activeSources = sourcesParam
-    ? sourcesParam.split(',').map(s => s.trim()).filter(s => SOURCE_KEYS.includes(s))
-    : DEFAULT_SOURCES;
+  // Resolve active sources — map scraped DB keys to 'meilisearch' + collect slugs
+  let activeSources;
+  let meiliSlugs = [];  // specific source_slugs to filter in Meilisearch
+  if (sourcesParam) {
+    const requested = sourcesParam.split(',').map(s => s.trim()).filter(s => ALL_KNOWN_KEYS.includes(s));
+    const apiSources = requested.filter(s => SOURCE_KEYS.includes(s));
+    const scrapedKeys = requested.filter(s => MEILI_KEYS.includes(s));
+    meiliSlugs = scrapedKeys.map(k => MEILI_SLUG_MAP[k]);
+    // If any scraped DB is selected, ensure 'meilisearch' is in active sources
+    if (scrapedKeys.length > 0 && !apiSources.includes('meilisearch')) {
+      apiSources.push('meilisearch');
+    }
+    activeSources = [...new Set(apiSources)];
+  } else {
+    activeSources = DEFAULT_SOURCES;
+  }
 
   // Resolve search term
   let term;
@@ -73,7 +104,7 @@ export default async function handler(req, res) {
     loc:         () => searchLOC(term),
     nypl:        () => searchNYPL(term),
     bhl:         () => searchBHL(term),
-    meilisearch: () => searchMeilisearch(term, { category }),
+    meilisearch: () => searchMeilisearch(term, { category, sourceSlugs: meiliSlugs }),
   };
 
   const results = await Promise.allSettled(
@@ -299,7 +330,7 @@ async function searchWellcome(term) {
       .map(item => ({
         id:          `wellcome-${item.id}`,
         title:       item.source?.title || 'Untitled',
-        image_url:   item.thumbnail.url.replace(/\/full\/.*?\/0\//, '/full/600,/0/'),
+        image_url:   item.thumbnail.url.replace('/info.json', '/full/880,/0/default.jpg'),
         source_url:  `https://wellcomecollection.org/works/${item.source?.id || item.id}`,
         institution: 'Wellcome Collection',
         date:        item.source?.productionDates?.[0]?.label || '',
@@ -417,7 +448,7 @@ async function searchNYPL(term) {
 // Env vars required:
 //   MEILI_URL  — e.g. https://visual-archive-search.onrender.com
 //   MEILI_KEY  — search-only API key (NOT the master key)
-async function searchMeilisearch(term, { category } = {}) {
+async function searchMeilisearch(term, { category, sourceSlugs } = {}) {
   const meiliUrl = process.env.MEILI_URL;
   const meiliKey = process.env.MEILI_KEY;
   if (!meiliUrl || !meiliKey) return [];
@@ -426,6 +457,9 @@ async function searchMeilisearch(term, { category } = {}) {
     // Build filter string (only filterable fields: category, source_slug, year, medium)
     const filters = [];
     if (category) filters.push(`category = "${category}"`);
+    if (sourceSlugs?.length) {
+      filters.push(`source_slug IN [${sourceSlugs.map(s => `"${s}"`).join(', ')}]`);
+    }
 
     const body = {
       q:                    decodeURIComponent(term),
@@ -433,7 +467,8 @@ async function searchMeilisearch(term, { category } = {}) {
       attributesToRetrieve: [
         'id', 'title', 'creator', 'year', 'medium', 'category',
         'source', 'source_slug', 'description', 'tags',
-        'image_url', 'stills', 'item_url', 'location', 'dimensions',
+        'image_url', 'image_index', 'total_images',
+        'item_url', 'location', 'dimensions',
       ],
       attributesToHighlight: ['title', 'creator'],
       highlightPreTag:       '<mark>',
@@ -470,7 +505,8 @@ async function searchMeilisearch(term, { category } = {}) {
       source_slug: hit.source_slug || '',
       description: hit.description || '',
       tags:        hit.tags || [],
-      stills:      hit.stills || [],
+      image_index: hit.image_index || null,
+      total_images: hit.total_images || null,
       location:    hit.location || '',
       dimensions:  hit.dimensions || '',
       // Flag so the frontend knows this came from static index
