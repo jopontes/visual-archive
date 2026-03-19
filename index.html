@@ -118,8 +118,9 @@
     .res-main { flex: 1; padding: 24px 0 24px 28px; min-width: 0; }
     .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
     .res-count { font-size: 13px; color: var(--ink-2); }
-    .img-grid { columns: 4; column-gap: 6px; }
-    .img-card { cursor: pointer; break-inside: avoid; margin-bottom: 6px; display: block; width: 100%; }
+    .img-grid { display: flex; gap: 6px; align-items: flex-start; }
+    .img-col  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .img-card { cursor: pointer; display: block; width: 100%; }
     .img-card-wrap { overflow: hidden; background: var(--paper-dark); width: 100%; }
     .img-card-wrap img { width: 100%; height: auto; display: block; }
     .img-card:hover .img-card-wrap img { opacity: 0.82; }
@@ -419,7 +420,6 @@
 
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 1100px) {
-      .img-grid { columns: 3; }
       .res-sidebar { width: 210px; }
     }
     /* Mobile filter toggle */
@@ -442,7 +442,7 @@
       .home-sources-wrap { display: none; }
       .res-body { padding: 0; }
       .res-header { padding: 12px 16px; }
-      .img-grid { columns: 2; column-gap: 4px; }
+      .img-grid { gap: 4px; }
       .res-sidebar { display: none; max-height: none; position: static; }
       .res-main { padding: 14px 16px; }
       .arch-inner { padding: 32px 20px 80px; }
@@ -1421,10 +1421,50 @@ async function fetchSearch({ q, offset = 0 }) {
   return res.json();  // { items, total, offset }
 }
 
+// ── GRID HELPERS ─────────────────────────────────────────────────
+function gridColCount() {
+  const w = window.innerWidth;
+  if (w < 500)  return 2;
+  if (w < 900)  return 3;
+  return 4;
+}
+
 function skeletonGrid(n) {
-  return Array(n).fill(0).map(() =>
-    `<div class="img-card skel-card"><div class="img-card-wrap"></div></div>`
-  ).join('');
+  const nc = gridColCount();
+  const cols = Array.from({ length: nc }, () => []);
+  for (let i = 0; i < n; i++) {
+    cols[i % nc].push(`<div class="img-card skel-card"><div class="img-card-wrap"></div></div>`);
+  }
+  return cols.map(c => `<div class="img-col">${c.join('')}</div>`).join('');
+}
+
+// Distribute items into explicit column divs (stable layout — no CSS-columns rebalancing).
+// reset=true clears the grid and creates fresh columns.
+// reset=false appends to existing columns (for Load More).
+function buildGrid(items, reset, startIdx = 0) {
+  const grid = document.getElementById('results-grid');
+  const nc = gridColCount();
+
+  let cols;
+  if (reset) {
+    grid.innerHTML = '';
+    cols = Array.from({ length: nc }, () => {
+      const col = document.createElement('div');
+      col.className = 'img-col';
+      grid.appendChild(col);
+      return col;
+    });
+  } else {
+    cols = [...grid.querySelectorAll('.img-col')];
+    if (!cols.length) return buildGrid(items, true, startIdx);
+  }
+
+  items.forEach((item, i) => {
+    const col = cols[(startIdx + i) % cols.length];
+    const wrap = document.createElement('div');
+    wrap.innerHTML = cardHtml(item, startIdx + i);
+    col.appendChild(wrap.firstChild);
+  });
 }
 
 // ── RESULT DIVERSITY & DEDUPLICATION ─────────────────────────────
@@ -1527,7 +1567,7 @@ function renderResults(items) {
   state.displayedCount   = spread.length;
   state.displayedResults = spread;
 
-  grid.innerHTML = spread.map((item, i) => cardHtml(item, i)).join('');
+  buildGrid(spread, true, 0);
   state.offset = 60;
   renderLoadMore();
 }
@@ -1579,14 +1619,9 @@ async function loadMore() {
     const spread = diversify(unique);
     spread.forEach(item => { const k = itemKey(item); if (k) state.shownIds.add(k); });
 
-    // Append to grid
-    const grid = document.getElementById('results-grid');
+    // Append to existing columns (stable — no layout shift)
     const startIdx = state.displayedResults.length;
-    spread.forEach((item, i) => {
-      const div = document.createElement('div');
-      div.innerHTML = cardHtml(item, startIdx + i);
-      while (div.firstChild) grid.appendChild(div.firstChild);
-    });
+    buildGrid(spread, false, startIdx);
 
     state.displayedResults = state.displayedResults.concat(spread);
     state.filteredResults  = state.displayedResults;
