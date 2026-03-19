@@ -473,6 +473,30 @@
     @media (min-width: 769px) {
       #mob-nav { display: none !important; }
     }
+
+    /* ── SOURCE STRIP ────────────────────────────────────────────── */
+    #source-strip {
+      display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px;
+      scrollbar-width: none; margin-bottom: 4px;
+    }
+    #source-strip::-webkit-scrollbar { display: none; }
+    .src-strip-btn {
+      flex-shrink: 0; border: 1px solid var(--rule); background: var(--warm-white);
+      padding: 4px 10px; font-family: var(--font-ui); font-size: 11px; color: var(--ink-2);
+      cursor: pointer; border-radius: 2px; white-space: nowrap; letter-spacing: .02em;
+      transition: all .12s;
+    }
+    .src-strip-btn.active { background: var(--ink); color: var(--warm-white); border-color: var(--ink); }
+    .src-strip-btn:hover:not(.active) { border-color: var(--ink-3); color: var(--ink); }
+    .src-strip-count { font-size: 10px; opacity: .6; margin-left: 3px; }
+
+    /* ── MOBILE: always show card overlay on touch screens ───────── */
+    @media (hover: none) {
+      .img-card-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,0) 50%);
+      }
+    }
   </style>
 </head>
 <body>
@@ -633,6 +657,59 @@
     <aside class="res-sidebar">
       <div class="sidebar-header">Refine</div>
 
+      <!-- Sources (top of sidebar for quick access) -->
+      <div class="filter-group">
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Source</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <label class="filter-opt" style="margin-bottom:10px">
+            <input type="checkbox" id="src-all" checked onchange="handleSourceAll(this)"/>
+            <span class="filter-opt-label">All sources</span>
+          </label>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Film &amp; Video</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab<span class="filter-opt-sub" data-sub-for="filmgrab">curated film stills</span></span><span class="filter-count" id="cnt-filmgrab"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub" data-sub-for="booooooom">short film stills</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub" data-sub-for="directors_notes">film stills</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub" data-sub-for="directors_library">film stills</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub" data-sub-for="beyond_short">short film stills</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vimeo" onchange="handleSourceCb()"/><span class="filter-opt-label">Vimeo Staff Picks<span class="filter-opt-sub" data-sub-for="vimeo_staff_picks">stills</span></span><span class="filter-count" id="cnt-vimeo"></span></label>
+          </div>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Museums &amp; Galleries</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum<span class="filter-opt-sub">London</span></span><span class="filter-count" id="cnt-vam"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago</span><span class="filter-count" id="cnt-artic"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">New York</span></span><span class="filter-count" id="cnt-met"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub">European paintings</span></span><span class="filter-count" id="cnt-wga"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
+          </div>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Design &amp; Typography</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive<span class="filter-opt-sub" data-sub-for="letterform">type works</span></span><span class="filter-count" id="cnt-letterform"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="fonts_in_use" onchange="handleSourceCb()"/><span class="filter-opt-label">Fonts In Use<span class="filter-opt-sub" data-sub-for="fonts_in_use">specimens</span></span><span class="filter-count" id="cnt-fonts_in_use"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="peoples_gd" onchange="handleSourceCb()"/><span class="filter-opt-label">People's Graphic Design<span class="filter-opt-sub" data-sub-for="peoples_gd">works</span></span><span class="filter-count" id="cnt-peoples_gd"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Gallery<span class="filter-opt-sub">Photography · LA</span></span><span class="filter-count" id="cnt-mb_collection"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="icp" onchange="handleSourceCb()"/><span class="filter-opt-label">ICP<span class="filter-opt-sub" data-sub-for="icp">photographs</span></span><span class="filter-count" id="cnt-icp"></span></label>
+          </div>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Archives &amp; Libraries</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints &amp; photos</span></span><span class="filter-count" id="cnt-loc"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL<span class="filter-opt-sub">1M+ images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art &amp; medicine</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="duke" onchange="handleSourceCb()"/><span class="filter-opt-label">Duke AdAccess<span class="filter-opt-sub" data-sub-for="duke">ads</span></span><span class="filter-count" id="cnt-duke"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons<span class="filter-opt-sub" data-sub-for="wikimedia_commons">images</span></span><span class="filter-count" id="cnt-bhl"></span></label>
+          </div>
+        </div>
+      </div>
+
       <!-- Type of work -->
       <div class="filter-group">
         <div class="filter-group-header" onclick="toggleSection(this)">
@@ -729,58 +806,6 @@
         </div>
       </div>
 
-      <!-- Sources -->
-      <div class="filter-group">
-        <div class="filter-group-header" onclick="toggleSection(this)">
-          <div class="filter-title">Source</div>
-          <span class="filter-group-arrow">▾</span>
-        </div>
-        <div class="filter-group-body">
-          <label class="filter-opt" style="margin-bottom:10px">
-            <input type="checkbox" id="src-all" checked onchange="handleSourceAll(this)"/>
-            <span class="filter-opt-label">All sources</span>
-          </label>
-
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Film &amp; Video</div>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab<span class="filter-opt-sub">3,967 film stills</span></span><span class="filter-count" id="cnt-filmgrab"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub">8,900 short films</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub">6,338 films</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub">1,000 films</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub">1,269 shorts</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vimeo" onchange="handleSourceCb()"/><span class="filter-opt-label">Vimeo Staff Picks<span class="filter-opt-sub">7,809 stills</span></span><span class="filter-count" id="cnt-vimeo"></span></label>
-          </div>
-
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Museums &amp; Galleries</div>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum<span class="filter-opt-sub">London</span></span><span class="filter-count" id="cnt-vam"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago</span><span class="filter-count" id="cnt-artic"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">New York</span></span><span class="filter-count" id="cnt-met"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub">European paintings</span></span><span class="filter-count" id="cnt-wga"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
-          </div>
-
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Design &amp; Typography</div>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive<span class="filter-opt-sub">3,666 type works</span></span><span class="filter-count" id="cnt-letterform"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="fonts_in_use" onchange="handleSourceCb()"/><span class="filter-opt-label">Fonts In Use</span><span class="filter-count" id="cnt-fonts_in_use"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="peoples_gd" onchange="handleSourceCb()"/><span class="filter-opt-label">People's Graphic Design</span><span class="filter-count" id="cnt-peoples_gd"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Gallery<span class="filter-opt-sub">Photography · LA</span></span><span class="filter-count" id="cnt-mb_collection"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="icp" onchange="handleSourceCb()"/><span class="filter-opt-label">ICP<span class="filter-opt-sub">Photography</span></span><span class="filter-count" id="cnt-icp"></span></label>
-          </div>
-
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Archives &amp; Libraries</div>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints</span></span><span class="filter-count" id="cnt-loc"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL<span class="filter-opt-sub">1M+ images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art &amp; medicine</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="duke" onchange="handleSourceCb()"/><span class="filter-opt-label">Duke AdAccess</span><span class="filter-count" id="cnt-duke"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons</span><span class="filter-count" id="cnt-bhl"></span></label>
-          </div>
-        </div>
-      </div>
     </aside>
 
     <!-- Main -->
@@ -788,6 +813,39 @@
       <div class="res-meta">
         <span class="res-count" id="res-count"></span>
       </div>
+
+      <!-- Quick-access source strip (horizontal scrollable) -->
+      <div id="source-strip">
+        <button class="src-strip-btn active" data-src="" onclick="setSourceStrip('')">All sources</button>
+        <!-- Film & Video -->
+        <button class="src-strip-btn" data-src="filmgrab"          onclick="setSourceStrip('filmgrab')">FilmGrab</button>
+        <button class="src-strip-btn" data-src="booooooom"         onclick="setSourceStrip('booooooom')">Booooooom TV</button>
+        <button class="src-strip-btn" data-src="directors_notes"   onclick="setSourceStrip('directors_notes')">Directors Notes</button>
+        <button class="src-strip-btn" data-src="directors_library" onclick="setSourceStrip('directors_library')">Directors Library</button>
+        <button class="src-strip-btn" data-src="beyond_short"      onclick="setSourceStrip('beyond_short')">Beyond the Short</button>
+        <button class="src-strip-btn" data-src="vimeo"             onclick="setSourceStrip('vimeo')">Vimeo Picks</button>
+        <!-- Museums -->
+        <button class="src-strip-btn" data-src="vam"               onclick="setSourceStrip('vam')">V&amp;A</button>
+        <button class="src-strip-btn" data-src="artic"             onclick="setSourceStrip('artic')">Art Inst. Chicago</button>
+        <button class="src-strip-btn" data-src="smithsonian"       onclick="setSourceStrip('smithsonian')">Smithsonian</button>
+        <button class="src-strip-btn" data-src="met"               onclick="setSourceStrip('met')">The Met</button>
+        <button class="src-strip-btn" data-src="europeana"         onclick="setSourceStrip('europeana')">Europeana</button>
+        <button class="src-strip-btn" data-src="wga"               onclick="setSourceStrip('wga')">Web Gallery</button>
+        <!-- Design -->
+        <button class="src-strip-btn" data-src="letterform"        onclick="setSourceStrip('letterform')">Letterform</button>
+        <button class="src-strip-btn" data-src="fonts_in_use"      onclick="setSourceStrip('fonts_in_use')">Fonts In Use</button>
+        <button class="src-strip-btn" data-src="peoples_gd"        onclick="setSourceStrip('peoples_gd')">People's GD</button>
+        <button class="src-strip-btn" data-src="mb_collection"     onclick="setSourceStrip('mb_collection')">M+B Gallery</button>
+        <button class="src-strip-btn" data-src="icp"               onclick="setSourceStrip('icp')">ICP</button>
+        <!-- Archives -->
+        <button class="src-strip-btn" data-src="loc"               onclick="setSourceStrip('loc')">Lib. of Congress</button>
+        <button class="src-strip-btn" data-src="nypl"              onclick="setSourceStrip('nypl')">NYPL</button>
+        <button class="src-strip-btn" data-src="wellcome"          onclick="setSourceStrip('wellcome')">Wellcome</button>
+        <button class="src-strip-btn" data-src="duke"              onclick="setSourceStrip('duke')">Duke AdAccess</button>
+        <button class="src-strip-btn" data-src="nasa"              onclick="setSourceStrip('nasa')">NASA</button>
+        <button class="src-strip-btn" data-src="bhl"               onclick="setSourceStrip('bhl')">Wikimedia</button>
+      </div>
+
       <div id="filter-badges"></div>
       <div class="img-grid" id="results-grid"></div>
       <div id="res-empty" class="state-msg" style="display:none">
@@ -1358,7 +1416,19 @@ async function runSearch(q, onlySources = null, pushHistory = true) {
   renderActiveBadges();
 
   // If called from sources strip, override source filter
-  if (onlySources) state.filters.sources = onlySources;
+  if (onlySources) {
+    state.filters.sources = onlySources;
+    // Highlight that source in the strip
+    const key = onlySources.length === 1 ? onlySources[0] : '';
+    document.querySelectorAll('.src-strip-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.src === key)
+    );
+  } else {
+    // Reset strip to "All" for a fresh search
+    document.querySelectorAll('.src-strip-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.src === '')
+    );
+  }
 
   try {
     const data = await fetchSearch({ q, offset: 0 });
@@ -1604,6 +1674,9 @@ function toggleChipFilter(group, value, chipEl) {
 // Source filter checkboxes
 function handleSourceAll(cb) {
   document.querySelectorAll('.src-cb').forEach(c => c.checked = cb.checked);
+  // Reset source strip to "All"
+  document.querySelectorAll('.src-strip-btn').forEach(b => b.classList.toggle('active', b.dataset.src === ''));
+  state.filters.sources = [];
   applyFilters();
 }
 
@@ -1611,7 +1684,88 @@ function handleSourceCb() {
   const allSrcCbs = document.querySelectorAll('.src-cb');
   const srcAll = document.getElementById('src-all');
   if (srcAll) srcAll.checked = [...allSrcCbs].every(c => c.checked);
+  // Sync source strip: highlight only if exactly one source selected
+  const checked = [...allSrcCbs].filter(c => c.checked).map(c => c.dataset.src);
+  document.querySelectorAll('.src-strip-btn').forEach(b => {
+    b.classList.toggle('active', checked.length === 1 && checked[0] === b.dataset.src
+      || (checked.length === allSrcCbs.length && b.dataset.src === ''));
+  });
   applyFilters();
+}
+
+// ── SOURCE STRIP (quick-access above results grid) ─────────────────
+function setSourceStrip(key) {
+  // Update active state
+  document.querySelectorAll('.src-strip-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.src === key)
+  );
+
+  if (key === '') {
+    // All sources
+    state.filters.sources = [];
+    document.querySelectorAll('.src-cb').forEach(cb => cb.checked = true);
+    const srcAll = document.getElementById('src-all');
+    if (srcAll) srcAll.checked = true;
+  } else {
+    // Single source
+    state.filters.sources = [key];
+    document.querySelectorAll('.src-cb').forEach(cb => {
+      cb.checked = cb.dataset.src === key;
+    });
+    const srcAll = document.getElementById('src-all');
+    if (srcAll) srcAll.checked = false;
+  }
+
+  state.offset = 0;
+  applyFilters();
+}
+
+// ── SOURCE COUNTS (from Meilisearch facets) ───────────────────────
+// Maps Meilisearch source_slug → sidebar key
+const SLUG_TO_SRC_KEY = {
+  filmgrab:              'filmgrab',
+  booooooom:             'booooooom',
+  directors_notes:       'directors_notes',
+  directors_library:     'directors_library',
+  beyond_the_short:      'beyond_short',
+  vimeo_staff_picks:     'vimeo',
+  wga:                   'wga',
+  mb_collection:         'mb_collection',
+  letterform:            'letterform',
+  peoples_gd:            'peoples_gd',
+  fonts_in_use:          'fonts_in_use',
+  icp:                   'icp',
+  duke:                  'duke',
+};
+
+async function loadSourceCounts() {
+  try {
+    const res = await fetch(`${VS_API}/api/counts`, { headers: { 'x-api-secret': VS_SECRET } });
+    if (!res.ok) return;
+    const counts = await res.json();
+
+    // Update sidebar filter-opt-sub labels for scraped sources
+    document.querySelectorAll('[data-sub-for]').forEach(el => {
+      const slug = el.dataset.subFor;
+      const n = counts[slug];
+      if (n) el.textContent = n.toLocaleString() + ' items';
+    });
+
+    // Update source strip buttons with count badge
+    Object.entries(counts).forEach(([slug, n]) => {
+      const srcKey = SLUG_TO_SRC_KEY[slug];
+      if (!srcKey) return;
+      const btn = document.querySelector(`.src-strip-btn[data-src="${srcKey}"]`);
+      if (btn && !btn.querySelector('.src-strip-count')) {
+        const badge = document.createElement('span');
+        badge.className = 'src-strip-count';
+        badge.textContent = n >= 1000 ? Math.round(n / 1000) + 'k' : n;
+        btn.appendChild(badge);
+      }
+    });
+  } catch (e) {
+    // Silent fail — counts are decorative
+  }
 }
 
 // Year range filter
@@ -1786,7 +1940,8 @@ async function startDiscover() {
     const res = await fetch(`${VS_API}/api/search?discover=1`, {
       headers: { 'x-api-secret': VS_SECRET }
     });
-    const items = await res.json();
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : (data.items || []);
     state.discoverBatch = items.filter(i => i.image_url);
     state.discoverIdx = 0;
     document.getElementById('disc-loading').style.display = 'none';
@@ -1957,6 +2112,8 @@ function runAdvancedSearch() {
 
 // ── INIT ──────────────────────────────────────────────────────────
 initFromURL();
+// Load real source document counts from Meilisearch (async, non-blocking)
+loadSourceCounts();
 </script>
 </body>
 </html>
