@@ -8,6 +8,13 @@
 //   ?discover=1            — returns random results from a curated term set (no q needed)
 //   ?sources=vam,artic,met — comma-separated source filter (default: all)
 //   ?category=film         — filter static index by category (film|art|photography|design|typography)
+//   ?offset=0              — pagination offset (default 0; when >0 only queries Meilisearch)
+//   ?limit=60              — results per page (default 60)
+//   ?mood=melancholic,dramatic  — filter by ai_mood (OR within)
+//   ?lighting=low-key,neon      — filter by ai_lighting (OR within)
+//   ?shot_type=close-up         — filter by ai_shot_type (OR within)
+//   ?year_from=1850             — filter year >= N
+//   ?year_to=1920               — filter year <= N
 
 const SOURCE_KEYS = [
   'vam', 'artic', 'smithsonian', 'europeana', 'met',
@@ -62,7 +69,10 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { q, discover, sources: sourcesParam } = req.query;
+  const { q, discover, sources: sourcesParam, offset: offsetParam, limit: limitParam,
+          mood, lighting, shot_type, year_from, year_to } = req.query;
+  const offset = Math.max(0, parseInt(offsetParam) || 0);
+  const limit  = Math.min(200, Math.max(1, parseInt(limitParam) || 60));
 
   // Resolve active sources — map scraped DB keys to 'meilisearch' + collect slugs
   let activeSources;
@@ -93,18 +103,36 @@ export default async function handler(req, res) {
 
   // Build fetch promises for active sources only
   const { category } = req.query;
+
+  // Parse comma-separated filter values
+  const parseCsv = (v) => v ? v.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const meiliFilters = {
+    category,
+    sourceSlugs: meiliSlugs,
+    moods:      parseCsv(mood),
+    lighting:   parseCsv(lighting),
+    shotTypes:  parseCsv(shot_type),
+    yearFrom:   parseInt(year_from) || null,
+    yearTo:     parseInt(year_to) || null,
+    offset,
+    limit,
+  };
+
+  // When offset > 0 (pagination), only query Meilisearch (APIs don't support offset)
+  const skipApis = offset > 0;
+
   const fetchers = {
-    vam:         () => searchVAMuseum(term),
-    artic:       () => searchArtic(term),
-    smithsonian: () => searchSmithsonian(term),
-    europeana:   () => searchEuropeana(term),
-    met:         () => searchMet(term),
-    wellcome:    () => searchWellcome(term),
-    nasa:        () => searchNASA(term),
-    loc:         () => searchLOC(term),
-    nypl:        () => searchNYPL(term),
-    bhl:         () => searchBHL(term),
-    meilisearch: () => searchMeilisearch(term, { category, sourceSlugs: meiliSlugs }),
+    vam:         () => skipApis ? [] : searchVAMuseum(term),
+    artic:       () => skipApis ? [] : searchArtic(term),
+    smithsonian: () => skipApis ? [] : searchSmithsonian(term),
+    europeana:   () => skipApis ? [] : searchEuropeana(term),
+    met:         () => skipApis ? [] : searchMet(term),
+    wellcome:    () => skipApis ? [] : searchWellcome(term),
+    nasa:        () => skipApis ? [] : searchNASA(term),
+    loc:         () => skipApis ? [] : searchLOC(term),
+    nypl:        () => skipApis ? [] : searchNYPL(term),
+    bhl:         () => skipApis ? [] : searchBHL(term),
+    meilisearch: () => searchMeilisearch(term, meiliFilters),
   };
 
   const results = await Promise.allSettled(
@@ -162,7 +190,18 @@ export default async function handler(req, res) {
     items = allItems.sort((a, b) => b._rrfScore - a._rrfScore);
   }
 
-  return res.status(200).json(items.slice(0, 150));
+  // Extract Meilisearch total for pagination info
+  const meiliResult = results.find((r, i) => activeSources[i] === 'meilisearch');
+  const estimatedTotal = meiliResult?.status === 'fulfilled' && meiliResult.value?._meta?.estimatedTotalHits
+    ? meiliResult.value._meta.estimatedTotalHits : null;
+
+  // Strip _meta from meilisearch results (it was attached for internal use)
+  const maxItems = skipApis ? limit : 150;
+  return res.status(200).json({
+    items: items.slice(0, maxItems),
+    total: estimatedTotal,
+    offset,
+  });
 }
 
 // ── 1. V&A Museum ──────────────────────────────────────────────
@@ -448,31 +487,48 @@ async function searchNYPL(term) {
 // Env vars required:
 //   MEILI_URL  — e.g. https://visual-archive-search.onrender.com
 //   MEILI_KEY  — search-only API key (NOT the master key)
-async function searchMeilisearch(term, { category, sourceSlugs } = {}) {
+async function searchMeilisearch(term, {
+  category, sourceSlugs, moods, lighting, shotTypes,
+  yearFrom, yearTo, offset = 0, limit = 60,
+} = {}) {
   const meiliUrl = process.env.MEILI_URL;
   const meiliKey = process.env.MEILI_KEY;
   if (!meiliUrl || !meiliKey) return [];
 
   try {
-    // Build filter string (only filterable fields: category, source_slug, year, medium)
+    // Build filter string — filterable fields: category, source_slug, year, medium,
+    // ai_mood, ai_lighting, ai_shot_type, ai_tags, color_palette
     const filters = [];
     if (category) filters.push(`category = "${category}"`);
     if (sourceSlugs?.length) {
       filters.push(`source_slug IN [${sourceSlugs.map(s => `"${s}"`).join(', ')}]`);
     }
+    if (moods?.length) {
+      filters.push(`ai_mood IN [${moods.map(s => `"${s}"`).join(', ')}]`);
+    }
+    if (lighting?.length) {
+      filters.push(`ai_lighting IN [${lighting.map(s => `"${s}"`).join(', ')}]`);
+    }
+    if (shotTypes?.length) {
+      filters.push(`ai_shot_type IN [${shotTypes.map(s => `"${s}"`).join(', ')}]`);
+    }
+    if (yearFrom) filters.push(`year >= ${yearFrom}`);
+    if (yearTo)   filters.push(`year <= ${yearTo}`);
 
     const body = {
       q:                    decodeURIComponent(term),
-      limit:                30,
+      offset,
+      limit,
       attributesToRetrieve: [
         'id', 'title', 'creator', 'year', 'medium', 'category',
         'source', 'source_slug', 'description', 'tags',
         'image_url', 'image_index', 'total_images',
         'item_url', 'location', 'dimensions',
+        'ai_mood', 'ai_lighting', 'ai_shot_type', 'ai_tags',
       ],
       attributesToHighlight: ['title', 'creator'],
-      highlightPreTag:       '<mark>',
-      highlightPostTag:      '</mark>',
+      highlightPreTag:       '<em>',
+      highlightPostTag:      '</em>',
       filter:                filters.length ? filters.join(' AND ') : undefined,
     };
 
@@ -490,28 +546,36 @@ async function searchMeilisearch(term, { category, sourceSlugs } = {}) {
 
     if (!res.ok) return [];
     const data = await res.json();
-    if (!data.hits?.length) return [];
 
-    return data.hits.map(hit => ({
+    const items = (data.hits || []).map(hit => ({
       id:          hit.id,
-      title:       hit._formatted?.title || hit.title || 'Untitled',
+      title:       hit.title || 'Untitled',
+      titleHighlighted: hit._formatted?.title || hit.title || 'Untitled',
       image_url:   hit.image_url,
       source_url:  hit.item_url || '',
       institution: hit.source || 'Visual Archive',
       date:        hit.year ? String(hit.year) : '',
-      creator:     hit._formatted?.creator || hit.creator || '',
+      creator:     hit.creator || '',
+      creatorHighlighted: hit._formatted?.creator || hit.creator || '',
       medium:      hit.medium || '',
       category:    hit.category || '',
       source_slug: hit.source_slug || '',
       description: hit.description || '',
       tags:        hit.tags || [],
+      ai_tags:     hit.ai_tags || [],
+      ai_mood:     hit.ai_mood || '',
+      ai_lighting: hit.ai_lighting || '',
+      ai_shot_type: hit.ai_shot_type || '',
       image_index: hit.image_index || null,
       total_images: hit.total_images || null,
       location:    hit.location || '',
       dimensions:  hit.dimensions || '',
-      // Flag so the frontend knows this came from static index
       _static:     true,
     }));
+
+    // Attach meta for pagination — will be extracted by handler
+    items._meta = { estimatedTotalHits: data.estimatedTotalHits || 0 };
+    return items;
   } catch { return []; }
 }
 

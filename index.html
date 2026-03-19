@@ -98,9 +98,9 @@
     .res-search-wrap { flex: 1; display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 8px 14px; gap: 8px; background: var(--paper); max-width: 600px; }
     .res-search-wrap input { border: none; background: transparent; outline: none; font-size: 14px; flex: 1; color: var(--ink); }
     .res-search-ic { color: var(--ink-3); font-size: 14px; }
-    .res-body { display: flex; min-height: calc(100vh - 105px); max-width: 1400px; margin: 0 auto; width: 100%; padding: 0 40px; }
+    .res-body { display: flex; align-items: flex-start; min-height: calc(100vh - 105px); max-width: 1400px; margin: 0 auto; width: 100%; padding: 0 40px; }
     /* Sidebar */
-    .res-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--rule); padding: 24px 20px; background: var(--warm-white); overflow-y: auto; }
+    .res-sidebar { width: 240px; flex-shrink: 0; border-right: 1px solid var(--rule); padding: 24px 18px; background: var(--warm-white); overflow-y: auto; max-height: calc(100vh - 105px); position: sticky; top: 105px; align-self: flex-start; }
     .sidebar-header { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
     .filter-group { margin-bottom: 28px; }
     .filter-title { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 12px; }
@@ -307,6 +307,103 @@
     #mob-nav.dark .mob-tab.active .mob-tab-icon { color: rgba(255,255,255,.7); }
     #mob-nav.dark .mob-tab.active .mob-tab-label { color: rgba(255,255,255,.7); }
 
+    /* ── CARD OVERLAY ───────────────────────────────── */
+    .img-card-wrap { position: relative; }
+    .img-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,0) 55%);
+      opacity: 0; transition: opacity .18s ease;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 10px 10px 10px 10px; pointer-events: none;
+    }
+    .img-card:hover .img-card-overlay { opacity: 1; pointer-events: auto; }
+    .img-card-inst { font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 3px; display: block; }
+    .img-card-ttl  { font-size: 11px; color: rgba(255,255,255,.95); line-height: 1.3; display: block; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; flex: 1; }
+    .img-card-ext  {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(255,255,255,.15); color: white; border-radius: 2px;
+      padding: 4px 7px; font-size: 11px; text-decoration: none; backdrop-filter: blur(4px);
+      line-height: 1; transition: background .15s;
+    }
+    .img-card-ext:hover { background: rgba(255,255,255,.3); }
+
+    /* ── FILTER CHIPS ───────────────────────────────── */
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .filter-chip {
+      border: 1px solid var(--rule); padding: 4px 10px; font-size: 11px;
+      color: var(--ink-2); cursor: pointer; border-radius: 2px;
+      background: var(--warm-white); font-family: var(--font-ui);
+      transition: all .12s ease; line-height: 1.4;
+    }
+    .filter-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+    .filter-chip.active { border-color: var(--ink); color: var(--ink); background: var(--paper-dark); font-weight: 500; }
+
+    /* ── FILTER BADGES (active filters row) ─────────── */
+    #filter-badges {
+      display: none; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 12px;
+    }
+    .filter-badge {
+      background: var(--ink); color: white; border-radius: 2px;
+      padding: 4px 10px; font-size: 11px; cursor: pointer;
+      font-family: var(--font-ui); line-height: 1.4;
+      transition: background .12s;
+    }
+    .filter-badge:hover { background: #2d2924; }
+
+    /* ── SIDEBAR COLLAPSIBLE ────────────────────────── */
+    .filter-group-header {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; padding: 3px 0; margin-bottom: 10px;
+      user-select: none;
+    }
+    .filter-group-header .filter-title { margin-bottom: 0; }
+    .filter-group-arrow { font-size: 10px; color: var(--ink-3); transition: transform .2s; }
+    .filter-group.collapsed .filter-group-arrow { transform: rotate(-90deg); }
+    .filter-group.collapsed .filter-group-body { display: none; }
+
+    /* ── SIDEBAR DATE RANGE ─────────────────────────── */
+    .year-range-row { display: flex; gap: 6px; margin-top: 8px; }
+    .year-range-row input {
+      flex: 1; border: 1px solid var(--rule); border-radius: 2px;
+      padding: 6px 8px; font-size: 12px; font-family: var(--font-ui);
+      color: var(--ink); background: var(--warm-white); outline: none; width: 0;
+    }
+    .year-range-row input:focus { border-color: var(--ink-3); }
+    .year-range-row input::placeholder { color: var(--ink-3); }
+
+    /* ── SIDEBAR SOURCE SUBGROUPS ───────────────────── */
+    .src-subgroup { margin-bottom: 12px; }
+    .src-subgroup-title {
+      font-size: 9px; letter-spacing: .10em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 6px; padding-bottom: 4px;
+      border-bottom: 1px solid var(--paper-dark);
+    }
+
+    /* ── RESULT COUNTER ─────────────────────────────── */
+    .res-count { font-size: 13px; color: var(--ink-2); }
+    em { font-style: italic; }
+
+    /* ── SOURCE DIRECTORY — CATEGORY CARDS ──────────── */
+    .dir-cat { margin-bottom: 40px; }
+    .dir-cat-title { font-family: var(--font-ui); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+    .dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .dir-card { background: var(--warm-white); padding: 14px 16px; cursor: pointer; text-decoration: none; display: block; transition: background .15s; }
+    .dir-card:hover { background: var(--paper); }
+    .dir-card-name { font-family: var(--font-ui); font-size: 14px; color: var(--ink); margin-bottom: 3px; font-weight: 500; }
+    .dir-card-desc { font-family: var(--font-ui); font-size: 12px; color: var(--ink-3); line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .dir-card-count { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+    /* ── HOME SUGGESTION CHIPS ──────────────────────── */
+    .home-suggest { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .home-suggest-label { font-size: 12px; color: var(--ink-3); align-self: center; letter-spacing: .04em; margin-right: 2px; white-space: nowrap; }
+    .suggest-chip {
+      border: 1px solid var(--rule); padding: 5px 12px; font-size: 12px;
+      color: var(--ink-2); cursor: pointer; border-radius: 2px;
+      background: var(--warm-white); font-family: var(--font-ui);
+    }
+    .suggest-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+
     /* ── ANIMATIONS ─────────────────────────────────── */
     @media (prefers-reduced-motion: no-preference) {
       .img-card-wrap img { transition: opacity .15s ease; }
@@ -323,6 +420,18 @@
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 1100px) {
       .img-grid { columns: 3; }
+      .res-sidebar { width: 210px; }
+    }
+    /* Mobile filter toggle */
+    #filter-toggle-btn {
+      display: none; position: fixed; bottom: 72px; right: 16px; z-index: 45;
+      background: var(--ink); color: white; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 16px; cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+    @media (max-width: 768px) {
+      #filter-toggle-btn { display: flex; align-items: center; justify-content: center; }
+      .res-sidebar.mobile-open { display: block !important; position: fixed; inset: 0; z-index: 60; background: var(--warm-white); overflow-y: auto; padding: 20px 20px 80px; }
     }
     @media (max-width: 768px) {
       #nav { padding: 0 20px; }
@@ -334,7 +443,7 @@
       .res-body { padding: 0; }
       .res-header { padding: 12px 16px; }
       .img-grid { columns: 2; column-gap: 4px; }
-      .res-sidebar { display: none; }
+      .res-sidebar { display: none; max-height: none; position: static; }
       .res-main { padding: 14px 16px; }
       .arch-inner { padding: 32px 20px 80px; }
       .arch-list { grid-template-columns: repeat(2, 1fr); }
@@ -380,23 +489,34 @@
 <!-- ── HOME VIEW ─────────────────────────────────────────────── -->
 <div id="view-home" class="view active">
   <div class="home-inner">
-    <div class="home-eyebrow">Visual Research Tool</div>
-    <h1 class="home-title">Visual research<br><em>across institutions</em></h1>
-    <p class="home-sub">Search 10 major museum and institutional archives simultaneously — art, photography, science, design, objects, historical illustrations. All in one place.</p>
+    <div class="home-eyebrow">Visual Research · 894,000 works · 23 collections</div>
+    <h1 class="home-title">Search visual archives<br><em>across institutions</em></h1>
+    <p class="home-sub">Art, photography, film stills, typography, design objects — from global museums, curated databases, and specialized collections. All in one place.</p>
 
     <div class="home-search-row">
-      <input id="home-input" type="text" placeholder="Search by theme, style, object, period, technique…"
+      <input id="home-input" type="text" placeholder="Search by theme, style, mood, technique, period…"
              onkeydown="if(event.key==='Enter') triggerSearch()"/>
       <button class="home-search-btn" onclick="triggerSearch()">Search</button>
     </div>
-    <div style="margin-bottom:8px;margin-top:-6px;text-align:right;">
+    <div style="margin-bottom:12px;margin-top:-6px;text-align:right;">
       <span onclick="showAdvanced()" style="font-size:12px;color:var(--ink-3);cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Advanced search</span>
+    </div>
+
+    <div class="home-suggest">
+      <span class="home-suggest-label">Try:</span>
+      <span class="suggest-chip" onclick="quickSearch('golden hour')">golden hour</span>
+      <span class="suggest-chip" onclick="quickSearch('Bauhaus')">Bauhaus</span>
+      <span class="suggest-chip" onclick="quickSearch('melancholic portrait')">melancholic portrait</span>
+      <span class="suggest-chip" onclick="quickSearch('neon city')">neon city</span>
+      <span class="suggest-chip" onclick="quickSearch('botanical illustration')">botanical illustration</span>
+      <span class="suggest-chip" onclick="quickSearch('brutalist architecture')">brutalism</span>
+      <span class="suggest-chip" onclick="quickSearch('chiaroscuro')">chiaroscuro</span>
     </div>
 
     <div class="home-chips">
       <span class="chips-label">Type:</span>
       <span class="chip active" data-type="any">Any</span>
-      <span class="chip" data-type="film">Film</span>
+      <span class="chip" data-type="film">Film Stills</span>
       <span class="chip" data-type="painting">Painting</span>
       <span class="chip" data-type="photography">Photography</span>
       <span class="chip" data-type="typography">Typography</span>
@@ -511,45 +631,155 @@
   <div class="res-body">
     <!-- Sidebar -->
     <aside class="res-sidebar">
-      <div class="sidebar-header">Filters</div>
+      <div class="sidebar-header">Refine</div>
 
+      <!-- Type of work -->
       <div class="filter-group">
-        <div class="filter-title">Type</div>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="any" checked onchange="setTypeFilter('any')"/><span class="filter-opt-label">Any</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="film" onchange="setTypeFilter('film')"/><span class="filter-opt-label">Film</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="painting" onchange="setTypeFilter('painting')"/><span class="filter-opt-label">Painting</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="photography" onchange="setTypeFilter('photography')"/><span class="filter-opt-label">Photography</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="typography" onchange="setTypeFilter('typography')"/><span class="filter-opt-label">Typography</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="design" onchange="setTypeFilter('design')"/><span class="filter-opt-label">Design</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="object" onchange="setTypeFilter('object')"/><span class="filter-opt-label">Object</span></label>
-        <label class="filter-opt"><input type="radio" name="type-filter" value="architecture" onchange="setTypeFilter('architecture')"/><span class="filter-opt-label">Architecture</span></label>
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Type of work</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <label class="filter-opt"><input type="radio" name="type-filter" value="any" checked onchange="setTypeFilter('any')"/><span class="filter-opt-label">Any</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="film" onchange="setTypeFilter('film')"/><span class="filter-opt-label">Film Stills</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="photography" onchange="setTypeFilter('photography')"/><span class="filter-opt-label">Photography</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="painting" onchange="setTypeFilter('painting')"/><span class="filter-opt-label">Painting &amp; Fine Art</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="design" onchange="setTypeFilter('design')"/><span class="filter-opt-label">Graphic Design</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="typography" onchange="setTypeFilter('typography')"/><span class="filter-opt-label">Typography</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="architecture" onchange="setTypeFilter('architecture')"/><span class="filter-opt-label">Architecture</span></label>
+          <label class="filter-opt"><input type="radio" name="type-filter" value="object" onchange="setTypeFilter('object')"/><span class="filter-opt-label">Sculpture &amp; Object</span></label>
+        </div>
       </div>
 
+      <!-- Date range -->
       <div class="filter-group">
-        <div class="filter-title">Source</div>
-        <label class="filter-opt">
-          <input type="checkbox" id="src-all" checked onchange="handleSourceAll(this)"/>
-          <span class="filter-opt-label">All sources</span>
-        </label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum<span class="filter-opt-sub">1.2M objects · London</span></span><span class="filter-count" id="cnt-vam"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago<span class="filter-opt-sub">120k works</span></span><span class="filter-count" id="cnt-artic"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">5.1M items · Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana<span class="filter-opt-sub">50M+ items from European institutions</span></span><span class="filter-count" id="cnt-europeana"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">470k objects · New York</span></span><span class="filter-count" id="cnt-met"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art, life &amp; medicine · London</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints &amp; photographs</span></span><span class="filter-count" id="cnt-loc"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">New York Public Library<span class="filter-opt-sub">1M+ digital images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space photography archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons<span class="filter-opt-sub">Open media repository</span></span><span class="filter-count" id="cnt-bhl"></span></label>
-        <div class="filter-title" style="margin-top:16px;margin-bottom:10px;">Our databases</div>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab<span class="filter-opt-sub">3,967 curated film stills</span></span><span class="filter-count" id="cnt-filmgrab"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub">8,900 short films &amp; art videos</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub">6,338 films indexed by director</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub">1,000 influential films</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub">1,269 short films</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub">52,866 European paintings 3rd–19th c.</span></span><span class="filter-count" id="cnt-wga"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Gallery<span class="filter-opt-sub">Photography gallery · Los Angeles</span></span><span class="filter-count" id="cnt-mb_collection"></span></label>
-        <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive<span class="filter-opt-sub">3,666 typography &amp; lettering works</span></span><span class="filter-count" id="cnt-letterform"></span></label>
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Period</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <div class="year-range-row">
+            <input id="year-from" type="number" placeholder="From" min="1000" max="2025" oninput="handleYearInput()"/>
+            <input id="year-to"   type="number" placeholder="To"   min="1000" max="2025" oninput="handleYearInput()"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mood / Atmosphere (ai_mood) -->
+      <div class="filter-group">
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Mood</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <div class="filter-chips">
+            <span class="filter-chip" data-group="moods" data-value="melancholic"    onclick="toggleChipFilter('moods','melancholic',this)">melancholic</span>
+            <span class="filter-chip" data-group="moods" data-value="dramatic"       onclick="toggleChipFilter('moods','dramatic',this)">dramatic</span>
+            <span class="filter-chip" data-group="moods" data-value="serene"         onclick="toggleChipFilter('moods','serene',this)">serene</span>
+            <span class="filter-chip" data-group="moods" data-value="mysterious"     onclick="toggleChipFilter('moods','mysterious',this)">mysterious</span>
+            <span class="filter-chip" data-group="moods" data-value="nostalgic"      onclick="toggleChipFilter('moods','nostalgic',this)">nostalgic</span>
+            <span class="filter-chip" data-group="moods" data-value="ethereal"       onclick="toggleChipFilter('moods','ethereal',this)">ethereal</span>
+            <span class="filter-chip" data-group="moods" data-value="contemplative"  onclick="toggleChipFilter('moods','contemplative',this)">contemplative</span>
+            <span class="filter-chip" data-group="moods" data-value="energetic"      onclick="toggleChipFilter('moods','energetic',this)">energetic</span>
+            <span class="filter-chip" data-group="moods" data-value="romantic"       onclick="toggleChipFilter('moods','romantic',this)">romantic</span>
+            <span class="filter-chip" data-group="moods" data-value="tense"          onclick="toggleChipFilter('moods','tense',this)">tense</span>
+            <span class="filter-chip" data-group="moods" data-value="playful"        onclick="toggleChipFilter('moods','playful',this)">playful</span>
+            <span class="filter-chip" data-group="moods" data-value="haunting"       onclick="toggleChipFilter('moods','haunting',this)">haunting</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lighting (ai_lighting) -->
+      <div class="filter-group">
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Lighting</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <div class="filter-chips">
+            <span class="filter-chip" data-group="lighting" data-value="natural light"  onclick="toggleChipFilter('lighting','natural light',this)">natural</span>
+            <span class="filter-chip" data-group="lighting" data-value="low-key"        onclick="toggleChipFilter('lighting','low-key',this)">low-key</span>
+            <span class="filter-chip" data-group="lighting" data-value="high-key"       onclick="toggleChipFilter('lighting','high-key',this)">high-key</span>
+            <span class="filter-chip" data-group="lighting" data-value="golden hour"    onclick="toggleChipFilter('lighting','golden hour',this)">golden hour</span>
+            <span class="filter-chip" data-group="lighting" data-value="neon"           onclick="toggleChipFilter('lighting','neon',this)">neon</span>
+            <span class="filter-chip" data-group="lighting" data-value="chiaroscuro"    onclick="toggleChipFilter('lighting','chiaroscuro',this)">chiaroscuro</span>
+            <span class="filter-chip" data-group="lighting" data-value="backlighting"   onclick="toggleChipFilter('lighting','backlighting',this)">backlit</span>
+            <span class="filter-chip" data-group="lighting" data-value="studio"         onclick="toggleChipFilter('lighting','studio',this)">studio</span>
+            <span class="filter-chip" data-group="lighting" data-value="candlelight"    onclick="toggleChipFilter('lighting','candlelight',this)">candlelight</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shot type (ai_shot_type) -->
+      <div class="filter-group">
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Framing</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <div class="filter-chips">
+            <span class="filter-chip" data-group="shotTypes" data-value="close-up"         onclick="toggleChipFilter('shotTypes','close-up',this)">close-up</span>
+            <span class="filter-chip" data-group="shotTypes" data-value="wide shot"         onclick="toggleChipFilter('shotTypes','wide shot',this)">wide</span>
+            <span class="filter-chip" data-group="shotTypes" data-value="medium shot"       onclick="toggleChipFilter('shotTypes','medium shot',this)">medium</span>
+            <span class="filter-chip" data-group="shotTypes" data-value="extreme close-up"  onclick="toggleChipFilter('shotTypes','extreme close-up',this)">extreme CU</span>
+            <span class="filter-chip" data-group="shotTypes" data-value="aerial"            onclick="toggleChipFilter('shotTypes','aerial',this)">aerial</span>
+            <span class="filter-chip" data-group="shotTypes" data-value="macro"             onclick="toggleChipFilter('shotTypes','macro',this)">macro</span>
+            <span class="filter-chip" data-group="shotTypes" data-value="portrait"          onclick="toggleChipFilter('shotTypes','portrait',this)">portrait</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sources -->
+      <div class="filter-group">
+        <div class="filter-group-header" onclick="toggleSection(this)">
+          <div class="filter-title">Source</div>
+          <span class="filter-group-arrow">▾</span>
+        </div>
+        <div class="filter-group-body">
+          <label class="filter-opt" style="margin-bottom:10px">
+            <input type="checkbox" id="src-all" checked onchange="handleSourceAll(this)"/>
+            <span class="filter-opt-label">All sources</span>
+          </label>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Film &amp; Video</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab<span class="filter-opt-sub">3,967 film stills</span></span><span class="filter-count" id="cnt-filmgrab"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub">8,900 short films</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub">6,338 films</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub">1,000 films</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub">1,269 shorts</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vimeo" onchange="handleSourceCb()"/><span class="filter-opt-label">Vimeo Staff Picks<span class="filter-opt-sub">7,809 stills</span></span><span class="filter-count" id="cnt-vimeo"></span></label>
+          </div>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Museums &amp; Galleries</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum<span class="filter-opt-sub">London</span></span><span class="filter-count" id="cnt-vam"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago</span><span class="filter-count" id="cnt-artic"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">New York</span></span><span class="filter-count" id="cnt-met"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub">European paintings</span></span><span class="filter-count" id="cnt-wga"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
+          </div>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Design &amp; Typography</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive<span class="filter-opt-sub">3,666 type works</span></span><span class="filter-count" id="cnt-letterform"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="fonts_in_use" onchange="handleSourceCb()"/><span class="filter-opt-label">Fonts In Use</span><span class="filter-count" id="cnt-fonts_in_use"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="peoples_gd" onchange="handleSourceCb()"/><span class="filter-opt-label">People's Graphic Design</span><span class="filter-count" id="cnt-peoples_gd"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Gallery<span class="filter-opt-sub">Photography · LA</span></span><span class="filter-count" id="cnt-mb_collection"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="icp" onchange="handleSourceCb()"/><span class="filter-opt-label">ICP<span class="filter-opt-sub">Photography</span></span><span class="filter-count" id="cnt-icp"></span></label>
+          </div>
+
+          <div class="src-subgroup">
+            <div class="src-subgroup-title">Archives &amp; Libraries</div>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints</span></span><span class="filter-count" id="cnt-loc"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL<span class="filter-opt-sub">1M+ images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art &amp; medicine</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="duke" onchange="handleSourceCb()"/><span class="filter-opt-label">Duke AdAccess</span><span class="filter-count" id="cnt-duke"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons</span><span class="filter-count" id="cnt-bhl"></span></label>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -558,11 +788,15 @@
       <div class="res-meta">
         <span class="res-count" id="res-count"></span>
       </div>
+      <div id="filter-badges"></div>
       <div class="img-grid" id="results-grid"></div>
-      <div id="res-empty" class="state-msg" style="display:none"><p>No results found. Try a different term.</p></div>
+      <div id="res-empty" class="state-msg" style="display:none">
+        <p>No results found.</p>
+        <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Try removing some filters or using a different search term.</p>
+      </div>
       <div class="archives-cta" id="archives-cta" style="display:none">
         <span class="archives-cta-icon">↖</span>
-        <p>Didn't find what you needed? <a onclick="showSources()">Explore these 137 curated sources</a> — each has its own search tools and may surface exactly what you're looking for.</p>
+        <p>Didn't find what you needed? <a onclick="showSources()">Explore 137 curated sources</a> — each has its own search tools and may surface exactly what you're looking for.</p>
       </div>
     </main>
   </div>
@@ -600,15 +834,15 @@
 <div id="view-sources" class="view">
   <div class="arch-inner">
     <div class="arch-head">
-      <div class="arch-title">Curated Sources</div>
-      <div class="arch-sub">137 archives organised by area</div>
+      <div class="arch-title">Source Directory</div>
+      <div class="arch-sub">23 integrated databases + 137 curated external sources</div>
     </div>
 
     <div class="arch-banner">
       <div class="arch-banner-icon">↖</div>
       <div class="arch-banner-text">
-        Didn't find what you needed in the search?
-        <strong>Each source below has its own search tools</strong> and may have exactly what you're looking for — including things our API doesn't surface yet.
+        Our integrated databases are <strong>fully searchable from the search bar</strong>.
+        External sources below link to their own search tools — for research beyond what our API surfaces.
       </div>
     </div>
 
@@ -707,6 +941,9 @@
   </div>
 </div>
 
+<!-- ── MOBILE FILTER TOGGLE ───────────────────────────────────── -->
+<button id="filter-toggle-btn" onclick="toggleMobileSidebar()" title="Filters">⊞</button>
+
 <!-- ── MOBILE NAV ─────────────────────────────────────────────── -->
 <nav id="mob-nav">
   <div class="mob-nav-inner">
@@ -774,6 +1011,11 @@ const SRC_KEY_MAP = {
   wga:               'Web Gallery of Art',
   mb_collection:     'M+B Collection',
   letterform:        'Letterform Archive',
+  vimeo:             'Vimeo Staff Picks',
+  fonts_in_use:      'Fonts In Use',
+  peoples_gd:        'People\'s Graphic Design Archive',
+  icp:               'ICP',
+  duke:              'Duke AdAccess',
 };
 
 // ── CONFIG ─────────────────────────────────────────────────────────
@@ -791,8 +1033,19 @@ let state = {
   discoverBatch:    [],
   discoverIdx:      0,
   activeItem:       null,
-  advDateFrom:      null,
-  advDateTo:        null,
+  // Pagination
+  offset:           0,
+  meiliTotal:       null,   // estimatedTotalHits from Meilisearch
+  // Filters
+  filters: {
+    sources:    [],   // source keys (empty = all defaults)
+    categories: [],   // medium/type categories for Meilisearch
+    moods:      [],   // ai_mood values
+    lighting:   [],   // ai_lighting values
+    shotTypes:  [],   // ai_shot_type values
+    yearFrom:   null,
+    yearTo:     null,
+  },
 };
 
 // ── PICKER ───────────────────────────────────────────────────────
@@ -906,13 +1159,14 @@ function pickerSearch() {
   document.querySelectorAll('.chip[data-type]').forEach(c => {
     c.classList.toggle('active', c.dataset.type === pickerType);
   });
-  const radio = document.querySelector(`input[name="type-filter"][value="${pickerType}"]`);
-  if (radio) radio.checked = true;
   // Sync picker selection to sidebar checkboxes
   document.querySelectorAll('.src-cb').forEach(cb => {
     cb.checked = pickerSelected.has(cb.dataset.src);
   });
-  document.getElementById('src-all').checked = false;
+  const srcAll = document.getElementById('src-all');
+  if (srcAll) srcAll.checked = false;
+  // Store in filter state
+  state.filters.sources = [...pickerSelected];
   runSearch(pickerQuery);
 }
 
@@ -939,6 +1193,21 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── MOBILE SIDEBAR ───────────────────────────────────────────────
+function toggleMobileSidebar() {
+  const sidebar = document.querySelector('.res-sidebar');
+  if (!sidebar) return;
+  sidebar.classList.toggle('mobile-open');
+}
+
+// ── QUICK SEARCH (suggestion chips on home) ─────────────────────
+function quickSearch(q) {
+  document.getElementById('home-input').value = q;
+  state.query = q;
+  // Go straight to results without picker for suggestion chips
+  runSearch(q);
+}
+
 // ── SOURCE STRIP ─────────────────────────────────────────────────
 function triggerSourceSearch(srcKey) {
   const q = document.getElementById('home-input').value.trim() || 'art';
@@ -956,6 +1225,9 @@ function showView(name, pushHistory = true) {
   if (radio) radio.checked = true;
   // Hide global nav in discover (it has its own header)
   document.getElementById('nav').style.display = name === 'discover' ? 'none' : '';
+  // Show mobile filter button only on results view
+  const filterToggle = document.getElementById('filter-toggle-btn');
+  if (filterToggle) filterToggle.style.display = name === 'results' ? '' : 'none';
   // Mobile nav
   const mobNav = document.getElementById('mob-nav');
   mobNav.classList.toggle('dark', name === 'discover');
@@ -1064,11 +1336,7 @@ function triggerSearch(from = 'home') {
   const q = input.value.trim();
   if (!q) return;
   state.query = q;
-  // Clear any advanced search date filters when doing a plain search
-  state.advDateFrom = null;
-  state.advDateTo = null;
   if (from === 'home') {
-    // Mandatory source picker step
     showPicker(q);
   } else {
     runSearch(q);
@@ -1077,44 +1345,57 @@ function triggerSearch(from = 'home') {
 
 async function runSearch(q, onlySources = null, pushHistory = true) {
   state.query = q;
+  state.offset = 0;
+  state.meiliTotal = null;
   showView('results', pushHistory);
   document.getElementById('res-input').value = q;
   document.getElementById('res-count').textContent = 'Searching…';
   document.getElementById('results-grid').innerHTML = skeletonGrid(12);
-  document.getElementById('res-empty').style.display = 'none';
-  document.getElementById('archives-cta').style.display = 'none';
+  const emptyEl = document.getElementById('res-empty');
+  if (emptyEl) emptyEl.style.display = 'none';
+  const ctaEl = document.getElementById('archives-cta');
+  if (ctaEl) ctaEl.style.display = 'none';
+  renderActiveBadges();
 
-  // Build type modifier
-  const typeQ = state.typeFilter !== 'any' ? `${q} ${state.typeFilter}` : q;
-
-  // If called from sources strip, pre-check only that source
-  if (onlySources) {
-    document.querySelectorAll('.src-cb').forEach(cb => {
-      cb.checked = onlySources.includes(cb.dataset.src);
-    });
-    document.getElementById('src-all').checked = false;
-  }
-
-  // Map type filters to Meilisearch category (passed as ?category= param)
-  const TYPE_TO_CATEGORY = { film: 'film', photography: 'photography', typography: 'typography', design: 'design', art: 'art' };
-  const category = TYPE_TO_CATEGORY[state.typeFilter];
-
-  // Build sources param from checked checkboxes (or onlySources override)
-  const srcKeys = onlySources || [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
+  // If called from sources strip, override source filter
+  if (onlySources) state.filters.sources = onlySources;
 
   try {
-    let url = `${VS_API}/api/search?q=${encodeURIComponent(typeQ)}`;
-    if (category) url += `&category=${category}`;
-    if (srcKeys.length) url += `&sources=${srcKeys.join(',')}`;
-    const res = await fetch(url, { headers: { 'x-api-secret': VS_SECRET } });
-    if (!res.ok) throw new Error('API error');
-    const items = await res.json();
-    state.allResults = items;
-    renderResults(items);
+    const data = await fetchSearch({ q, offset: 0 });
+    state.allResults = data.items || [];
+    state.meiliTotal = data.total;
+    renderResults(state.allResults);
   } catch(e) {
     document.getElementById('res-count').textContent = 'Error loading results.';
     document.getElementById('results-grid').innerHTML = '';
   }
+}
+
+// Central fetch: builds URL with all active filters and paginates
+async function fetchSearch({ q, offset = 0 }) {
+  // Build type modifier
+  const typeQ = state.typeFilter !== 'any' ? `${q} ${state.typeFilter}` : q;
+
+  // Map type filters to Meilisearch category
+  const TYPE_TO_CATEGORY = { film: 'film', photography: 'photography', typography: 'typography', design: 'design', art: 'art' };
+  const category = TYPE_TO_CATEGORY[state.typeFilter];
+
+  // Sources (from state.filters.sources or defaults)
+  const srcKeys = state.filters.sources.length ? state.filters.sources
+    : [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
+
+  let url = `${VS_API}/api/search?q=${encodeURIComponent(typeQ)}&offset=${offset}&limit=60`;
+  if (category) url += `&category=${category}`;
+  if (srcKeys.length) url += `&sources=${srcKeys.join(',')}`;
+  if (state.filters.moods.length)     url += `&mood=${state.filters.moods.join(',')}`;
+  if (state.filters.lighting.length)  url += `&lighting=${state.filters.lighting.join(',')}`;
+  if (state.filters.shotTypes.length) url += `&shot_type=${state.filters.shotTypes.join(',')}`;
+  if (state.filters.yearFrom)         url += `&year_from=${state.filters.yearFrom}`;
+  if (state.filters.yearTo)           url += `&year_to=${state.filters.yearTo}`;
+
+  const res = await fetch(url, { headers: { 'x-api-secret': VS_SECRET } });
+  if (!res.ok) throw new Error('API error');
+  return res.json();  // { items, total, offset }
 }
 
 function skeletonGrid(n) {
@@ -1124,7 +1405,7 @@ function skeletonGrid(n) {
 }
 
 function renderResults(items) {
-  // Count per source
+  // Count per source for sidebar badges
   const counts = {};
   items.forEach(item => {
     const key = Object.entries(SRC_KEY_MAP).find(([,v]) => v === item.institution)?.[0];
@@ -1135,54 +1416,56 @@ function renderResults(items) {
     if (el) el.textContent = counts[key] || '';
   });
 
-  // Filter by checked sources
-  const checked = [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
-  const checkedNames = checked.map(k => SRC_KEY_MAP[k]);
-  let filtered = items.filter(item => checkedNames.includes(item.institution));
-
-  // Filter by date range (from advanced search)
-  if (state.advDateFrom || state.advDateTo) {
-    filtered = filtered.filter(item => {
-      if (!item.date) return true; // keep if no date
-      const yearMatch = item.date.match(/\d{4}/);
-      if (!yearMatch) return true;
-      const year = parseInt(yearMatch[0]);
-      if (state.advDateFrom && year < state.advDateFrom) return false;
-      if (state.advDateTo   && year > state.advDateTo)   return false;
-      return true;
-    });
-  }
-
-  const grid = document.getElementById('results-grid');
+  const grid  = document.getElementById('results-grid');
   const empty = document.getElementById('res-empty');
   const cta   = document.getElementById('archives-cta');
 
-  if (filtered.length === 0) {
+  if (items.length === 0) {
     grid.innerHTML = '';
-    empty.style.display = 'block';
-    cta.style.display = 'flex';
+    if (empty) empty.style.display = 'block';
+    if (cta) cta.style.display = 'flex';
     document.getElementById('res-count').textContent = '0 results';
+    renderLoadMore();
     return;
   }
 
-  document.getElementById('res-count').textContent =
-    `${filtered.length} result${filtered.length !== 1 ? 's' : ''} · ${state.query}`;
-  empty.style.display = 'none';
-  cta.style.display = filtered.length < 10 ? 'flex' : 'none';
+  // Build result counter — show Meilisearch estimated total when available
+  let countText;
+  if (state.meiliTotal !== null && state.meiliTotal > items.length) {
+    const totalStr = state.meiliTotal.toLocaleString();
+    countText = `${items.length} shown · ~${totalStr} total`;
+  } else {
+    countText = `${items.length} result${items.length !== 1 ? 's' : ''}`;
+  }
+  document.getElementById('res-count').textContent = countText;
 
-  state.filteredResults  = filtered;
-  state.displayedCount   = Math.min(BATCH_SIZE, filtered.length);
-  state.displayedResults = filtered.slice(0, state.displayedCount);
+  if (empty) empty.style.display = 'none';
+  if (cta) cta.style.display = items.length < 10 ? 'flex' : 'none';
 
-  grid.innerHTML = state.displayedResults.map((item, i) => cardHtml(item, i)).join('');
+  state.filteredResults  = items;
+  state.displayedCount   = items.length;
+  state.displayedResults = items;
+
+  grid.innerHTML = items.map((item, i) => cardHtml(item, i)).join('');
+  // offset for next page = how many we've shown so far (from API perspective)
+  state.offset = 60; // first page fetched 60
   renderLoadMore();
 }
 
 function cardHtml(item, idx) {
+  const srcUrl = item.source_url ? escHtml(item.source_url) : '#';
+  const inst   = escHtml(item.institution || '');
+  const title  = escHtml(item.title || 'Untitled');
   return `<div class="img-card" onclick="openModal(${idx})">
     <div class="img-card-wrap">
-      <img src="${escHtml(item.image_url)}" alt="${escHtml(item.title)}" loading="lazy"
+      <img src="${escHtml(item.image_url)}" alt="${title}" loading="lazy"
            onerror="this.style.display='none';this.parentNode.style.background='var(--paper-dark)'"/>
+      <div class="img-card-overlay">
+        <span class="img-card-inst">${inst}</span>
+        <span class="img-card-ttl">${title}</span>
+        <a class="img-card-ext" href="${srcUrl}" target="_blank" rel="noopener"
+           onclick="event.stopPropagation()" title="View at source">↗</a>
+      </div>
     </div>
   </div>`;
 }
@@ -1190,60 +1473,164 @@ function cardHtml(item, idx) {
 function renderLoadMore() {
   const existing = document.getElementById('load-more-btn');
   if (existing) existing.remove();
-  const remaining = state.filteredResults.length - state.displayedCount;
-  if (remaining <= 0) return;
+  // Show load more if we know there are more from Meilisearch
+  const canLoadMore = state.meiliTotal !== null
+    ? state.offset < state.meiliTotal
+    : false;
+  if (!canLoadMore) return;
+  const remaining = state.meiliTotal - state.offset;
   const btn = document.createElement('div');
   btn.id = 'load-more-btn';
-  btn.innerHTML = `<button onclick="loadMore()">Load more &nbsp;·&nbsp; ${remaining} more images</button>`;
+  btn.innerHTML = `<button onclick="loadMore()">Load more &nbsp;·&nbsp; ~${remaining.toLocaleString()} more</button>`;
   document.getElementById('results-grid').after(btn);
 }
 
-function loadMore() {
-  const offset    = state.displayedCount;
-  const nextItems = state.filteredResults.slice(offset, offset + BATCH_SIZE);
-  state.displayedCount   += nextItems.length;
-  state.displayedResults  = state.filteredResults.slice(0, state.displayedCount);
+async function loadMore() {
+  const btn = document.querySelector('#load-more-btn button');
+  if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
 
-  const grid = document.getElementById('results-grid');
-  const tmp  = document.createElement('div');
-  tmp.innerHTML = nextItems.map((item, i) => cardHtml(item, offset + i)).join('');
-  while (tmp.firstChild) grid.appendChild(tmp.firstChild);
+  try {
+    const data = await fetchSearch({ q: state.query, offset: state.offset });
+    const newItems = data.items || [];
+    if (data.total !== null) state.meiliTotal = data.total;
+
+    // Append to grid
+    const grid = document.getElementById('results-grid');
+    const startIdx = state.displayedResults.length;
+    newItems.forEach((item, i) => {
+      const div = document.createElement('div');
+      div.innerHTML = cardHtml(item, startIdx + i);
+      while (div.firstChild) grid.appendChild(div.firstChild);
+    });
+
+    state.displayedResults = state.displayedResults.concat(newItems);
+    state.filteredResults  = state.displayedResults;
+    state.displayedCount   = state.displayedResults.length;
+    state.offset += 60;
+
+    // Update counter
+    let countText;
+    if (state.meiliTotal !== null && state.meiliTotal > state.displayedCount) {
+      countText = `${state.displayedCount} shown · ~${state.meiliTotal.toLocaleString()} total`;
+    } else {
+      countText = `${state.displayedCount} results`;
+    }
+    document.getElementById('res-count').textContent = countText;
+  } catch(e) {
+    if (btn) { btn.textContent = 'Error — try again'; btn.disabled = false; }
+    return;
+  }
 
   renderLoadMore();
 }
 
-// ── SOURCE FILTER CHECKBOXES ─────────────────────────────────────
-let _srcFilterTimer = null;
+// ── FILTER SYSTEM ─────────────────────────────────────────────────
+let _filterTimer = null;
 
+// Central debounced re-query triggered by any filter change
+function applyFilters() {
+  if (!state.query) return;
+  clearTimeout(_filterTimer);
+  _filterTimer = setTimeout(async () => {
+    document.getElementById('results-grid').innerHTML = skeletonGrid(12);
+    document.getElementById('res-count').textContent = 'Searching…';
+    state.offset = 0;
+    state.meiliTotal = null;
+    renderActiveBadges();
+    try {
+      const data = await fetchSearch({ q: state.query, offset: 0 });
+      state.allResults = data.items || [];
+      state.meiliTotal = data.total;
+      renderResults(state.allResults);
+    } catch {
+      document.getElementById('res-count').textContent = 'Error loading results.';
+    }
+  }, 300);
+}
+
+// Render active filter badges above the grid
+function renderActiveBadges() {
+  let badgesEl = document.getElementById('filter-badges');
+  if (!badgesEl) return;
+  const badges = [];
+  state.filters.moods.forEach(m =>
+    badges.push(`<span class="filter-badge" onclick="removeFilter('moods','${m}')">${m} ×</span>`));
+  state.filters.lighting.forEach(l =>
+    badges.push(`<span class="filter-badge" onclick="removeFilter('lighting','${l}')">${l} ×</span>`));
+  state.filters.shotTypes.forEach(s =>
+    badges.push(`<span class="filter-badge" onclick="removeFilter('shotTypes','${s}')">${s} ×</span>`));
+  if (state.filters.yearFrom || state.filters.yearTo) {
+    const from = state.filters.yearFrom || '…';
+    const to   = state.filters.yearTo   || '…';
+    badges.push(`<span class="filter-badge" onclick="removeYearFilter()">${from}–${to} ×</span>`);
+  }
+  badgesEl.innerHTML = badges.join('');
+  badgesEl.style.display = badges.length ? 'flex' : 'none';
+}
+
+function removeFilter(group, value) {
+  state.filters[group] = state.filters[group].filter(v => v !== value);
+  // Deselect chip in sidebar
+  document.querySelectorAll(`.filter-chip[data-group="${group}"][data-value="${CSS.escape(value)}"]`)
+    .forEach(c => c.classList.remove('active'));
+  applyFilters();
+  renderActiveBadges();
+}
+
+function removeYearFilter() {
+  state.filters.yearFrom = null;
+  state.filters.yearTo   = null;
+  const fromEl = document.getElementById('year-from');
+  const toEl   = document.getElementById('year-to');
+  if (fromEl) fromEl.value = '';
+  if (toEl)   toEl.value = '';
+  applyFilters();
+  renderActiveBadges();
+}
+
+// Toggle a chip filter (mood, lighting, shot type)
+function toggleChipFilter(group, value, chipEl) {
+  const idx = state.filters[group].indexOf(value);
+  if (idx === -1) {
+    state.filters[group].push(value);
+    chipEl.classList.add('active');
+  } else {
+    state.filters[group].splice(idx, 1);
+    chipEl.classList.remove('active');
+  }
+  applyFilters();
+}
+
+// Source filter checkboxes
 function handleSourceAll(cb) {
   document.querySelectorAll('.src-cb').forEach(c => c.checked = cb.checked);
-  debouncedRequery();
+  applyFilters();
 }
 
 function handleSourceCb() {
-  // Update "All sources" checkbox state
-  const allCbs = [...document.querySelectorAll('.src-cb')];
-  const defaultOn = ['vam','artic','smithsonian','europeana','met','wellcome','loc','nypl',
-                     'filmgrab','booooooom','directors_notes','directors_library','beyond_short','wga','mb_collection','letterform'];
-  const allDefaultChecked = defaultOn.every(k => {
-    const cb = document.querySelector(`.src-cb[data-src="${k}"]`);
-    return cb ? cb.checked : true;
-  });
-  document.getElementById('src-all').checked = allDefaultChecked && allCbs.every(c => c.checked);
-  debouncedRequery();
+  const allSrcCbs = document.querySelectorAll('.src-cb');
+  const srcAll = document.getElementById('src-all');
+  if (srcAll) srcAll.checked = [...allSrcCbs].every(c => c.checked);
+  applyFilters();
 }
 
-function debouncedRequery() {
-  // Re-query the API with updated sources after 400ms debounce
-  clearTimeout(_srcFilterTimer);
-  _srcFilterTimer = setTimeout(() => {
-    if (!state.query) return;
-    // Show skeleton while reloading
-    document.getElementById('results-grid').innerHTML = skeletonGrid(12);
-    document.getElementById('res-count').textContent = 'Searching…';
-    const srcKeys = [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
-    runSearch(state.query, srcKeys, false);
-  }, 400);
+// Year range filter
+let _yearTimer = null;
+function handleYearInput() {
+  clearTimeout(_yearTimer);
+  _yearTimer = setTimeout(() => {
+    const from = parseInt(document.getElementById('year-from')?.value) || null;
+    const to   = parseInt(document.getElementById('year-to')?.value)   || null;
+    state.filters.yearFrom = from;
+    state.filters.yearTo   = to;
+    applyFilters();
+  }, 600);
+}
+
+// Toggle sidebar section collapse
+function toggleSection(headerEl) {
+  const group = headerEl.closest('.filter-group');
+  group.classList.toggle('collapsed');
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
@@ -1278,34 +1665,62 @@ function buildModalMeta(item) {
     html += `<div class="modal-row modal-row-desc"><span class="modal-key">About</span><span class="modal-val">${escHtml(desc)}${item.description.length > 320 ? '…' : ''}</span></div>`;
   }
   html += `<div class="modal-row"><span class="modal-key">Source</span><span class="modal-val">${escHtml(domain(item.source_url))}</span></div>`;
+
+  // Vision AI fields (only for static/Meilisearch items)
+  if (item.ai_mood || item.ai_lighting || item.ai_shot_type || (item.ai_tags && item.ai_tags.length)) {
+    html += `<div style="border-top:1px solid var(--paper-dark);margin:10px 0 6px;padding-top:10px;">
+      <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;">AI Vision</div>`;
+    if (item.ai_mood)      html += row('Mood',     item.ai_mood);
+    if (item.ai_lighting)  html += row('Lighting', item.ai_lighting);
+    if (item.ai_shot_type) html += row('Framing',  item.ai_shot_type);
+    if (item.ai_tags && item.ai_tags.length) {
+      const chips = item.ai_tags.slice(0, 12).map(t =>
+        `<span class="filter-chip" style="font-size:10px;padding:2px 8px;cursor:default">${escHtml(t)}</span>`
+      ).join('');
+      html += `<div class="modal-row"><span class="modal-key">Tags</span><span class="modal-val" style="flex-wrap:wrap;display:flex;gap:4px;">${chips}</span></div>`;
+    }
+    html += `</div>`;
+  }
+
   html += `<div class="modal-enrich" id="modal-enrich-status"></div>`;
   return html;
 }
-function openModal(idx) {
-  const item = state.displayedResults?.[idx] || state.allResults?.[idx];
+// Sanitize: allow only <em> tags (for Meilisearch highlighting)
+function sanitizeHighlight(str) {
+  if (!str) return '';
+  return escHtml(str).replace(/&lt;em&gt;/g, '<em>').replace(/&lt;\/em&gt;/g, '</em>');
+}
+
+function _openModal(item) {
   if (!item) return;
   state.activeItem = item;
-  document.getElementById('modal-img').src = item.image_url;
-  document.getElementById('modal-img').alt = item.title;
-  document.getElementById('modal-source').textContent = item.institution;
-  document.getElementById('modal-title').textContent = item.title;
-  document.getElementById('modal-link').href = item.source_url;
+  document.getElementById('modal-img').src  = item.image_url;
+  document.getElementById('modal-img').alt  = item.title || '';
+  document.getElementById('modal-source').textContent = item.institution || '';
+  // Use titleHighlighted with <em> for highlighting (sanitized)
+  const titleEl = document.getElementById('modal-title');
+  if (item.titleHighlighted && item.titleHighlighted !== item.title) {
+    titleEl.innerHTML = sanitizeHighlight(item.titleHighlighted);
+  } else {
+    titleEl.textContent = item.title || 'Untitled';
+  }
+  const linkEl = document.getElementById('modal-link');
+  if (linkEl) {
+    linkEl.href = item.source_url || '#';
+    linkEl.textContent = `View at ${item.institution || 'source'} ↗`;
+  }
   document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
   document.getElementById('modal').classList.add('open');
   enrichModalLazy(item);
 }
+
+function openModal(idx) {
+  const item = state.displayedResults?.[idx] || state.allResults?.[idx];
+  _openModal(item);
+}
 function openModalFromDiscover() {
   const item = state.discoverBatch[state.discoverIdx];
-  if (!item) return;
-  state.activeItem = item;
-  document.getElementById('modal-img').src = item.image_url;
-  document.getElementById('modal-img').alt = item.title;
-  document.getElementById('modal-source').textContent = item.institution;
-  document.getElementById('modal-title').textContent = item.title;
-  document.getElementById('modal-link').href = item.source_url;
-  document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
-  document.getElementById('modal').classList.add('open');
-  enrichModalLazy(item);
+  _openModal(item);
 }
 
 // ── LAZY DETAIL ENRICHMENT ──────────────────────────────────────
@@ -1454,8 +1869,40 @@ function setSourceFilter(tag) {
   renderSources();
 }
 
+// Our integrated databases (searchable via the search engine)
+const OUR_DATABASES = [
+  { key: 'filmgrab',          name: 'FilmGrab',                        desc: '3,967 curated film stills by director & cinematographer' },
+  { key: 'booooooom',         name: 'Booooooom TV',                    desc: '8,900 short films & art video stills' },
+  { key: 'directors_notes',   name: 'Directors Notes',                  desc: '6,338 films indexed by director — international shorts & features' },
+  { key: 'directors_library', name: 'Directors Library',               desc: '1,000 influential films from major directors worldwide' },
+  { key: 'beyond_short',      name: 'Beyond the Short',                desc: '1,269 short films from emerging filmmakers' },
+  { key: 'vimeo',             name: 'Vimeo Staff Picks',               desc: '7,809 high-quality stills from Vimeo\'s curated picks' },
+  { key: 'wga',               name: 'Web Gallery of Art',              desc: '52,866 European paintings — 3rd to 19th century' },
+  { key: 'letterform',        name: 'Letterform Archive',              desc: '3,666 typography & lettering works — historical to contemporary' },
+  { key: 'fonts_in_use',      name: 'Fonts In Use',                    desc: 'Real-world typography indexed by typeface, format, and industry' },
+  { key: 'peoples_gd',        name: 'People\'s Graphic Design Archive', desc: 'Crowdsourced archive of inclusive graphic design history' },
+  { key: 'mb_collection',     name: 'M+B Gallery',                    desc: 'Photography gallery · Los Angeles — contemporary & fine art photo' },
+  { key: 'icp',               name: 'ICP',                            desc: 'International Center of Photography — socially impactful photojournalism' },
+  { key: 'duke',              name: 'Duke AdAccess',                   desc: 'Historical print advertisements from mid-century campaigns' },
+];
+
 function renderSourceContent() {
   const content = document.getElementById('arch-content');
+
+  // Our integrated databases section (always shown at top)
+  let html = `<div class="dir-cat">
+    <div class="dir-cat-title">Integrated Databases — searchable via Visual Archive</div>
+    <div class="dir-grid">
+      ${OUR_DATABASES.map(db => `
+        <div class="dir-card" onclick="quickSearch('*'); state.filters.sources=['${db.key}']; runSearch(state.query || '*', ['${db.key}'])">
+          <div class="dir-card-name">${escHtml(db.name)}</div>
+          <div class="dir-card-desc">${escHtml(db.desc)}</div>
+          <div class="dir-card-count">Click to browse →</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+
   const filtered = archActiveFilter === 'All'
     ? ARCHIVES
     : ARCHIVES.filter(a => a.t.split(',').map(t => t.trim()).includes(archActiveFilter));
@@ -1470,7 +1917,7 @@ function renderSourceContent() {
     groups[primaryTag].push(a);
   });
 
-  content.innerHTML = Object.entries(groups).sort(([a],[b]) => a.localeCompare(b)).map(([tag, items]) => `
+  html += Object.entries(groups).sort(([a],[b]) => a.localeCompare(b)).map(([tag, items]) => `
     <div class="arch-cat">
       <div class="arch-cat-title">${escHtml(tag)}</div>
       <div class="arch-list">
@@ -1483,6 +1930,8 @@ function renderSourceContent() {
       </div>
     </div>
   `).join('');
+
+  content.innerHTML = html;
 }
 
 // ── ADVANCED SEARCH ───────────────────────────────────────────────
@@ -1496,13 +1945,14 @@ function runAdvancedSearch() {
 
   // Collect selected sources
   const selectedSrcs = [...document.querySelectorAll('.adv-src-cb:checked')].map(c => c.dataset.src);
+  state.filters.sources = selectedSrcs;
 
-  // Date range
-  state.advDateFrom = parseInt(document.getElementById('adv-date-from').value) || null;
-  state.advDateTo   = parseInt(document.getElementById('adv-date-to').value)   || null;
+  // Date range → store in filters state
+  state.filters.yearFrom = parseInt(document.getElementById('adv-date-from').value) || null;
+  state.filters.yearTo   = parseInt(document.getElementById('adv-date-to').value)   || null;
 
   state.query = q;
-  runSearch(q, selectedSrcs.length === 10 ? null : selectedSrcs);
+  runSearch(q, null);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────
