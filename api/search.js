@@ -190,6 +190,20 @@ export default async function handler(req, res) {
     items = allItems.sort((a, b) => b._rrfScore - a._rrfScore);
   }
 
+  // Deduplicate: same image_url from multiple sources (e.g. V&A API + Meilisearch static)
+  // Keep the first occurrence (highest RRF score / best rank)
+  const seenUrls = new Set();
+  const seenIds  = new Set();
+  items = items.filter(item => {
+    const urlKey = item.image_url || '';
+    const idKey  = item.id ? String(item.id) : '';
+    if (urlKey && seenUrls.has(urlKey)) return false;
+    if (idKey  && seenIds.has(idKey))   return false;
+    if (urlKey) seenUrls.add(urlKey);
+    if (idKey)  seenIds.add(idKey);
+    return true;
+  });
+
   // Extract Meilisearch total for pagination info
   const meiliResult = results.find((r, i) => activeSources[i] === 'meilisearch');
   const estimatedTotal = meiliResult?.status === 'fulfilled' && meiliResult.value?._meta?.estimatedTotalHits

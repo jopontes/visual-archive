@@ -1046,6 +1046,7 @@ let state = {
   // Pagination
   offset:           0,
   meiliTotal:       null,   // estimatedTotalHits from Meilisearch
+  shownIds:         new Set(),  // tracks rendered item keys to prevent duplicates
   // Filters
   filters: {
     sources:    [],   // source keys (empty = all defaults)
@@ -1426,10 +1427,68 @@ function skeletonGrid(n) {
   ).join('');
 }
 
+// ── RESULT DIVERSITY & DEDUPLICATION ─────────────────────────────
+// Unique key for dedup: prefer item id, fallback to image_url
+function itemKey(item) {
+  return item.id ? String(item.id) : (item.image_url || '');
+}
+
+// Remove items whose key was already shown in this session
+function dedupeAgainstShown(items) {
+  return items.filter(item => {
+    const k = itemKey(item);
+    if (!k || state.shownIds.has(k)) return false;
+    return true;
+  });
+}
+
+// Interleave results by source so images from the same collection
+// (e.g. same film, same museum collection) don't cluster together.
+// Also does a lightweight within-group shuffle to add variety.
+function diversify(items) {
+  // Group by institution (source)
+  const groups = new Map();
+  items.forEach(item => {
+    const key = item.institution || 'other';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  });
+
+  // Light shuffle within each group — break score ties randomly
+  groups.forEach(arr => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  });
+
+  // Round-robin interleave across groups
+  const queues = [...groups.values()];
+  const result = [];
+  while (result.length < items.length) {
+    let added = false;
+    for (const q of queues) {
+      if (q.length > 0) { result.push(q.shift()); added = true; }
+    }
+    if (!added) break;
+  }
+  return result;
+}
+
 function renderResults(items) {
+  // Reset seen IDs for a fresh search
+  state.shownIds = new Set();
+
+  // Deduplicate within this page, then diversify
+  const unique = dedupeAgainstShown(items);
+  const spread = diversify(unique);
+
+  // Mark all as shown
+  spread.forEach(item => { const k = itemKey(item); if (k) state.shownIds.add(k); });
+
   // Count per source for sidebar badges
   const counts = {};
-  items.forEach(item => {
+  spread.forEach(item => {
     const key = Object.entries(SRC_KEY_MAP).find(([,v]) => v === item.institution)?.[0];
     if (key) counts[key] = (counts[key] || 0) + 1;
   });
@@ -1442,7 +1501,7 @@ function renderResults(items) {
   const empty = document.getElementById('res-empty');
   const cta   = document.getElementById('archives-cta');
 
-  if (items.length === 0) {
+  if (spread.length === 0) {
     grid.innerHTML = '';
     if (empty) empty.style.display = 'block';
     if (cta) cta.style.display = 'flex';
@@ -1453,24 +1512,23 @@ function renderResults(items) {
 
   // Build result counter — show Meilisearch estimated total when available
   let countText;
-  if (state.meiliTotal !== null && state.meiliTotal > items.length) {
+  if (state.meiliTotal !== null && state.meiliTotal > spread.length) {
     const totalStr = state.meiliTotal.toLocaleString();
-    countText = `${items.length} shown · ~${totalStr} total`;
+    countText = `${spread.length} shown · ~${totalStr} total`;
   } else {
-    countText = `${items.length} result${items.length !== 1 ? 's' : ''}`;
+    countText = `${spread.length} result${spread.length !== 1 ? 's' : ''}`;
   }
   document.getElementById('res-count').textContent = countText;
 
   if (empty) empty.style.display = 'none';
-  if (cta) cta.style.display = items.length < 10 ? 'flex' : 'none';
+  if (cta) cta.style.display = spread.length < 10 ? 'flex' : 'none';
 
-  state.filteredResults  = items;
-  state.displayedCount   = items.length;
-  state.displayedResults = items;
+  state.filteredResults  = spread;
+  state.displayedCount   = spread.length;
+  state.displayedResults = spread;
 
-  grid.innerHTML = items.map((item, i) => cardHtml(item, i)).join('');
-  // offset for next page = how many we've shown so far (from API perspective)
-  state.offset = 60; // first page fetched 60
+  grid.innerHTML = spread.map((item, i) => cardHtml(item, i)).join('');
+  state.offset = 60;
   renderLoadMore();
 }
 
@@ -1516,16 +1574,21 @@ async function loadMore() {
     const newItems = data.items || [];
     if (data.total !== null) state.meiliTotal = data.total;
 
+    // Deduplicate against already-shown items, then diversify the batch
+    const unique = dedupeAgainstShown(newItems);
+    const spread = diversify(unique);
+    spread.forEach(item => { const k = itemKey(item); if (k) state.shownIds.add(k); });
+
     // Append to grid
     const grid = document.getElementById('results-grid');
     const startIdx = state.displayedResults.length;
-    newItems.forEach((item, i) => {
+    spread.forEach((item, i) => {
       const div = document.createElement('div');
       div.innerHTML = cardHtml(item, startIdx + i);
       while (div.firstChild) grid.appendChild(div.firstChild);
     });
 
-    state.displayedResults = state.displayedResults.concat(newItems);
+    state.displayedResults = state.displayedResults.concat(spread);
     state.filteredResults  = state.displayedResults;
     state.displayedCount   = state.displayedResults.length;
     state.offset += 60;
