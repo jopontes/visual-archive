@@ -2,6 +2,7 @@
 // Queries 10 institutional APIs + Meilisearch static index in parallel.
 // NOTE: Rijksmuseum removed in March 2026 — old API (rijksmuseum.nl/api) returned HTTP 410 Gone.
 // New API (data.rijksmuseum.nl) only supports filters (creator=, type=), not free-text search.
+// NOTE: Europeana removed — API was very noisy with non-visual items, low quality results.
 //
 // Parameters:
 //   ?q=TERM                — search term (required unless discover=1)
@@ -17,7 +18,7 @@
 //   ?year_to=1920               — filter year <= N
 
 const SOURCE_KEYS = [
-  'vam', 'artic', 'smithsonian', 'europeana', 'met',
+  'vam', 'artic', 'smithsonian', 'met',
   'wellcome', 'nasa', 'loc', 'nypl', 'bhl',
   'meilisearch',  // ← static scraped databases
 ];
@@ -44,7 +45,7 @@ const ALL_KNOWN_KEYS = [...SOURCE_KEYS, ...MEILI_KEYS];
 // Sources included by default (no ?sources= param).
 // NASA and Wikimedia Commons are opt-in only (too noisy for most searches).
 const DEFAULT_SOURCES = [
-  'vam', 'artic', 'smithsonian', 'europeana', 'met',
+  'vam', 'artic', 'smithsonian', 'met',
   'wellcome', 'loc', 'nypl',
   'meilisearch',
 ];
@@ -151,7 +152,6 @@ export default async function handler(req, res) {
     vam:         () => skipApis ? [] : searchVAMuseum(term),
     artic:       () => skipApis ? [] : searchArtic(term),
     smithsonian: () => skipApis ? [] : searchSmithsonian(term),
-    europeana:   () => skipApis ? [] : searchEuropeana(term),
     met:         () => skipApis ? [] : searchMet(term),
     wellcome:    () => skipApis ? [] : searchWellcome(term),
     nasa:        () => skipApis ? [] : searchNASA(term),
@@ -180,7 +180,6 @@ export default async function handler(req, res) {
     wellcome:     0.9,   // Slightly niche
     loc:          0.9,
     nypl:         0.8,   // Slow, often partial
-    europeana:    0.4,   // Very noisy, lots of non-visual items
     nasa:         0.3,   // Opt-in only
     bhl:          0.3,   // Opt-in only
   };
@@ -334,33 +333,6 @@ async function searchSmithsonian(term) {
   } catch { return []; }
 }
 
-// ── 4. Europeana ───────────────────────────────────────────────
-async function searchEuropeana(term) {
-  const key = process.env.EUROPEANA_KEY;
-  if (!key) return [];
-  try {
-    const res = await fetch(
-      `https://api.europeana.eu/record/v2/search.json?query=${term}&wskey=${key}&rows=12&media=true&qf=TYPE:IMAGE`
-    );
-    const data = await res.json();
-    if (!data.items?.length) return [];
-    return data.items
-      .filter(item => item.edmPreview?.length)
-      .map(item => ({
-        id:          `europeana-${encodeURIComponent(item.id)}`,
-        title:       Array.isArray(item.title) ? item.title[0] : (item.title || 'Untitled'),
-        image_url:   item.edmPreview[0],
-        source_url:  item.guid || `https://www.europeana.eu/item${item.id}`,
-        institution: 'Europeana',
-        date:        item.year?.[0] || '',
-        creator:     item.dcCreator?.[0] || '',
-        medium:      '',
-        institution_detail: item.dataProvider?.[0] || '',
-        description: Array.isArray(item.dcDescription) ? item.dcDescription[0] : (item.dcDescription || ''),
-        subject:     Array.isArray(item.dcSubject) ? item.dcSubject.slice(0, 5).join(', ') : '',
-      }));
-  } catch { return []; }
-}
 
 // ── 5. Met Museum ──────────────────────────────────────────────
 async function searchMet(term) {
