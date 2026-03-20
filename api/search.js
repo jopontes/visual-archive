@@ -50,11 +50,35 @@ const DEFAULT_SOURCES = [
 ];
 
 const DISCOVER_TERMS = [
-  'portrait', 'landscape', 'textile', 'vessel', 'garden',
-  'costume', 'drawing', 'ornament', 'ritual', 'map',
-  'manuscript', 'flower', 'mask', 'figure', 'architecture',
-  'still life', 'monument', 'ceramic', 'tapestry', 'light',
-  'botanical', 'astronomical', 'specimen', 'anatomy', 'insect',
+  // colours & light
+  'gold', 'red', 'blue', 'black', 'white', 'shadow', 'darkness', 'neon',
+  'smoke', 'fire', 'fog', 'reflection', 'silhouette', 'glow', 'grain',
+
+  // emotions & mood
+  'melancholy', 'solitude', 'grief', 'joy', 'fear', 'desire', 'tenderness',
+  'rage', 'nostalgia', 'ecstasy', 'stillness', 'tension', 'longing',
+
+  // body & gesture
+  'face', 'hands', 'gaze', 'crowd', 'sleep', 'dance', 'embrace', 'fall',
+
+  // cinematic & photographic
+  'close-up', 'night', 'rain', 'street', 'window', 'door', 'staircase',
+  'mirror', 'empty room', 'car', 'chase', 'waiting',
+
+  // nature & environment
+  'storm', 'water', 'desert', 'forest', 'sky', 'ocean', 'ice', 'mud',
+  'ruins', 'overgrown', 'coast', 'mountain',
+
+  // objects & things
+  'clock', 'bottle', 'table', 'chair', 'book', 'cloth', 'wire', 'rope',
+  'food', 'machine', 'paper', 'glass', 'fabric',
+
+  // concepts & abstractions
+  'pattern', 'grid', 'spiral', 'texture', 'decay', 'memory', 'ritual',
+  'labor', 'war', 'childhood', 'ceremony', 'propaganda', 'utopia',
+
+  // classic art terms (kept but reduced)
+  'portrait', 'still life', 'botanical', 'anatomy', 'costume', 'map',
 ];
 
 export default async function handler(req, res) {
@@ -94,8 +118,10 @@ export default async function handler(req, res) {
   // Resolve search term
   let term;
   if (discover === '1') {
-    const idx = Math.floor(Math.random() * DISCOVER_TERMS.length);
-    term = encodeURIComponent(DISCOVER_TERMS[idx]);
+    // Pick 2 distinct random terms — multiplies variety exponentially
+    const shuffle = [...DISCOVER_TERMS].sort(() => Math.random() - 0.5);
+    const picked = shuffle.slice(0, 2);
+    term = encodeURIComponent(picked.join(' '));
   } else {
     if (!q || !q.trim()) return res.status(400).json({ error: 'Missing parameter: q' });
     term = encodeURIComponent(q.trim());

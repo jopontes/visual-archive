@@ -45,51 +45,24 @@
 
     /* ── HOME VIEW ──────────────────────────────────── */
     #view-home { padding-top: 52px; }
-    .home-inner { max-width: 900px; margin: 0 auto; padding: 80px 40px 60px; }
-    .home-eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; }
-    .home-title { font-family: var(--font-display); font-size: clamp(44px, 6vw, 80px); font-weight: 300; line-height: 1.05; letter-spacing: -.01em; margin-bottom: 20px; }
-    .home-title em { font-style: italic; }
-    .home-sub { font-size: 15px; color: var(--ink-2); line-height: 1.75; margin-bottom: 40px; max-width: 560px; }
-    .home-search-row { display: flex; border: 1.5px solid var(--ink); border-radius: 2px; margin-bottom: 14px; background: var(--warm-white); }
-    .home-search-row input { flex: 1; border: none; outline: none; padding: 14px 20px; font-size: 15px; color: var(--ink); background: transparent; }
+    .home-bar {
+      position: sticky; top: 52px; z-index: 30;
+      background: var(--warm-white); border-bottom: 1px solid var(--rule);
+      padding: 24px 0 16px;
+    }
+    .home-bar-inner { max-width: 600px; margin: 0 auto; padding: 0 20px; text-align: center; }
+    .home-brand { font-family: var(--font-display); font-size: 20px; letter-spacing: .10em; text-transform: uppercase; color: var(--ink); margin-bottom: 4px; }
+    .home-tagline { font-size: 12px; color: var(--ink-3); margin-bottom: 16px; letter-spacing: .03em; }
+    .home-search-row { display: flex; border: 1.5px solid var(--ink); border-radius: 2px; margin-bottom: 10px; background: var(--warm-white); }
+    .home-search-row input { flex: 1; border: none; outline: none; padding: 12px 16px; font-size: 14px; color: var(--ink); background: transparent; }
     .home-search-row input::placeholder { color: var(--ink-3); }
-    .home-search-btn { background: var(--ink); color: white; border: none; padding: 0 28px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; border-radius: 0; }
-    .home-chips { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 28px; }
-    .chips-label { font-size: 12px; color: var(--ink-3); letter-spacing: .04em; }
-    .chip { border: 1px solid var(--rule); padding: 6px 13px; font-size: 12px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); font-family: var(--font-ui); }
+    .home-search-btn { background: var(--ink); color: white; border: none; padding: 0 24px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; border-radius: 0; }
+    .home-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .chips-label { font-size: 11px; color: var(--ink-3); letter-spacing: .04em; }
+    .chip { border: 1px solid var(--rule); padding: 5px 11px; font-size: 11px; color: var(--ink-2); cursor: pointer; border-radius: 2px; background: var(--warm-white); font-family: var(--font-ui); }
     .chip:hover { border-color: var(--ink-3); color: var(--ink); }
     .chip.active { border-color: var(--ink); color: var(--ink); background: var(--paper); }
-    .home-divider { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-    .home-divider hr { flex: 1; border: none; border-top: 1px solid var(--rule); }
-    .home-divider span { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
-    /* Desktop: dashed discover button */
-    .home-discover-btn {
-      display: flex; align-items: center; gap: 14px;
-      padding: 16px 22px; border: 1.5px dashed var(--rule); border-radius: 2px;
-      cursor: pointer; background: var(--paper);
-    }
-    .home-discover-btn:hover { border-color: var(--ink-3); }
-    .home-discover-icon { font-size: 20px; line-height: 1; }
-    .home-discover-text strong { font-size: 14px; color: var(--ink); font-weight: 500; display: block; margin-bottom: 3px; }
-    .home-discover-text small { font-size: 12px; color: var(--ink-3); }
-    .home-discover-arrow { margin-left: auto; color: var(--ink-3); font-size: 16px; }
-    /* Mobile: solid dark discover button */
-    .mobile-discover-btn {
-      display: none; align-items: center; gap: 12px;
-      padding: 13px 16px; background: var(--ink); color: white;
-      border-radius: 2px; cursor: pointer; border: none; width: 100%;
-    }
-    .mobile-discover-btn strong { font-size: 14px; font-weight: 500; display: block; margin-bottom: 1px; }
-    .mobile-discover-btn small { font-size: 11px; color: rgba(255,255,255,.5); }
-    .mobile-discover-btn .mdb-arrow { margin-left: auto; opacity: .6; }
-    /* Sources strip — full width below home-inner */
-    .home-sources-wrap { border-top: 1px solid var(--rule); margin-top: 0; }
-    .home-sources { display: flex; flex-wrap: wrap; }
-    .home-source { flex: 1; min-width: 120px; padding: 14px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); transition: background .15s ease; cursor: pointer; }
-    .home-source:hover { background: var(--paper); }
-    .home-source:last-child { border-right: none; }
-    .home-source-name { font-size: 11px; font-weight: 500; letter-spacing: .03em; color: var(--ink); margin-bottom: 3px; }
-    .home-source-n { font-size: 10px; color: var(--ink-3); }
+    .home-gallery-wrap { padding: 16px 20px; max-width: 1800px; margin: 0 auto; }
 
     /* ── RESULTS VIEW ───────────────────────────────── */
     #view-results { padding-top: 52px; }
@@ -98,7 +71,7 @@
     .res-search-wrap { flex: 1; display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 8px 14px; gap: 8px; background: var(--paper); max-width: 600px; }
     .res-search-wrap input { border: none; background: transparent; outline: none; font-size: 14px; flex: 1; color: var(--ink); }
     .res-search-ic { color: var(--ink-3); font-size: 14px; }
-    .res-body { display: flex; align-items: flex-start; min-height: calc(100vh - 105px); max-width: 1400px; margin: 0 auto; width: 100%; padding: 0 40px; }
+    .res-body { display: flex; align-items: flex-start; min-height: calc(100vh - 105px); max-width: 1800px; margin: 0 auto; width: 100%; padding: 0 40px; }
     /* Sidebar */
     .res-sidebar { width: 240px; flex-shrink: 0; border-right: 1px solid var(--rule); padding: 24px 18px; background: var(--warm-white); overflow-y: auto; max-height: calc(100vh - 105px); position: sticky; top: 105px; align-self: flex-start; }
     .sidebar-header { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
@@ -118,8 +91,8 @@
     .res-main { flex: 1; padding: 24px 0 24px 28px; min-width: 0; }
     .res-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
     .res-count { font-size: 13px; color: var(--ink-2); }
-    .img-grid { display: flex; gap: 6px; align-items: flex-start; }
-    .img-col  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .img-grid { display: flex; gap: 4px; align-items: flex-start; }
+    .img-col  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
     .img-card { cursor: pointer; display: block; width: 100%; }
     .img-card-wrap { overflow: hidden; background: var(--paper-dark); width: 100%; }
     .img-card-wrap img { width: 100%; height: auto; display: block; }
@@ -290,6 +263,12 @@
     .modal-btn-primary { background: var(--ink); color: white; border: none; }
     .modal-btn-primary:hover { background: #2d2924; }
     .modal-btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--rule); opacity: .5; cursor: not-allowed; }
+    .modal-btn-find-similar { background: transparent; color: var(--ink); border: 1px solid var(--rule); cursor: pointer; opacity: 1; }
+    .modal-btn-find-similar:hover { border-color: var(--ink-3); }
+    .modal-similar { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0; }
+    .modal-similar-label { font-size: 10px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; width: 100%; }
+    .modal-similar img { width: 56px; height: 56px; object-fit: cover; cursor: pointer; border-radius: 2px; flex-shrink: 0; opacity: .85; transition: opacity .15s; }
+    .modal-similar img:hover { opacity: 1; }
 
     /* ── MOBILE NAV ─────────────────────────────────── */
     #mob-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; border-top: 1px solid var(--rule); background: var(--warm-white); height: 52px; }
@@ -375,11 +354,18 @@
 
     /* ── SIDEBAR SOURCE SUBGROUPS ───────────────────── */
     .src-subgroup { margin-bottom: 12px; }
+    .src-subgroup-header {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      padding-bottom: 4px; border-bottom: 1px solid var(--paper-dark); margin-bottom: 6px;
+    }
+    .src-subgroup-header input[type=checkbox] { width: 13px; height: 13px; accent-color: var(--ink); cursor: pointer; flex-shrink: 0; }
     .src-subgroup-title {
       font-size: 9px; letter-spacing: .10em; text-transform: uppercase;
-      color: var(--ink-3); margin-bottom: 6px; padding-bottom: 4px;
-      border-bottom: 1px solid var(--paper-dark);
+      color: var(--ink-3); flex: 1;
     }
+    .src-subgroup-arrow { font-size: 9px; color: var(--ink-3); transition: transform .15s ease; }
+    .src-subgroup.collapsed .src-subgroup-arrow { transform: rotate(-90deg); }
+    .src-subgroup-body { overflow: hidden; transition: max-height .2s ease; }
 
     /* ── RESULT COUNTER ─────────────────────────────── */
     .res-count { font-size: 13px; color: var(--ink-2); }
@@ -394,16 +380,6 @@
     .dir-card-name { font-family: var(--font-ui); font-size: 14px; color: var(--ink); margin-bottom: 3px; font-weight: 500; }
     .dir-card-desc { font-family: var(--font-ui); font-size: 12px; color: var(--ink-3); line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .dir-card-count { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); margin-top: 4px; }
-
-    /* ── HOME SUGGESTION CHIPS ──────────────────────── */
-    .home-suggest { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-    .home-suggest-label { font-size: 12px; color: var(--ink-3); align-self: center; letter-spacing: .04em; margin-right: 2px; white-space: nowrap; }
-    .suggest-chip {
-      border: 1px solid var(--rule); padding: 5px 12px; font-size: 12px;
-      color: var(--ink-2); cursor: pointer; border-radius: 2px;
-      background: var(--warm-white); font-family: var(--font-ui);
-    }
-    .suggest-chip:hover { border-color: var(--ink-3); color: var(--ink); }
 
     /* ── ANIMATIONS ─────────────────────────────────── */
     @media (prefers-reduced-motion: no-preference) {
@@ -496,84 +472,30 @@
 
 <!-- ── HOME VIEW ─────────────────────────────────────────────── -->
 <div id="view-home" class="view active">
-  <div class="home-inner">
-    <div class="home-eyebrow">Visual Research · 894,000 works · 23 collections</div>
-    <h1 class="home-title">Search visual archives<br><em>across institutions</em></h1>
-    <p class="home-sub">Art, photography, film stills, typography, design objects — from global museums, curated databases, and specialized collections. All in one place.</p>
-
-    <div class="home-search-row">
-      <input id="home-input" type="text" placeholder="Search by theme, style, mood, technique, period…"
-             onkeydown="if(event.key==='Enter') triggerSearch()"/>
-      <button class="home-search-btn" onclick="triggerSearch()">Search</button>
-    </div>
-    <div style="margin-bottom:12px;margin-top:-6px;text-align:right;">
-      <span onclick="showAdvanced()" style="font-size:12px;color:var(--ink-3);cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Advanced search</span>
-    </div>
-
-    <div class="home-suggest">
-      <span class="home-suggest-label">Try:</span>
-      <span class="suggest-chip" onclick="quickSearch('golden hour')">golden hour</span>
-      <span class="suggest-chip" onclick="quickSearch('Bauhaus')">Bauhaus</span>
-      <span class="suggest-chip" onclick="quickSearch('melancholic portrait')">melancholic portrait</span>
-      <span class="suggest-chip" onclick="quickSearch('neon city')">neon city</span>
-      <span class="suggest-chip" onclick="quickSearch('botanical illustration')">botanical illustration</span>
-      <span class="suggest-chip" onclick="quickSearch('brutalist architecture')">brutalism</span>
-      <span class="suggest-chip" onclick="quickSearch('chiaroscuro')">chiaroscuro</span>
-    </div>
-
-    <div class="home-chips">
-      <span class="chips-label">Type:</span>
-      <span class="chip active" data-type="any">Any</span>
-      <span class="chip" data-type="film">Film Stills</span>
-      <span class="chip" data-type="painting">Painting</span>
-      <span class="chip" data-type="photography">Photography</span>
-      <span class="chip" data-type="typography">Typography</span>
-      <span class="chip" data-type="design">Design</span>
-      <span class="chip" data-type="object">Object</span>
-      <span class="chip" data-type="architecture">Architecture</span>
-    </div>
-
-    <div class="home-divider">
-      <hr/><span>or</span><hr/>
-    </div>
-
-    <!-- Desktop: dashed discover -->
-    <div class="home-discover-btn" onclick="startDiscover()">
-      <span class="home-discover-icon">✦</span>
-      <div class="home-discover-text">
-        <strong>Discover something unexpected</strong>
-        <small>Random images from all 10 archives — no search term needed</small>
+  <!-- Sticky search bar -->
+  <div class="home-bar">
+    <div class="home-bar-inner">
+      <div class="home-brand">Visual Archive</div>
+      <p class="home-tagline">886k works indexed · millions more via 10 institutional APIs</p>
+      <div class="home-search-row">
+        <input id="home-input" type="text" placeholder="Search by theme, style, mood, technique, period…"
+               onkeydown="if(event.key==='Enter') triggerSearch()"/>
+        <button class="home-search-btn" onclick="triggerSearch()">Search</button>
       </div>
-      <span class="home-discover-arrow">→</span>
-    </div>
-
-    <!-- Mobile: solid dark discover -->
-    <button class="mobile-discover-btn" onclick="startDiscover()">
-      <span>✦</span>
-      <div>
-        <strong>Discover</strong>
-        <small>Random images · swipe to explore</small>
+      <div class="home-chips" id="home-source-groups">
+        <span class="chips-label">Sources:</span>
+        <span class="chip active" data-group="film_video" onclick="toggleHomeGroup(this)">Film &amp; Video</span>
+        <span class="chip active" data-group="museums" onclick="toggleHomeGroup(this)">Museums</span>
+        <span class="chip active" data-group="design_typo" onclick="toggleHomeGroup(this)">Design &amp; Typography</span>
+        <span class="chip active" data-group="libraries" onclick="toggleHomeGroup(this)">Libraries &amp; Archives</span>
       </div>
-      <span class="mdb-arrow">→</span>
-    </button>
+    </div>
   </div>
-
-  <!-- Sources strip — full width -->
-  <div class="home-sources-wrap">
-    <div class="home-sources">
-      <div class="home-source" onclick="triggerSourceSearch('vam')"><div class="home-source-name">V&amp;A Museum</div><div class="home-source-n">1.2M objects</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('artic')"><div class="home-source-name">Art Institute of Chicago</div><div class="home-source-n">120k+ works</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('smithsonian')"><div class="home-source-name">Smithsonian</div><div class="home-source-n">5.1M items</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('europeana')"><div class="home-source-name">Europeana</div><div class="home-source-n">50M+ items</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('met')"><div class="home-source-name">Met Museum</div><div class="home-source-n">470k objects</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('wellcome')"><div class="home-source-name">Wellcome</div><div class="home-source-n">Medicine &amp; art</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('loc')"><div class="home-source-name">Lib. of Congress</div><div class="home-source-n">Prints &amp; photos</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('nypl')"><div class="home-source-name">NYPL</div><div class="home-source-n">1.5M images</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('filmgrab')"><div class="home-source-name">FilmGrab</div><div class="home-source-n">3,967 film stills</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('booooooom')"><div class="home-source-name">Booooooom TV</div><div class="home-source-n">8,900 short films</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('directors_notes')"><div class="home-source-name">Directors Notes</div><div class="home-source-n">6,338 films</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('wga')"><div class="home-source-name">Web Gallery of Art</div><div class="home-source-n">52,866 paintings</div></div>
-      <div class="home-source" onclick="triggerSourceSearch('letterform')"><div class="home-source-name">Letterform Archive</div><div class="home-source-n">3,666 type items</div></div>
+  <!-- Random image gallery -->
+  <div class="home-gallery-wrap">
+    <div class="img-grid" id="home-gallery"></div>
+    <div id="home-gallery-loading" style="text-align:center;padding:40px 0;">
+      <span style="font-size:13px;color:var(--ink-3);">Loading…</span>
     </div>
   </div>
 </div>
@@ -653,43 +575,67 @@
             <span class="filter-opt-label">All sources</span>
           </label>
 
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Film &amp; Video</div>
+          <div class="src-subgroup collapsed" data-group="film_video">
+            <div class="src-subgroup-header" onclick="toggleSourceSubgroup(this.parentElement)">
+              <input type="checkbox" class="src-group-cb" checked onclick="event.stopPropagation()" onchange="handleGroupCb(this)"/>
+              <div class="src-subgroup-title">Film &amp; Video</div>
+              <span class="src-subgroup-arrow">▾</span>
+            </div>
+            <div class="src-subgroup-body">
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="filmgrab" checked onchange="handleSourceCb()"/><span class="filter-opt-label">FilmGrab<span class="filter-opt-sub" data-sub-for="filmgrab">curated film stills</span></span><span class="filter-count" id="cnt-filmgrab"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="booooooom" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Booooooom TV<span class="filter-opt-sub" data-sub-for="booooooom">short film stills</span></span><span class="filter-count" id="cnt-booooooom"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_notes" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Notes<span class="filter-opt-sub" data-sub-for="directors_notes">film stills</span></span><span class="filter-count" id="cnt-directors_notes"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="directors_library" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Directors Library<span class="filter-opt-sub" data-sub-for="directors_library">film stills</span></span><span class="filter-count" id="cnt-directors_library"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="beyond_short" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Beyond the Short<span class="filter-opt-sub" data-sub-for="beyond_the_short">short film stills</span></span><span class="filter-count" id="cnt-beyond_short"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vimeo" onchange="handleSourceCb()"/><span class="filter-opt-label">Vimeo Staff Picks<span class="filter-opt-sub" data-sub-for="vimeo_staff_picks">stills</span></span><span class="filter-count" id="cnt-vimeo"></span></label>
+            </div>
           </div>
 
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Museums &amp; Galleries</div>
+          <div class="src-subgroup collapsed" data-group="museums">
+            <div class="src-subgroup-header" onclick="toggleSourceSubgroup(this.parentElement)">
+              <input type="checkbox" class="src-group-cb" checked onclick="event.stopPropagation()" onchange="handleGroupCb(this)"/>
+              <div class="src-subgroup-title">Museums &amp; Galleries</div>
+              <span class="src-subgroup-arrow">▾</span>
+            </div>
+            <div class="src-subgroup-body">
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="vam" checked onchange="handleSourceCb()"/><span class="filter-opt-label">V&amp;A Museum<span class="filter-opt-sub">London</span></span><span class="filter-count" id="cnt-vam"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="artic" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Art Institute of Chicago</span><span class="filter-count" id="cnt-artic"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="smithsonian" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Smithsonian<span class="filter-opt-sub">Washington DC</span></span><span class="filter-count" id="cnt-smithsonian"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="met" checked onchange="handleSourceCb()"/><span class="filter-opt-label">The Met<span class="filter-opt-sub">New York</span></span><span class="filter-count" id="cnt-met"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wga" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Web Gallery of Art<span class="filter-opt-sub" data-sub-for="wga">European paintings</span></span><span class="filter-count" id="cnt-wga"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="europeana" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Europeana</span><span class="filter-count" id="cnt-europeana"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="icp" onchange="handleSourceCb()"/><span class="filter-opt-label">ICP<span class="filter-opt-sub" data-sub-for="icp">photographs</span></span><span class="filter-count" id="cnt-icp"></span></label>
+            </div>
           </div>
 
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Design &amp; Typography</div>
+          <div class="src-subgroup collapsed" data-group="design_typo">
+            <div class="src-subgroup-header" onclick="toggleSourceSubgroup(this.parentElement)">
+              <input type="checkbox" class="src-group-cb" checked onclick="event.stopPropagation()" onchange="handleGroupCb(this)"/>
+              <div class="src-subgroup-title">Design &amp; Typography</div>
+              <span class="src-subgroup-arrow">▾</span>
+            </div>
+            <div class="src-subgroup-body">
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="letterform" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Letterform Archive<span class="filter-opt-sub" data-sub-for="letterform">type works</span></span><span class="filter-count" id="cnt-letterform"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="fonts_in_use" onchange="handleSourceCb()"/><span class="filter-opt-label">Fonts In Use<span class="filter-opt-sub" data-sub-for="fonts_in_use">specimens</span></span><span class="filter-count" id="cnt-fonts_in_use"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="peoples_gd" onchange="handleSourceCb()"/><span class="filter-opt-label">People's Graphic Design<span class="filter-opt-sub" data-sub-for="peoples_gd">works</span></span><span class="filter-count" id="cnt-peoples_gd"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="mb_collection" checked onchange="handleSourceCb()"/><span class="filter-opt-label">M+B Gallery<span class="filter-opt-sub">Photography · LA</span></span><span class="filter-count" id="cnt-mb_collection"></span></label>
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="icp" onchange="handleSourceCb()"/><span class="filter-opt-label">ICP<span class="filter-opt-sub" data-sub-for="icp">photographs</span></span><span class="filter-count" id="cnt-icp"></span></label>
+            </div>
           </div>
 
-          <div class="src-subgroup">
-            <div class="src-subgroup-title">Archives &amp; Libraries</div>
+          <div class="src-subgroup collapsed" data-group="libraries">
+            <div class="src-subgroup-header" onclick="toggleSourceSubgroup(this.parentElement)">
+              <input type="checkbox" class="src-group-cb" checked onclick="event.stopPropagation()" onchange="handleGroupCb(this)"/>
+              <div class="src-subgroup-title">Libraries &amp; Archives</div>
+              <span class="src-subgroup-arrow">▾</span>
+            </div>
+            <div class="src-subgroup-body">
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints &amp; photos</span></span><span class="filter-count" id="cnt-loc"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL<span class="filter-opt-sub">1M+ images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art &amp; medicine</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="duke" onchange="handleSourceCb()"/><span class="filter-opt-label">Duke AdAccess<span class="filter-opt-sub" data-sub-for="duke">ads</span></span><span class="filter-count" id="cnt-duke"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons<span class="filter-opt-sub" data-sub-for="wikimedia_commons">images</span></span><span class="filter-count" id="cnt-bhl"></span></label>
+            </div>
           </div>
         </div>
       </div>
@@ -943,8 +889,10 @@
       <div class="modal-source" id="modal-source"></div>
       <div class="modal-title" id="modal-title"></div>
       <div class="modal-meta" id="modal-meta"></div>
+      <div id="modal-similar" class="modal-similar"></div>
       <div class="modal-actions">
         <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">View in source ↗</a>
+        <button class="modal-btn modal-btn-find-similar" onclick="findSimilarFullSearch()">✦ Find similar</button>
         <span class="modal-btn modal-btn-secondary">+ Save to collection</span>
       </div>
     </div>
@@ -1043,6 +991,10 @@ let state = {
   discoverBatch:    [],
   discoverIdx:      0,
   activeItem:       null,
+  similarItems:     [],
+  // Home gallery
+  homeGallery:      [],
+  homeGalleryLoading: false,
   // Pagination
   offset:           0,
   meiliTotal:       null,   // estimatedTotalHits from Meilisearch
@@ -1219,13 +1171,6 @@ function quickSearch(q) {
   runSearch(q);
 }
 
-// ── SOURCE STRIP ─────────────────────────────────────────────────
-function triggerSourceSearch(srcKey) {
-  const q = document.getElementById('home-input').value.trim() || 'art';
-  state.query = q;
-  runSearch(q, [srcKey]);
-}
-
 // ── NAVIGATION ───────────────────────────────────────────────────
 function showView(name, pushHistory = true) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1261,7 +1206,14 @@ function showView(name, pushHistory = true) {
     history.pushState({ view: name, query: state.query, type: state.typeFilter }, '', url);
   }
 }
-function goHome() { showView('home'); }
+function goHome() {
+  showView('home');
+  state.homeGallery = [];
+  state.shownIds = new Set();
+  const g = document.getElementById('home-gallery');
+  if (g) g.innerHTML = '';
+  loadHomeGallery();
+}
 function showSources() { renderSources(); showView('sources'); }
 function showAdvanced() { showView('advanced'); }
 function focusSearch() {
@@ -1340,6 +1292,29 @@ function setTypeFilter(type) {
 }
 
 // ── SEARCH ───────────────────────────────────────────────────────
+// Source group → source keys mapping
+const SOURCE_GROUPS = {
+  film_video:   ['filmgrab', 'booooooom', 'directors_notes', 'directors_library', 'beyond_short', 'vimeo'],
+  museums:      ['vam', 'artic', 'smithsonian', 'met', 'wga', 'europeana', 'icp'],
+  design_typo:  ['letterform', 'fonts_in_use', 'peoples_gd', 'mb_collection'],
+  libraries:    ['wellcome', 'loc', 'nypl', 'duke', 'nasa', 'bhl'],
+};
+
+function toggleHomeGroup(chipEl) {
+  chipEl.classList.toggle('active');
+}
+
+function getHomeGroupSources() {
+  const chips = document.querySelectorAll('#home-source-groups .chip');
+  const sources = [];
+  chips.forEach(c => {
+    if (c.classList.contains('active') && c.dataset.group) {
+      sources.push(...(SOURCE_GROUPS[c.dataset.group] || []));
+    }
+  });
+  return sources;
+}
+
 function triggerSearch(from = 'home') {
   const input = from === 'results'
     ? document.getElementById('res-input')
@@ -1348,10 +1323,36 @@ function triggerSearch(from = 'home') {
   if (!q) return;
   state.query = q;
   if (from === 'home') {
-    showPicker(q);
+    // Get selected source groups from home page chips
+    const sources = getHomeGroupSources();
+    const allGroups = document.querySelectorAll('#home-source-groups .chip');
+    const allActive = [...allGroups].every(c => c.classList.contains('active'));
+    if (allActive || sources.length === 0) {
+      // All groups selected — use defaults (no source filter)
+      state.filters.sources = [];
+    } else {
+      state.filters.sources = sources;
+    }
+    // Sync sidebar checkboxes with selected sources
+    syncSidebarFromState();
+    runSearch(q);
   } else {
     runSearch(q);
   }
+}
+
+function syncSidebarFromState() {
+  const allCbs = document.querySelectorAll('.src-cb');
+  if (state.filters.sources.length === 0) {
+    allCbs.forEach(cb => cb.checked = true);
+  } else {
+    allCbs.forEach(cb => {
+      cb.checked = state.filters.sources.includes(cb.dataset.src);
+    });
+  }
+  const srcAll = document.getElementById('src-all');
+  if (srcAll) srcAll.checked = [...allCbs].every(c => c.checked);
+  syncGroupCheckboxes();
 }
 
 async function runSearch(q, onlySources = null, pushHistory = true) {
@@ -1396,6 +1397,10 @@ async function runSearch(q, onlySources = null, pushHistory = true) {
 
 // Central fetch: builds URL with all active filters and paginates
 async function fetchSearch({ q, offset = 0 }) {
+  // If user explicitly deselected all sources, return empty
+  if (state.filters.sources.includes('__none__')) {
+    return { items: [], total: 0, offset: 0 };
+  }
   // Build type modifier
   const typeQ = state.typeFilter !== 'any' ? `${q} ${state.typeFilter}` : q;
 
@@ -1426,7 +1431,8 @@ function gridColCount() {
   const w = window.innerWidth;
   if (w < 500)  return 2;
   if (w < 900)  return 3;
-  return 4;
+  if (w < 1400) return 5;
+  return 6;
 }
 
 function skeletonGrid(n) {
@@ -1579,6 +1585,7 @@ function cardHtml(item, idx) {
   return `<div class="img-card" onclick="openModal(${idx})">
     <div class="img-card-wrap">
       <img src="${escHtml(item.image_url)}" alt="${title}" loading="lazy"
+           onload="checkImageQuality(this)"
            onerror="this.style.display='none';this.parentNode.style.background='var(--paper-dark)'"/>
       <div class="img-card-overlay">
         <span class="img-card-inst">${inst}</span>
@@ -1588,6 +1595,48 @@ function cardHtml(item, idx) {
       </div>
     </div>
   </div>`;
+}
+
+// Hide tiny images and mostly-white/black placeholder images
+function checkImageQuality(img) {
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  // Skip tiny images (icons, favicons, social media logos)
+  if (w < 80 || h < 80) {
+    img.closest('.img-card').style.display = 'none';
+    return;
+  }
+  // Check for mostly-white or mostly-black images via canvas sampling
+  try {
+    const canvas = document.createElement('canvas');
+    const size = 16; // sample at 16x16
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, size, size);
+    const data = ctx.getImageData(0, 0, size, size).data;
+    let totalBrightness = 0;
+    let pixelCount = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      totalBrightness += brightness;
+      pixelCount++;
+    }
+    const avg = totalBrightness / pixelCount;
+    // Compute variance to distinguish solid colors from real images
+    let variance = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      variance += (brightness - avg) ** 2;
+    }
+    variance /= pixelCount;
+    // Hide if nearly all white (avg > 245) or nearly all black (avg < 10) with low variance
+    if ((avg > 245 || avg < 10) && variance < 200) {
+      img.closest('.img-card').style.display = 'none';
+    }
+  } catch (e) {
+    // Cross-origin images will fail canvas read — ignore silently
+  }
 }
 
 function renderLoadMore() {
@@ -1726,21 +1775,74 @@ function handleSourceAll(cb) {
   document.querySelectorAll('.src-cb').forEach(c => c.checked = cb.checked);
   // Reset source strip to "All"
   document.querySelectorAll('.src-strip-btn').forEach(b => b.classList.toggle('active', b.dataset.src === ''));
-  state.filters.sources = [];
+  if (cb.checked) {
+    state.filters.sources = [];
+  } else {
+    state.filters.sources = ['__none__'];
+  }
+  syncGroupCheckboxes();
   applyFilters();
 }
 
 function handleSourceCb() {
   const allSrcCbs = document.querySelectorAll('.src-cb');
   const srcAll = document.getElementById('src-all');
-  if (srcAll) srcAll.checked = [...allSrcCbs].every(c => c.checked);
-  // Sync source strip: highlight only if exactly one source selected
+  const allChecked = [...allSrcCbs].every(c => c.checked);
+  if (srcAll) srcAll.checked = allChecked;
+
+  // Update state.filters.sources explicitly
+  const noneChecked = [...allSrcCbs].every(c => !c.checked);
+  if (allChecked) {
+    state.filters.sources = [];
+  } else if (noneChecked) {
+    state.filters.sources = ['__none__'];
+  } else {
+    state.filters.sources = [...allSrcCbs].filter(c => c.checked).map(c => c.dataset.src);
+  }
+
+  // Sync group checkboxes
+  syncGroupCheckboxes();
+
+  // Sync source strip
   const checked = [...allSrcCbs].filter(c => c.checked).map(c => c.dataset.src);
   document.querySelectorAll('.src-strip-btn').forEach(b => {
     b.classList.toggle('active', checked.length === 1 && checked[0] === b.dataset.src
-      || (checked.length === allSrcCbs.length && b.dataset.src === ''));
+      || (allChecked && b.dataset.src === ''));
   });
   applyFilters();
+}
+
+// Toggle collapse of a source subgroup in sidebar
+function toggleSourceSubgroup(groupEl) {
+  const body = groupEl.querySelector('.src-subgroup-body');
+  if (groupEl.classList.contains('collapsed')) {
+    groupEl.classList.remove('collapsed');
+    if (body) body.style.maxHeight = body.scrollHeight + 'px';
+  } else {
+    groupEl.classList.add('collapsed');
+    if (body) body.style.maxHeight = '0';
+  }
+}
+
+// Handle group-level checkbox (check/uncheck all sources in the group)
+function handleGroupCb(groupCb) {
+  const subgroup = groupCb.closest('.src-subgroup');
+  const cbs = subgroup.querySelectorAll('.src-cb');
+  cbs.forEach(cb => cb.checked = groupCb.checked);
+  handleSourceCb();
+}
+
+// Sync group checkboxes based on individual source checkbox states
+function syncGroupCheckboxes() {
+  document.querySelectorAll('.src-subgroup').forEach(group => {
+    const groupCb = group.querySelector('.src-group-cb');
+    if (!groupCb) return;
+    const cbs = [...group.querySelectorAll('.src-cb')];
+    const allChecked = cbs.every(c => c.checked);
+    const someChecked = cbs.some(c => c.checked);
+    groupCb.checked = allChecked;
+    groupCb.indeterminate = someChecked && !allChecked;
+  });
 }
 
 // ── SOURCE STRIP (quick-access above results grid) ─────────────────
@@ -1916,6 +2018,7 @@ function _openModal(item) {
   document.getElementById('modal-meta').innerHTML = buildModalMeta(item);
   document.getElementById('modal').classList.add('open');
   enrichModalLazy(item);
+  loadSimilarThumbnails(item);
 }
 
 function openModal(idx) {
@@ -2160,10 +2263,162 @@ function runAdvancedSearch() {
   runSearch(q, null);
 }
 
+// ── HOME GALLERY ──────────────────────────────────────────────────
+async function loadHomeGallery() {
+  if (state.homeGalleryLoading) return;
+  state.homeGalleryLoading = true;
+  const loadingEl = document.getElementById('home-gallery-loading');
+  if (loadingEl) loadingEl.style.display = 'block';
+  try {
+    const res = await fetch(`${VS_API}/api/search?discover=1`, { headers: { 'x-api-secret': VS_SECRET } });
+    const data = await res.json();
+    const items = (data.items || []).filter(i => i.image_url);
+    const unique = dedupeAgainstShown(items);
+    const spread = diversify(unique);
+    spread.forEach(item => { const k = itemKey(item); if (k) state.shownIds.add(k); });
+    const startIdx = state.homeGallery.length;
+    state.homeGallery.push(...spread);
+    buildHomeGrid(spread, startIdx === 0, startIdx);
+  } catch (e) { /* silent */ }
+  state.homeGalleryLoading = false;
+  if (loadingEl) loadingEl.style.display = 'none';
+}
+
+function buildHomeGrid(items, reset, startIdx = 0) {
+  const grid = document.getElementById('home-gallery');
+  if (!grid) return;
+  const nc = gridColCount();
+  let cols;
+  if (reset) {
+    grid.innerHTML = '';
+    cols = Array.from({ length: nc }, () => {
+      const col = document.createElement('div');
+      col.className = 'img-col';
+      grid.appendChild(col);
+      return col;
+    });
+  } else {
+    cols = [...grid.querySelectorAll('.img-col')];
+    if (!cols.length) return buildHomeGrid(items, true, startIdx);
+  }
+  items.forEach((item, i) => {
+    const col = cols[(startIdx + i) % cols.length];
+    const wrap = document.createElement('div');
+    wrap.innerHTML = homeCardHtml(item, startIdx + i);
+    col.appendChild(wrap.firstChild);
+  });
+}
+
+function homeCardHtml(item, idx) {
+  const srcUrl = item.source_url ? escHtml(item.source_url) : '#';
+  const inst   = escHtml(item.institution || '');
+  const title  = escHtml(item.title || 'Untitled');
+  return `<div class="img-card" onclick="_openModal(state.homeGallery[${idx}])">
+    <div class="img-card-wrap">
+      <img src="${escHtml(item.image_url)}" alt="${title}" loading="lazy"
+           onload="checkImageQuality(this)"
+           onerror="this.style.display='none';this.parentNode.style.background='var(--paper-dark)'"/>
+      <div class="img-card-overlay">
+        <span class="img-card-inst">${inst}</span>
+        <span class="img-card-ttl">${title}</span>
+        <a class="img-card-ext" href="${srcUrl}" target="_blank" rel="noopener"
+           onclick="event.stopPropagation()" title="View at source">↗</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function setupHomeScroll() {
+  window.addEventListener('scroll', () => {
+    if (state.view !== 'home') return;
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 600) {
+      loadHomeGallery();
+    }
+  });
+}
+
+// ── FIND SIMILAR (Pinterest-style) ────────────────────────────────
+async function loadSimilarThumbnails(item) {
+  const container = document.getElementById('modal-similar');
+  if (!container) return;
+  container.innerHTML = '<div class="modal-similar-label">Similar</div>';
+
+  let q = '';
+  let filterParams = '';
+
+  if (item.ai_mood || item.ai_lighting || item.ai_shot_type) {
+    q = item.category || (item.title || 'art').split(/\s+/).slice(0, 3).join(' ');
+    if (item.ai_mood) filterParams += `&mood=${encodeURIComponent(item.ai_mood)}`;
+    if (item.ai_lighting) filterParams += `&lighting=${encodeURIComponent(item.ai_lighting)}`;
+    if (item.ai_shot_type) filterParams += `&shot_type=${encodeURIComponent(item.ai_shot_type)}`;
+  } else {
+    q = (item.title || 'art').split(/\s+/).filter(w => w.length > 3).slice(0, 3).join(' ');
+    if (!q) q = item.object_type || item.institution || 'art';
+  }
+
+  try {
+    const res = await fetch(`${VS_API}/api/search?q=${encodeURIComponent(q)}&limit=12${filterParams}`,
+      { headers: { 'x-api-secret': VS_SECRET } });
+    const data = await res.json();
+    const items = (data.items || [])
+      .filter(i => i.image_url && i.image_url !== item.image_url)
+      .slice(0, 6);
+    state.similarItems = items;
+
+    items.forEach((sim) => {
+      const img = document.createElement('img');
+      img.src = sim.image_url;
+      img.alt = sim.title || '';
+      img.loading = 'lazy';
+      img.onclick = () => _openModal(sim);
+      container.appendChild(img);
+    });
+  } catch (e) { /* silent */ }
+}
+
+function findSimilarFullSearch() {
+  const item = state.activeItem;
+  if (!item) return;
+  closeModal();
+
+  state.filters.moods = item.ai_mood ? [item.ai_mood] : [];
+  state.filters.lighting = item.ai_lighting ? [item.ai_lighting] : [];
+  state.filters.shotTypes = item.ai_shot_type ? [item.ai_shot_type] : [];
+
+  // Sync sidebar filter chips
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    const group = c.dataset.group;
+    const value = c.dataset.value;
+    if (group && state.filters[group]) {
+      c.classList.toggle('active', state.filters[group].includes(value));
+    }
+  });
+
+  const q = item.category || (item.title || 'art').split(/\s+/).slice(0, 3).join(' ');
+  runSearch(q);
+}
+
 // ── INIT ──────────────────────────────────────────────────────────
 initFromURL();
 // Load real source document counts from Meilisearch (async, non-blocking)
 loadSourceCounts();
+// Set initial max-height for subgroup bodies (needed for CSS collapse transition)
+document.querySelectorAll('.src-subgroup').forEach(group => {
+  const body = group.querySelector('.src-subgroup-body');
+  if (!body) return;
+  if (group.classList.contains('collapsed')) {
+    body.style.maxHeight = '0';
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+});
+// Sync group checkboxes on init
+syncGroupCheckboxes();
+// Start home gallery
+if (state.view === 'home') {
+  loadHomeGallery();
+}
+setupHomeScroll();
 </script>
 </body>
 </html>
