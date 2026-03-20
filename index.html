@@ -122,30 +122,50 @@
 
     /* ── DISCOVER VIEW ──────────────────────────────── */
     /* Desktop: dark bg fills viewport, content centered as compact card */
-    #view-discover { background: var(--ink); min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+    /* ── DISCOVER ───────────────────────────────────────────────── */
+    #view-discover { background: #0c0c0c; min-height: 100vh; display: none; flex-direction: column; overflow: hidden; }
     #view-discover.active { display: flex; }
-    .disc-header { width: 100%; max-width: 640px; padding: 0 0 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-    .disc-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); cursor: pointer; }
-    .disc-source { font-family: var(--font-ui); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.35); }
-    .disc-card-area { width: 100%; max-width: 640px; padding: 0; flex-shrink: 0; }
-    .disc-card { background: #111; border-radius: 4px; overflow: hidden; }
-    .disc-card-img-wrap { overflow: hidden; display: flex; align-items: center; justify-content: center; background: #111; }
-    .disc-card img { max-width: 100%; max-height: 520px; width: auto; height: auto; object-fit: contain; display: block; }
-    .disc-card-info { padding: 14px 18px; background: var(--paper-dark); }
-    .disc-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 400; line-height: 1.3; color: var(--ink); margin-bottom: 5px; }
-    .disc-card-meta { font-family: var(--font-ui); font-size: 12px; color: var(--ink-2); }
-    .disc-actions { width: 100%; max-width: 640px; display: flex; gap: 10px; padding: 16px 0 0; flex-shrink: 0; }
-    .disc-btn { flex: 1; padding: 12px; text-align: center; border-radius: 2px; font-family: var(--font-ui); font-size: 13px; }
-    .disc-btn-skip { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; }
-    .disc-btn-skip:hover { background: rgba(255,255,255,.14); }
-    .disc-btn-info { background: rgba(255,255,255,.15); color: white; border: none; }
-    .disc-btn-info:hover { background: rgba(255,255,255,.22); }
-    .disc-progress { width: 100%; max-width: 640px; display: flex; gap: 4px; justify-content: center; padding: 14px 0 0; flex-shrink: 0; }
-    .disc-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.2); }
-    .disc-dot.on { background: rgba(255,255,255,.6); width: 14px; border-radius: 2px; }
-    .disc-hint { width: 100%; max-width: 640px; text-align: center; padding: 10px 0 0; font-family: var(--font-ui); font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
-    .disc-loading { min-height: 300px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 640px; }
-    .disc-loading p { font-size: 14px; color: rgba(255,255,255,.3); letter-spacing: .04em; }
+    #disc-main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    /* Top bar */
+    .disc-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 0; flex-shrink: 0; z-index: 2; }
+    .disc-close-btn { background: none; border: none; color: rgba(255,255,255,.45); font-size: 20px; cursor: pointer; padding: 4px 8px; line-height: 1; letter-spacing: 0; }
+    .disc-close-btn:hover { color: rgba(255,255,255,.85); }
+    .disc-source-badge { font-family: var(--font-ui); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.35); }
+    .disc-open-btn { background: rgba(255,255,255,.1); border: none; color: rgba(255,255,255,.7); font-size: 13px; letter-spacing: .04em; cursor: pointer; padding: 7px 14px; border-radius: 40px; font-family: var(--font-ui); }
+    .disc-open-btn:hover { background: rgba(255,255,255,.18); color: white; }
+    /* Stack + card */
+    .disc-stack { flex: 1; position: relative; overflow: hidden; margin: 14px 20px; min-height: 0; border-radius: 10px; }
+    .disc-card { position: absolute; inset: 0; border-radius: 10px; overflow: hidden; background: #1a1a1a; cursor: grab; will-change: transform; user-select: none; touch-action: none; }
+    .disc-card:active { cursor: grabbing; }
+    .disc-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; transition: opacity .35s ease; }
+    /* Swipe badges */
+    .disc-badge { position: absolute; top: 22px; font-family: var(--font-ui); font-size: 12px; letter-spacing: .14em; font-weight: 600; padding: 5px 12px; border-radius: 4px; opacity: 0; pointer-events: none; z-index: 4; text-transform: uppercase; }
+    .disc-badge-skip { left: 18px; color: #ff7979; border: 2px solid #ff7979; }
+    .disc-badge-open { right: 18px; color: #a9e34b; border: 2px solid #a9e34b; }
+    /* Info overlay */
+    .disc-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 64px 20px 22px; background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,0) 100%); z-index: 2; pointer-events: none; }
+    .disc-overlay-title { font-family: var(--font-display); font-size: 18px; color: white; line-height: 1.3; margin-bottom: 5px; }
+    .disc-overlay-meta { font-family: var(--font-ui); font-size: 12px; color: rgba(255,255,255,.5); }
+    /* Bottom bar */
+    .disc-bottombar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 20px; flex-shrink: 0; }
+    .disc-action { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.65); border-radius: 40px; padding: 10px 22px; font-family: var(--font-ui); font-size: 13px; cursor: pointer; letter-spacing: .02em; }
+    .disc-action:hover { background: rgba(255,255,255,.15); color: white; border-color: rgba(255,255,255,.2); }
+    .disc-dots { display: flex; gap: 5px; align-items: center; }
+    .disc-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.2); transition: all .25s; }
+    .disc-dot.on { background: rgba(255,255,255,.8); width: 18px; border-radius: 3px; }
+    /* Loading */
+    .disc-loading { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .disc-loading p { font-size: 13px; color: rgba(255,255,255,.25); letter-spacing: .06em; text-transform: uppercase; font-family: var(--font-ui); }
+    /* Desktop: constrain card width */
+    @media (min-width: 769px) {
+      #view-discover { align-items: center; padding: 40px 20px; }
+      #disc-main { width: 100%; max-width: 480px; }
+      .disc-topbar { padding: 0 0 14px; }
+      .disc-stack { margin: 0 0 14px; height: 600px; flex: none; border-radius: 8px; }
+      .disc-card { border-radius: 8px; }
+      .disc-bottombar { padding: 0; }
+      .disc-loading { min-height: 600px; flex: none; }
+    }
 
     /* ── ADVANCED SEARCH VIEW ───────────────────────── */
     #view-advanced { padding-top: 52px; }
@@ -435,16 +455,7 @@
       .adv-inner { padding: 40px 20px 80px; }
       .adv-sources-grid { grid-template-columns: 1fr; }
       /* Discover: full-screen on mobile */
-      #view-discover { height: 100vh; min-height: unset; overflow: hidden; padding: 0; align-items: stretch; justify-content: flex-start; padding-bottom: 60px; }
-      .disc-header { max-width: none; width: auto; padding: 16px 24px 0; }
-      .disc-card-area { flex: 1; max-width: none; padding: 16px 20px 0; display: flex; flex-direction: column; min-height: 0; }
-      .disc-card { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-      .disc-card-img-wrap { flex: 1; min-height: 0; }
-      .disc-card img { max-height: 100%; }
-      .disc-actions { max-width: none; padding: 12px 20px 0; }
-      .disc-progress { max-width: none; padding: 10px 20px 0; }
-      .disc-hint { max-width: none; padding: 8px 20px 0; }
-      .disc-loading { max-width: none; min-height: unset; }
+      #view-discover { padding-bottom: 60px; }
     }
     @media (min-width: 769px) {
       #mob-nav { display: none !important; }
@@ -760,29 +771,29 @@
 
 <!-- ── DISCOVER VIEW ─────────────────────────────────────────── -->
 <div id="view-discover" class="view">
-  <div class="disc-header">
-    <div class="disc-logo" onclick="goHome()">Visual Archive</div>
-    <div class="disc-source" id="disc-source-label"></div>
-  </div>
   <div class="disc-loading" id="disc-loading"><p>Loading…</p></div>
-  <div id="disc-main" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
-    <div class="disc-card-area">
+  <div id="disc-main" style="display:none">
+    <div class="disc-topbar">
+      <button class="disc-close-btn" onclick="goHome()">✕</button>
+      <div class="disc-source-badge" id="disc-source-label"></div>
+      <button class="disc-open-btn" onclick="openModalFromDiscover()">More info</button>
+    </div>
+    <div class="disc-stack" id="disc-stack">
       <div class="disc-card" id="disc-card">
-        <div class="disc-card-img-wrap">
-          <img id="disc-img" src="" alt="" loading="lazy"/>
-        </div>
-        <div class="disc-card-info">
-          <div class="disc-card-title" id="disc-title"></div>
-          <div class="disc-card-meta" id="disc-meta"></div>
+        <img id="disc-img" src="" alt=""/>
+        <div class="disc-badge disc-badge-skip" id="disc-badge-skip">Skip</div>
+        <div class="disc-badge disc-badge-open" id="disc-badge-open">Open</div>
+        <div class="disc-overlay">
+          <div class="disc-overlay-title" id="disc-title"></div>
+          <div class="disc-overlay-meta" id="disc-meta"></div>
         </div>
       </div>
     </div>
-    <div class="disc-actions">
-      <button class="disc-btn disc-btn-skip" onclick="discoverNext()">Skip →</button>
-      <button class="disc-btn disc-btn-info" onclick="openModalFromDiscover()">More info</button>
+    <div class="disc-bottombar">
+      <button class="disc-action" onclick="discoverNext()">← Skip</button>
+      <div class="disc-dots" id="disc-progress"></div>
+      <button class="disc-action" onclick="openModalFromDiscover()">Open ↗</button>
     </div>
-    <div class="disc-progress" id="disc-progress"></div>
-    <div class="disc-hint">Swipe left to skip · tap "More info" for details</div>
   </div>
 </div>
 
@@ -2026,8 +2037,8 @@ function openModal(idx) {
   _openModal(item);
 }
 function openModalFromDiscover() {
-  const item = state.discoverBatch[state.discoverIdx];
-  _openModal(item);
+  const item = _discQueue[0] || state.activeItem;
+  if (item) _openModal(item);
 }
 
 // ── LAZY DETAIL ENRICHMENT ──────────────────────────────────────
@@ -2084,70 +2095,206 @@ document.addEventListener('keydown', e => {
 });
 
 // ── DISCOVER MODE ─────────────────────────────────────────────────
+// Continuous queue — silently fetches more as user browses
+let _discQueue = [];
+let _discFetching = false;
+let _discSwipeSetup = false;
+
+// Wide variety of discover terms — 2 picked at random each fetch for maximum diversity
+const DISC_TERMS = [
+  // moods & emotions
+  'melancholy','joy','grief','solitude','ecstasy','fear','nostalgia','rage','calm','wonder',
+  'longing','tension','intimacy','euphoria','dread','tenderness','desire','absence',
+  // color & light
+  'golden hour','shadow','mist','neon','crimson','darkness','silhouette','fog','glare','reflection',
+  // human
+  'portrait','crowd','hands','gaze','dance','sleep','gesture','embrace','labor','childhood',
+  // place & nature
+  'desert','forest','ocean','rain','ruins','window','street','rooftop','cave','garden',
+  // objects & texture
+  'glass','paper','metal','smoke','fire','cloth','wood','concrete','water','stone',
+  // themes
+  'war','ceremony','protest','celebration','memory','ritual','voyage','solitude','play','death',
+  // form & composition
+  'pattern','spiral','grid','symmetry','closeup','fragment','abstraction','minimal','chaos',
+];
+
+function _discRandomTerm() {
+  const t = DISC_TERMS;
+  const a = t[Math.floor(Math.random() * t.length)];
+  let b = t[Math.floor(Math.random() * t.length)];
+  while (b === a) b = t[Math.floor(Math.random() * t.length)];
+  // Sometimes use 1 term, sometimes 2
+  return Math.random() < 0.4 ? a : `${a} ${b}`;
+}
+
+async function _discFetchMore() {
+  if (_discFetching) return;
+  _discFetching = true;
+  try {
+    const term = encodeURIComponent(_discRandomTerm());
+    const res = await fetch(`${VS_API}/api/search?discover=1&q=${term}`, {
+      headers: { 'x-api-secret': VS_SECRET }
+    });
+    const data = await res.json();
+    const items = (Array.isArray(data) ? data : (data.items || []))
+      .filter(i => i.image_url);
+    // Shuffle before appending
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    _discQueue.push(...items);
+  } catch { /* silent */ }
+  _discFetching = false;
+}
+
 async function startDiscover() {
   showView('discover');
   document.getElementById('disc-loading').style.display = 'flex';
   document.getElementById('disc-main').style.display = 'none';
-
-  try {
-    const res = await fetch(`${VS_API}/api/search?discover=1`, {
-      headers: { 'x-api-secret': VS_SECRET }
-    });
-    const data = await res.json();
-    const items = Array.isArray(data) ? data : (data.items || []);
-    state.discoverBatch = items.filter(i => i.image_url);
-    state.discoverIdx = 0;
-    document.getElementById('disc-loading').style.display = 'none';
-    document.getElementById('disc-main').style.display = 'flex';
-    renderDiscoverCard();
-  } catch {
-    document.getElementById('disc-loading').innerHTML = '<p>Error loading images. Try again.</p>';
+  _discQueue = [];
+  _discSwipeSetup = false;
+  await _discFetchMore();
+  if (!_discQueue.length) {
+    document.getElementById('disc-loading').innerHTML = '<p>Error loading. Try again.</p>';
+    return;
   }
+  document.getElementById('disc-loading').style.display = 'none';
+  document.getElementById('disc-main').style.display = 'flex';
+  renderDiscoverCard();
+  if (!_discSwipeSetup) { _setupDiscoverSwipe(); _discSwipeSetup = true; }
 }
 
-function renderDiscoverCard() {
-  const batch = state.discoverBatch;
-  if (!batch.length) return;
-  const idx = state.discoverIdx % batch.length;
-  const item = batch[idx];
+function renderDiscoverCard(animDir) {
+  const item = _discQueue[0];
+  if (!item) { startDiscover(); return; }
+  state.activeItem = item;
 
-  document.getElementById('disc-img').src = item.image_url;
-  document.getElementById('disc-img').alt = item.title;
-  document.getElementById('disc-title').textContent = item.title;
+  const card = document.getElementById('disc-card');
+  const img  = document.getElementById('disc-img');
+
+  // If animating in, start from off-screen opposite side
+  if (animDir) {
+    const fromX = animDir === 'left' ? '60px' : '-60px';
+    card.style.transition = 'none';
+    card.style.transform = `translateX(${fromX})`;
+    card.style.opacity = '0';
+    requestAnimationFrame(() => {
+      card.style.transition = 'transform .32s cubic-bezier(.22,1,.36,1), opacity .28s ease';
+      card.style.transform = '';
+      card.style.opacity = '1';
+    });
+  } else {
+    card.style.transition = 'none';
+    card.style.transform = '';
+    card.style.opacity = '1';
+  }
+
+  // Crossfade image
+  img.style.opacity = '0';
+  img.onload  = () => { img.style.opacity = '1'; };
+  img.onerror = () => { _discQueue.shift(); renderDiscoverCard(animDir); };
+  img.src = item.image_url;
+  img.alt = item.title || '';
+  // If already cached, onload won't fire — show immediately
+  if (img.complete && img.naturalWidth > 0) img.style.opacity = '1';
+
+  document.getElementById('disc-title').textContent = item.title || 'Untitled';
   document.getElementById('disc-meta').textContent =
     [item.date, item.institution].filter(Boolean).join(' · ');
-  document.getElementById('disc-source-label').textContent = item.institution;
+  document.getElementById('disc-source-label').textContent = item.institution || '';
 
-  // Progress dots (show up to 7)
-  const total = Math.min(batch.length, 7);
-  const dots = document.getElementById('disc-progress');
-  dots.innerHTML = Array(total).fill(0).map((_, i) =>
-    `<div class="disc-dot ${i === idx % total ? 'on' : ''}"></div>`
-  ).join('');
+  // Dots (queue depth, max 8)
+  const total = Math.min(_discQueue.length, 8);
+  document.getElementById('disc-progress').innerHTML =
+    Array(total).fill(0).map((_, i) =>
+      `<div class="disc-dot ${i === 0 ? 'on' : ''}"></div>`
+    ).join('');
 
-  // Touch/swipe support
-  setupSwipe();
+  // Pre-fetch more when queue runs low
+  if (_discQueue.length < 6) _discFetchMore();
 }
 
 function discoverNext() {
-  state.discoverIdx++;
-  if (state.discoverIdx >= state.discoverBatch.length) {
-    // Reload a new batch
-    startDiscover();
-    return;
-  }
-  renderDiscoverCard();
+  const card = document.getElementById('disc-card');
+  card.style.transition = 'transform .22s ease-in, opacity .18s ease-in';
+  card.style.transform = 'translateX(-105%) rotate(-8deg)';
+  card.style.opacity = '0';
+  setTimeout(() => {
+    _discQueue.shift();
+    renderDiscoverCard('right');
+  }, 200);
 }
 
-// Swipe support for discover mode
-let touchStartX = 0;
-function setupSwipe() {
+function _setupDiscoverSwipe() {
   const card = document.getElementById('disc-card');
-  card.ontouchstart = e => { touchStartX = e.touches[0].clientX; };
-  card.ontouchend = e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 50) discoverNext();
-  };
+  const badgeSkip = document.getElementById('disc-badge-skip');
+  const badgeOpen = document.getElementById('disc-badge-open');
+  let startX = 0, startY = 0, dragging = false, startTime = 0, lockedAxis = null;
+
+  function onStart(x, y) {
+    startX = x; startY = y; dragging = true; startTime = Date.now(); lockedAxis = null;
+    card.style.transition = 'none';
+  }
+  function onMove(x, y) {
+    if (!dragging) return;
+    const dx = x - startX, dy = y - startY;
+    // Lock axis on first significant move
+    if (!lockedAxis) {
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6)
+        lockedAxis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+    }
+    if (lockedAxis === 'y') { dragging = false; card.style.transform = ''; return; }
+    if (lockedAxis !== 'x') return;
+    const rot = dx / 16;
+    card.style.transform = `translateX(${dx}px) rotate(${rot}deg)`;
+    badgeSkip.style.opacity = Math.min(1, -dx / 70).toFixed(2);
+    badgeOpen.style.opacity = Math.min(1,  dx / 70).toFixed(2);
+  }
+  function onEnd(x) {
+    if (!dragging) return;
+    dragging = false;
+    badgeSkip.style.opacity = '0';
+    badgeOpen.style.opacity = '0';
+    const dx = x - startX;
+    const vel = Math.abs(dx) / (Date.now() - startTime); // px/ms
+    const shouldThrow = Math.abs(dx) > 80 || vel > 0.45;
+    if (shouldThrow) {
+      const dir = dx < 0 ? -1 : 1;
+      card.style.transition = 'transform .3s ease-out, opacity .25s ease-out';
+      card.style.transform = `translateX(${dir * 110}%) rotate(${dir * 18}deg)`;
+      card.style.opacity = '0';
+      setTimeout(() => {
+        if (dir < 0) { // left = skip
+          _discQueue.shift();
+          renderDiscoverCard('right');
+        } else { // right = open detail
+          renderDiscoverCard();
+          setTimeout(() => openModalFromDiscover(), 40);
+        }
+      }, 270);
+    } else {
+      // Snap back with spring feel
+      card.style.transition = 'transform .4s cubic-bezier(.34,1.56,.64,1)';
+      card.style.transform = '';
+    }
+  }
+
+  card.addEventListener('touchstart',  e => { e.preventDefault(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  card.addEventListener('touchmove',   e => { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  card.addEventListener('touchend',    e => onEnd(e.changedTouches[0].clientX));
+  card.addEventListener('mousedown',   e => onStart(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => { if (dragging) onMove(e.clientX, e.clientY); });
+  window.addEventListener('mouseup',   e => onEnd(e.clientX));
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function discKey(e) {
+    if (state.view !== 'discover') return;
+    if (e.key === 'ArrowLeft')  discoverNext();
+    if (e.key === 'ArrowRight') openModalFromDiscover();
+    if (e.key === 'Escape')     goHome();
+  });
 }
 
 // ── SOURCES ───────────────────────────────────────────────────────
