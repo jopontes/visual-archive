@@ -690,7 +690,6 @@
               <span class="src-subgroup-arrow">▾</span>
             </div>
             <div class="src-subgroup-body">
-            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="loc" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Library of Congress<span class="filter-opt-sub">17M prints &amp; photos</span></span><span class="filter-count" id="cnt-loc"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL<span class="filter-opt-sub">1M+ images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art &amp; medicine</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="duke" onchange="handleSourceCb()"/><span class="filter-opt-label">Duke AdAccess<span class="filter-opt-sub" data-sub-for="duke">ads</span></span><span class="filter-count" id="cnt-duke"></span></label>
@@ -919,7 +918,6 @@
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="smithsonian" checked/> Smithsonian</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="met" checked/> The Met</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="wellcome" checked/> Wellcome Collection</label>
-        <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="loc" checked/> Library of Congress</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nypl" checked/> New York Public Library</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="nasa"/> NASA</label>
         <label class="adv-src-opt"><input type="checkbox" class="adv-src-cb" data-src="bhl"/> Wikimedia Commons</label>
@@ -997,7 +995,7 @@ const SRC_COLOR = {
   'The Met':                       '#5C1A1A',
   'Wellcome Collection':           '#1A3D5C',
   'NASA':                          '#0B2C4A',
-  'Library of Congress':           '#5C2C1A',
+
   'New York Public Library':       '#2C1A5C',
   'Wikimedia Commons':             '#1A4C2C',
   // Scraped databases
@@ -1019,7 +1017,7 @@ const SRC_KEY_MAP = {
   met:               'The Met',
   wellcome:          'Wellcome Collection',
   nasa:              'NASA',
-  loc:               'Library of Congress',
+
   nypl:              'New York Public Library',
   bhl:               'Wikimedia Commons',
   // Scraped databases (institution = source name from Meilisearch)
@@ -1081,7 +1079,7 @@ const PICKER_SOURCES = {
     { key: 'smithsonian', name: 'Smithsonian',              sub: '5.1M items · Washington DC' },
     { key: 'met',         name: 'The Met',                  sub: '470k objects · New York' },
     { key: 'wellcome',    name: 'Wellcome Collection',      sub: 'Art, life & medicine · London' },
-    { key: 'loc',         name: 'Library of Congress',      sub: '17M prints & photographs' },
+
     { key: 'nypl',        name: 'New York Public Library',  sub: '1M+ digital images' },
     { key: 'nasa',        name: 'NASA',                     sub: 'Space photography archive' },
     { key: 'bhl',         name: 'Wikimedia Commons',        sub: 'Open media repository' },
@@ -1099,7 +1097,7 @@ const PICKER_SOURCES = {
 };
 
 const DEFAULT_PICKER_KEYS = new Set([
-  'vam','artic','smithsonian','met','wellcome','loc','nypl',
+  'vam','artic','smithsonian','met','wellcome','nypl',
   'filmgrab','booooooom','directors_notes','directors_library','beyond_short','wga','mb_collection','letterform',
 ]);
 
@@ -1358,7 +1356,7 @@ const SOURCE_GROUPS = {
   film_video:   ['filmgrab', 'booooooom', 'directors_notes', 'directors_library', 'beyond_short', 'vimeo'],
   museums:      ['vam', 'artic', 'smithsonian', 'met', 'wga', 'icp'],
   design_typo:  ['letterform', 'fonts_in_use', 'peoples_gd', 'mb_collection'],
-  libraries:    ['wellcome', 'loc', 'nypl', 'duke', 'nasa', 'bhl'],
+  libraries:    ['wellcome', 'nypl', 'duke', 'nasa', 'bhl'],
 };
 
 function toggleHomeGroup(chipEl) {

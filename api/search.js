@@ -19,7 +19,7 @@
 
 const SOURCE_KEYS = [
   'vam', 'artic', 'smithsonian', 'met',
-  'wellcome', 'nasa', 'loc', 'nypl', 'bhl',
+  'wellcome', 'nasa', 'nypl', 'bhl',
   'meilisearch',  // ← static scraped databases
 ];
 
@@ -46,7 +46,7 @@ const ALL_KNOWN_KEYS = [...SOURCE_KEYS, ...MEILI_KEYS];
 // NASA and Wikimedia Commons are opt-in only (too noisy for most searches).
 const DEFAULT_SOURCES = [
   'vam', 'artic', 'smithsonian', 'met',
-  'wellcome', 'loc', 'nypl',
+  'wellcome', 'nypl',
   'meilisearch',
 ];
 
@@ -155,7 +155,6 @@ export default async function handler(req, res) {
     met:         () => skipApis ? [] : searchMet(term),
     wellcome:    () => skipApis ? [] : searchWellcome(term),
     nasa:        () => skipApis ? [] : searchNASA(term),
-    loc:         () => skipApis ? [] : searchLOC(term),
     nypl:        () => skipApis ? [] : searchNYPL(term),
     bhl:         () => skipApis ? [] : searchBHL(term),
     meilisearch: () => searchMeilisearch(term, meiliFilters),
@@ -178,7 +177,6 @@ export default async function handler(req, res) {
     met:          1.0,
     smithsonian:  1.0,
     wellcome:     0.9,   // Slightly niche
-    loc:          0.9,
     nypl:         0.8,   // Slow, often partial
     nasa:         0.3,   // Opt-in only
     bhl:          0.3,   // Opt-in only
@@ -425,32 +423,6 @@ async function searchNASA(term) {
   } catch { return []; }
 }
 
-// ── 8. Library of Congress ─────────────────────────────────────
-// Note: image_url field is an array of URLs (smallest→largest).
-async function searchLOC(term) {
-  try {
-    const res = await fetch(
-      `https://www.loc.gov/photos/?q=${term}&fo=json&c=12`
-    );
-    const data = await res.json();
-    if (!data.results?.length) return [];
-    return data.results
-      .filter(item => item.image_url?.length)
-      .map(item => ({
-        id:          `loc-${encodeURIComponent(item.id || item.url || String(Math.random()))}`,
-        title:       Array.isArray(item.title) ? item.title[0] : (item.title || 'Untitled'),
-        // Use largest available (last element), fallback to first
-        image_url:   item.image_url[item.image_url.length - 1] || item.image_url[0],
-        source_url:  item.url || 'https://www.loc.gov/photos/',
-        institution: 'Library of Congress',
-        date:        item.date || '',
-        creator:     Array.isArray(item.contributor) ? item.contributor[0] : (item.contributor || ''),
-        medium:      '',
-        description: Array.isArray(item.description) ? item.description[0] : (item.description || ''),
-        subject:     Array.isArray(item.subject) ? item.subject.slice(0, 4).join(', ') : (item.subject || ''),
-      }));
-  } catch { return []; }
-}
 
 // ── 9. NYPL Digital Collections ───────────────────────────────
 // Search returns imageID; image URL built as images.nypl.org/index.php?id={id}&t=q
