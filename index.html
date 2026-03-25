@@ -285,6 +285,9 @@
     .modal-btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--rule); opacity: .5; cursor: not-allowed; }
     .modal-btn-find-similar { background: transparent; color: var(--ink); border: 1px solid var(--rule); cursor: pointer; opacity: 1; }
     .modal-btn-find-similar:hover { border-color: var(--ink-3); }
+    .modal-btn-mod { background: transparent; color: var(--ink-3); border: 1px solid var(--rule); cursor: pointer; font-size: 11px; padding: 8px 10px; }
+    .modal-btn-mod:hover { border-color: #c42020; color: #c42020; }
+    .modal-btn-flag:hover { border-color: #c88800; color: #c88800; }
     .modal-similar { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0; }
     .modal-similar-label { font-size: 10px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; width: 100%; }
     .modal-similar img { width: 56px; height: 56px; object-fit: cover; cursor: pointer; border-radius: 2px; flex-shrink: 0; opacity: .85; transition: opacity .15s; }
@@ -326,6 +329,54 @@
       line-height: 1; transition: background .15s;
     }
     .img-card-ext:hover { background: rgba(255,255,255,.3); }
+
+    /* ── CARD ACTIONS (hide / flag) ─────────────────── */
+    .card-actions {
+      position: absolute; top: 8px; left: 8px;
+      display: flex; gap: 4px;
+      opacity: 0; transition: opacity .18s ease;
+      z-index: 2;
+    }
+    .img-card:hover .card-actions { opacity: 1; }
+    .card-action-btn {
+      width: 20px; height: 20px; border-radius: 2px; border: none;
+      cursor: pointer; font-size: 10px; display: flex;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px); transition: background .15s; line-height: 1;
+    }
+    .card-action-hide { background: rgba(210,35,35,.75); color: white; }
+    .card-action-hide:hover { background: rgba(210,35,35,1); }
+    .card-action-flag { background: rgba(200,145,0,.8); color: white; }
+    .card-action-flag:hover { background: rgba(200,145,0,1); }
+
+    /* ── FLAG POPOVER ────────────────────────────────── */
+    #flag-popover {
+      position: fixed; z-index: 9999;
+      background: var(--warm-white); border: 1px solid var(--rule);
+      border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      padding: 12px; width: 224px;
+      font-family: var(--font-ui); font-size: 12px; display: none;
+    }
+    #flag-popover.open { display: block; }
+    .flag-pop-title { font-weight: 600; color: var(--ink); margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+    .flag-presets { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .flag-preset {
+      padding: 4px 8px; border: 1px solid var(--rule); border-radius: 2px;
+      cursor: pointer; font-size: 11px; color: var(--ink-2); background: var(--paper);
+      font-family: var(--font-ui); transition: all .12s;
+    }
+    .flag-preset:hover, .flag-preset.sel { border-color: var(--ink); color: var(--ink); background: var(--paper-dark); }
+    #flag-custom {
+      width: 100%; box-sizing: border-box; border: 1px solid var(--rule); border-radius: 2px;
+      padding: 5px 7px; font-family: var(--font-ui); font-size: 11px;
+      color: var(--ink); background: var(--warm-white); resize: none; margin-bottom: 8px;
+    }
+    #flag-custom:focus { outline: none; border-color: var(--ink-3); }
+    .flag-pop-btns { display: flex; gap: 6px; justify-content: flex-end; }
+    .flag-btn-cancel { padding: 4px 10px; font-size: 11px; color: var(--ink-3); cursor: pointer; border: 1px solid var(--rule); border-radius: 2px; background: none; font-family: var(--font-ui); }
+    .flag-btn-cancel:hover { color: var(--ink); border-color: var(--ink-3); }
+    .flag-btn-submit { padding: 4px 10px; font-size: 11px; color: white; cursor: pointer; border: none; border-radius: 2px; background: var(--ink); font-family: var(--font-ui); }
+    .flag-btn-submit:hover { background: #2d2924; }
 
     /* ── FILTER CHIPS ───────────────────────────────── */
     .filter-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
@@ -903,6 +954,10 @@
         <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">View in source ↗</a>
         <button class="modal-btn modal-btn-find-similar" onclick="findSimilarFullSearch()">✦ Find similar</button>
         <span class="modal-btn modal-btn-secondary">+ Save to collection</span>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <button id="modal-hide-btn" class="modal-btn modal-btn-mod" onclick="modalHide()" style="flex:1;">✕ Esconder</button>
+          <button id="modal-flag-btn" class="modal-btn modal-btn-mod modal-btn-flag" onclick="modalFlag(event)" style="flex:1;">⚑ Reportar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1472,10 +1527,11 @@ function buildGrid(items, reset, startIdx = 0) {
   }
 
   items.forEach((item, i) => {
+    if (hiddenItems.has(itemKey(item))) return;
     const col = cols[(startIdx + i) % cols.length];
     const wrap = document.createElement('div');
     wrap.innerHTML = cardHtml(item, startIdx + i);
-    col.appendChild(wrap.firstChild);
+    if (wrap.firstChild) col.appendChild(wrap.firstChild);
   });
 }
 
@@ -1484,6 +1540,9 @@ function buildGrid(items, reset, startIdx = 0) {
 function itemKey(item) {
   return item.id ? String(item.id) : (item.image_url || '');
 }
+
+// Hidden items (persisted across sessions)
+const hiddenItems = new Set(JSON.parse(localStorage.getItem('vr_hidden') || '[]'));
 
 // Remove items whose key was already shown in this session
 function dedupeAgainstShown(items) {
@@ -1585,10 +1644,11 @@ function renderResults(items) {
 }
 
 function cardHtml(item, idx) {
+  const key    = escHtml(itemKey(item));
   const srcUrl = item.source_url ? escHtml(item.source_url) : '#';
   const inst   = escHtml(item.institution || '');
   const title  = escHtml(item.title || 'Untitled');
-  return `<div class="img-card" onclick="openModal(${idx})">
+  return `<div class="img-card" data-key="${key}" onclick="openModal(${idx})">
     <div class="img-card-wrap">
       <img src="${escHtml(item.image_url)}" alt="${title}" loading="lazy"
            onload="checkImageQuality(this)"
@@ -1598,6 +1658,10 @@ function cardHtml(item, idx) {
         <span class="img-card-ttl">${title}</span>
         <a class="img-card-ext" href="${srcUrl}" target="_blank" rel="noopener"
            onclick="event.stopPropagation()" title="View at source">↗</a>
+      </div>
+      <div class="card-actions">
+        <button class="card-action-btn card-action-hide" onclick="hideCard('${key}',event)" title="Esconder este resultado">✕</button>
+        <button class="card-action-btn card-action-flag" onclick="openFlagPopover('${key}','${title}',event)" title="Reportar problema">⚑</button>
       </div>
     </div>
   </div>`;
@@ -2444,18 +2508,20 @@ function buildHomeGrid(items, reset, startIdx = 0) {
     if (!cols.length) return buildHomeGrid(items, true, startIdx);
   }
   items.forEach((item, i) => {
+    if (hiddenItems.has(itemKey(item))) return;
     const col = cols[(startIdx + i) % cols.length];
     const wrap = document.createElement('div');
     wrap.innerHTML = homeCardHtml(item, startIdx + i);
-    col.appendChild(wrap.firstChild);
+    if (wrap.firstChild) col.appendChild(wrap.firstChild);
   });
 }
 
 function homeCardHtml(item, idx) {
+  const key    = escHtml(itemKey(item));
   const srcUrl = item.source_url ? escHtml(item.source_url) : '#';
   const inst   = escHtml(item.institution || '');
   const title  = escHtml(item.title || 'Untitled');
-  return `<div class="img-card" onclick="_openModal(state.homeGallery[${idx}])">
+  return `<div class="img-card" data-key="${key}" onclick="_openModal(state.homeGallery[${idx}])">
     <div class="img-card-wrap">
       <img src="${escHtml(item.image_url)}" alt="${title}" loading="lazy"
            onload="checkImageQuality(this)"
@@ -2465,6 +2531,10 @@ function homeCardHtml(item, idx) {
         <span class="img-card-ttl">${title}</span>
         <a class="img-card-ext" href="${srcUrl}" target="_blank" rel="noopener"
            onclick="event.stopPropagation()" title="View at source">↗</a>
+      </div>
+      <div class="card-actions">
+        <button class="card-action-btn card-action-hide" onclick="hideCard('${key}',event)" title="Esconder este resultado">✕</button>
+        <button class="card-action-btn card-action-flag" onclick="openFlagPopover('${key}','${title}',event)" title="Reportar problema">⚑</button>
       </div>
     </div>
   </div>`;
@@ -2561,6 +2631,116 @@ if (state.view === 'home') {
   loadHomeGallery();
 }
 setupHomeScroll();
+
+// ── MODERATION: hide + flag ──────────────────────────────────────────────
+function saveHidden() {
+  localStorage.setItem('vr_hidden', JSON.stringify([...hiddenItems]));
+}
+
+function hideCard(key, event) {
+  event.stopPropagation();
+  hiddenItems.add(key);
+  saveHidden();
+  const card = event.currentTarget.closest('.img-card');
+  if (card) card.style.display = 'none';
+}
+
+function modalHide() {
+  const item = state.activeItem;
+  if (!item) return;
+  const key = itemKey(item);
+  hiddenItems.add(key);
+  saveHidden();
+  const card = document.querySelector(`.img-card[data-key="${CSS.escape(key)}"]`);
+  if (card) card.style.display = 'none';
+  closeModal();
+  _showToast('Resultado escondido');
+}
+
+function modalFlag(event) {
+  const item = state.activeItem;
+  if (!item) return;
+  const key   = itemKey(item);
+  const title = item.title || 'Untitled';
+  openFlagPopover(key, title, event);
+}
+
+// Flag popover
+let _flagKey = null, _flagTitle = null;
+
+function openFlagPopover(key, title, event) {
+  event.stopPropagation();
+  _flagKey = key;
+  _flagTitle = title;
+  const pop = document.getElementById('flag-popover');
+  pop.querySelectorAll('.flag-preset').forEach(b => b.classList.remove('sel'));
+  document.getElementById('flag-custom').value = '';
+  const btn = event.currentTarget;
+  const rect = btn.getBoundingClientRect();
+  pop.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
+  pop.style.top  = Math.min(rect.bottom + 6, window.innerHeight - 200) + 'px';
+  pop.classList.add('open');
+  setTimeout(() => document.addEventListener('click', _outsideFlagClick, { once: true }), 0);
+}
+
+function _outsideFlagClick(e) {
+  const pop = document.getElementById('flag-popover');
+  if (!pop.contains(e.target)) { closeFlagPopover(); }
+  else { setTimeout(() => document.addEventListener('click', _outsideFlagClick, { once: true }), 0); }
+}
+
+function selectFlagPreset(btn, reason) {
+  btn.closest('.flag-presets').querySelectorAll('.flag-preset').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('flag-custom').value = reason;
+}
+
+function closeFlagPopover() {
+  document.getElementById('flag-popover').classList.remove('open');
+  _flagKey = null; _flagTitle = null;
+}
+
+function submitFlag() {
+  const reason = document.getElementById('flag-custom').value.trim();
+  if (!reason) { document.getElementById('flag-custom').focus(); return; }
+  const flags = JSON.parse(localStorage.getItem('vr_flags') || '[]');
+  flags.push({ key: _flagKey, title: _flagTitle, reason, ts: Date.now() });
+  localStorage.setItem('vr_flags', JSON.stringify(flags));
+  closeFlagPopover();
+  _showToast('Problema salvo no log');
+}
+
+function _showToast(msg) {
+  let t = document.getElementById('vr-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'vr-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:8px 18px;border-radius:2px;font-family:var(--font-ui);font-size:12px;z-index:10000;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
 </script>
+
+<div id="flag-popover">
+  <div class="flag-pop-title">Reportar problema</div>
+  <div class="flag-presets">
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Imagem muito pequena')">Muito pequena</button>
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Logo ou ícone de rede social')">Logo/social</button>
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Sem relevância visual')">Sem relevância</button>
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Só texto, sem imagem')">Só texto</button>
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Imagem quebrada ou erro')">Quebrada</button>
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Metadados incorretos')">Metadados</button>
+    <button class="flag-preset" onclick="selectFlagPreset(this,'Baixa qualidade')">Baixa qualidade</button>
+  </div>
+  <textarea id="flag-custom" rows="2" placeholder="Detalhe o problema..."></textarea>
+  <div class="flag-pop-btns">
+    <button class="flag-btn-cancel" onclick="closeFlagPopover()">Cancelar</button>
+    <button class="flag-btn-submit" onclick="submitFlag()">Salvar</button>
+  </div>
+</div>
 </body>
 </html>
