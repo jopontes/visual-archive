@@ -35,9 +35,13 @@ const MEILI_SLUG_MAP = {
   letterform:        'letterform',
   peoples_gd:        'peoples_gd',
   vimeo:             'vimeo_staff_picks',
-  fonts_in_use:      'fonts_in_use',
-  icp:               'icp',
-  duke:              'duke',
+  fonts_in_use:          'fonts_in_use',
+  icp:                   'icp',
+  duke:                  'duke',
+  aperture:              'aperture',
+  bjp_1854:              'bjp_1854',
+  ikonographia:          'ikonographia',
+  american_sign_museum:  'american_sign_museum',
 };
 const MEILI_KEYS = Object.keys(MEILI_SLUG_MAP);
 const ALL_KNOWN_KEYS = [...SOURCE_KEYS, ...MEILI_KEYS];

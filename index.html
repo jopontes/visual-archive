@@ -701,6 +701,10 @@
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nypl" checked onchange="handleSourceCb()"/><span class="filter-opt-label">NYPL<span class="filter-opt-sub">1M+ images</span></span><span class="filter-count" id="cnt-nypl"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="wellcome" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Wellcome Collection<span class="filter-opt-sub">Art &amp; medicine</span></span><span class="filter-count" id="cnt-wellcome"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="duke" onchange="handleSourceCb()"/><span class="filter-opt-label">Duke AdAccess<span class="filter-opt-sub" data-sub-for="duke">ads</span></span><span class="filter-count" id="cnt-duke"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="aperture" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Aperture Foundation<span class="filter-opt-sub" data-sub-for="aperture">photography editorial</span></span><span class="filter-count" id="cnt-aperture"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bjp_1854" checked onchange="handleSourceCb()"/><span class="filter-opt-label">British Journal of Photography<span class="filter-opt-sub" data-sub-for="bjp_1854">photography</span></span><span class="filter-count" id="cnt-bjp_1854"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="ikonographia" checked onchange="handleSourceCb()"/><span class="filter-opt-label">Ikonographia<span class="filter-opt-sub" data-sub-for="ikonographia">design archive</span></span><span class="filter-count" id="cnt-ikonographia"></span></label>
+            <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="american_sign_museum" onchange="handleSourceCb()"/><span class="filter-opt-label">American Sign Museum<span class="filter-opt-sub" data-sub-for="american_sign_museum">signage</span></span><span class="filter-count" id="cnt-american_sign_museum"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="nasa" onchange="handleSourceCb()"/><span class="filter-opt-label">NASA<span class="filter-opt-sub">Space archive</span></span><span class="filter-count" id="cnt-nasa"></span></label>
             <label class="filter-opt filter-opt--src"><input type="checkbox" class="src-cb" data-src="bhl" onchange="handleSourceCb()"/><span class="filter-opt-label">Wikimedia Commons<span class="filter-opt-sub" data-sub-for="wikimedia_commons">images</span></span><span class="filter-count" id="cnt-bhl"></span></label>
             </div>
@@ -1311,11 +1315,21 @@ async function loadSourcePreviews() {
 }
 
 function browseSource(key, name) {
-  state.filters.sources = [key];
+  // Reset ALL filters so previous search state doesn't bleed in
+  state.filters = { sources: [key] };
+  state.query = '';
+
+  // Update sidebar: uncheck "All sources", uncheck all groups, check only this source
+  const allCb = document.getElementById('src-all');
+  if (allCb) allCb.checked = false;
+  document.querySelectorAll('.src-group-cb').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.src-cb').forEach(cb => {
+    cb.checked = (cb.dataset.src === key);
+  });
+
+  // Clear category chips
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
   runSearch('*', [key]);
-  // Update page title area to reflect source browse
-  const titleEl = document.getElementById('results-title');
-  if (titleEl) titleEl.textContent = name;
 }
 function showAdvanced() { showView('advanced'); }
 function focusSearch() {
@@ -1514,7 +1528,12 @@ async function fetchSearch({ q, offset = 0 }) {
   const srcKeys = state.filters.sources.length ? state.filters.sources
     : [...document.querySelectorAll('.src-cb:checked')].map(cb => cb.dataset.src);
 
-  let url = `${VS_API}/api/search?q=${encodeURIComponent(typeQ)}&offset=${offset}&limit=60`;
+  // For browse mode (q='*'), randomise starting offset so results differ each session
+  const isBrowse = (q === '*' || q === '');
+  const randomOffset = isBrowse ? Math.floor(Math.random() * 800) : 0;
+  const effectiveOffset = offset === 0 ? randomOffset : offset;
+
+  let url = `${VS_API}/api/search?q=${encodeURIComponent(typeQ)}&offset=${effectiveOffset}&limit=60`;
   if (category) url += `&category=${category}`;
   if (srcKeys.length) url += `&sources=${srcKeys.join(',')}`;
   if (state.filters.moods.length)     url += `&mood=${state.filters.moods.join(',')}`;
@@ -1525,7 +1544,30 @@ async function fetchSearch({ q, offset = 0 }) {
 
   const res = await fetch(url, { headers: { 'x-api-secret': VS_SECRET } });
   if (!res.ok) throw new Error('API error');
-  return res.json();  // { items, total, offset }
+  const data = await res.json();
+
+  // Shuffle results for discovery — full shuffle for browse, light for keyword search
+  if (data.items && data.items.length > 1) {
+    const arr = data.items;
+    if (isBrowse) {
+      // Full Fisher-Yates shuffle
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    } else {
+      // Light shuffle: swap within chunks of 5 so top results still surface first
+      for (let i = 0; i < arr.length; i += 5) {
+        const end = Math.min(i + 5, arr.length);
+        for (let k = end - 1; k > i; k--) {
+          const j = i + Math.floor(Math.random() * (k - i + 1));
+          [arr[k], arr[j]] = [arr[j], arr[k]];
+        }
+      }
+    }
+  }
+
+  return data;  // { items, total, offset }
 }
 
 // ── GRID HELPERS ─────────────────────────────────────────────────
