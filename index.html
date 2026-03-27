@@ -1500,6 +1500,9 @@ async function runSearch(q, onlySources = null, pushHistory = true) {
     state.allResults = data.items || [];
     state.meiliTotal = data.total;
     renderResults(state.allResults);
+    // Use actual Meilisearch offset from API response so load-more continues
+    // from the right place (random offset may differ from 0).
+    state.offset = (data.offset ?? 0) + 60;
   } catch(e) {
     document.getElementById('res-count').textContent = 'Error loading results.';
     document.getElementById('results-grid').innerHTML = '';
@@ -1717,7 +1720,6 @@ function renderResults(items) {
   state.displayedResults = spread;
 
   buildGrid(spread, true, 0);
-  state.offset = 60;
   renderLoadMore();
 }
 
@@ -1859,6 +1861,7 @@ function applyFilters() {
       state.allResults = data.items || [];
       state.meiliTotal = data.total;
       renderResults(state.allResults);
+      state.offset = (data.offset ?? 0) + 60;
     } catch {
       document.getElementById('res-count').textContent = 'Error loading results.';
     }
