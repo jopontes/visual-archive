@@ -504,7 +504,7 @@ async function searchMeilisearch(term, {
     if (yearTo)   filters.push(`year <= ${yearTo}`);
 
     const body = {
-      q:                    decodeURIComponent(term),
+      q:                    decodeURIComponent(term) === '*' ? '' : decodeURIComponent(term),
       offset,
       limit,
       attributesToRetrieve: [

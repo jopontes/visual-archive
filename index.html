@@ -1285,7 +1285,7 @@ function goHome() {
   if (g) g.innerHTML = '';
   loadHomeGallery();
 }
-function showSources() { renderSources(); showView('sources'); loadSourcePreviews(); }
+function showSources() { renderSources(); showView('sources'); loadSourcePreviews(); loadSourceCounts(); }
 
 async function loadSourcePreviews() {
   for (const db of OUR_DATABASES) {
@@ -1296,7 +1296,7 @@ async function loadSourcePreviews() {
       const data = await res.json();
       const items = (data.items || []).filter(i => i.image_url);
 
-      // Thumbnails
+      // Thumbnails only — counts are handled by loadSourceCounts() via facets API
       items.slice(0,4).forEach((item, i) => {
         const el = document.getElementById(`dir-thumb-${db.key}-${i}`);
         if (el) {
@@ -1304,19 +1304,14 @@ async function loadSourcePreviews() {
           el.classList.remove('loading');
         }
       });
-
-      // Count
-      const countEl = document.getElementById(`dir-count-${db.key}`);
-      if (countEl && data.total) {
-        countEl.textContent = Number(data.total).toLocaleString() + ' items';
-      }
     } catch(e) { /* silently skip */ }
   }
 }
 
 function browseSource(key, name) {
-  // Reset ALL filters so previous search state doesn't bleed in
-  state.filters = { sources: [key] };
+  // Reset ALL filters so previous search state doesn't bleed in,
+  // but keep the full structure so fetchSearch doesn't throw on .length accesses.
+  state.filters = { sources: [key], categories: [], moods: [], lighting: [], shotTypes: [], yearFrom: null, yearTo: null };
   state.query = '';
 
   // Update sidebar: uncheck "All sources", uncheck all groups, check only this source
@@ -2071,6 +2066,18 @@ async function loadSourceCounts() {
         badge.textContent = n >= 1000 ? Math.round(n / 1000) + 'k' : n;
         btn.appendChild(badge);
       }
+    });
+
+    // Update Sources page dir-count elements with exact facet counts
+    Object.entries(counts).forEach(([slug, n]) => {
+      const key = SLUG_TO_SRC_KEY[slug] || slug;
+      const countEl = document.getElementById(`dir-count-${key}`);
+      if (countEl) countEl.textContent = n.toLocaleString() + ' items';
+    });
+
+    // Clear any remaining "Loading…" for sources with no indexed content yet
+    document.querySelectorAll('[id^="dir-count-"]').forEach(el => {
+      if (el.textContent === 'Loading…') el.textContent = '—';
     });
   } catch (e) {
     // Silent fail — counts are decorative

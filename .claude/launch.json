@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "Visual Research",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vercel", "dev", "--yes"],
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["-c", "PATH=/usr/local/bin:$PATH npx vercel dev --yes"],
       "port": 3000,
       "autoPort": true
     }
